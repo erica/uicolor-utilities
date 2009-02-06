@@ -18,10 +18,10 @@
 - (void) getInfo
 {
 
-	// self.title = [self.bgcolor hexStringFromColor];
-	self.bgcolor = [UIColor colorWithString:[self.bgcolor stringFromColor]];
-	self.title = [self.bgcolor stringFromColor];
-	printf("%f\n", self.bgcolor.green);
+	self.title = [self.bgcolor hexStringFromColor];
+	// self.bgcolor = [UIColor colorWithString:[self.bgcolor stringFromColor]];
+	// self.title = [self.bgcolor stringFromColor];
+	// printf("%f\n", self.bgcolor.green);
 }
 
 - (void) update:(UISlider *)aSlider

@@ -15,10 +15,11 @@
  - Crayola color set
  - T Hillerson - Random Colors ([UIColor pickSomethingNice])
  - Eridius - UIColor needs a method that takes 2 colors and gives a third complementary one
- - Monochromization 
- - Eridius - colorWithHex:(NSInteger)hex, e.g. [UIColor colorWithHex:0xaabbcc
- 
-*/
+ - Monochromization (something like 0.45 red + 0.35 green + 0.2 blue, what's the best formula?)
+ - Eridius - colorWithHex:(NSInteger)hex, e.g. [UIColor colorWithHex:0xaabbcc]
+ - Consider UIMutableColor that can be adjusted (brighter, cooler, warmer, thicker-alpha, etc)
+ - Eridius - colorByAddingColor: and/or -colorWithAlpha:
+ */
 
 /*
  FOR REFERENCE: Color Space Models: enum CGColorSpaceModel {

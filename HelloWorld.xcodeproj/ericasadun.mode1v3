@@ -197,7 +197,48 @@
 	<key>Notifications</key>
 	<array/>
 	<key>OpenEditors</key>
-	<array/>
+	<array>
+		<dict>
+			<key>Content</key>
+			<dict>
+				<key>PBXProjectModuleGUID</key>
+				<string>8ED6EDCB0F3CCA82004BF073</string>
+				<key>PBXProjectModuleLabel</key>
+				<string>UIColor-Expanded.h</string>
+				<key>PBXSplitModuleInNavigatorKey</key>
+				<dict>
+					<key>Split0</key>
+					<dict>
+						<key>PBXProjectModuleGUID</key>
+						<string>8ED6EDCC0F3CCA82004BF073</string>
+						<key>PBXProjectModuleLabel</key>
+						<string>UIColor-Expanded.h</string>
+						<key>_historyCapacity</key>
+						<integer>0</integer>
+						<key>bookmark</key>
+						<string>8ED6EDD90F3CCABA004BF073</string>
+						<key>history</key>
+						<array>
+							<string>8ED6EDC50F3CCA38004BF073</string>
+						</array>
+					</dict>
+					<key>SplitCount</key>
+					<string>1</string>
+				</dict>
+				<key>StatusBarVisibility</key>
+				<true/>
+			</dict>
+			<key>Geometry</key>
+			<dict>
+				<key>Frame</key>
+				<string>{{0, 20}, {939, 569}}</string>
+				<key>PBXModuleWindowStatusBarHidden2</key>
+				<false/>
+				<key>RubberWindowFrame</key>
+				<string>519 91 939 610 0 0 1680 1028 </string>
+			</dict>
+		</dict>
+	</array>
 	<key>PerspectiveWidths</key>
 	<array>
 		<integer>-1</integer>
@@ -325,12 +366,12 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>8ED6EDB50F3CC505004BF073</string>
+										<string>8ED6EDD80F3CCABA004BF073</string>
 										<key>history</key>
 										<array>
 											<string>8ED61B5C0F3CABA200B2FE57</string>
 											<string>8ED6ED490F3CBEDA004BF073</string>
-											<string>8ED6EDA10F3CC465004BF073</string>
+											<string>8ED6EDBC0F3CC8A2004BF073</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -531,13 +572,13 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>8ED6EDB60F3CC505004BF073</string>
-		<string>8ED6EDB70F3CC505004BF073</string>
-		<string>8ED6ED930F3CC3E9004BF073</string>
+		<string>8ED6EDD40F3CCAAD004BF073</string>
+		<string>8ED6EDC80F3CCA82004BF073</string>
 		<string>8ED6ED770F3CC181004BF073</string>
 		<string>8ED6ED780F3CC181004BF073</string>
 		<string>1C78EAAD065D492600B07095</string>
 		<string>1CD10A99069EF8BA00B06720</string>
+		<string>8ED6EDCB0F3CCA82004BF073</string>
 		<string>8E0DD4FF0D8448D5009D1638</string>
 		<string>/Users/ericasadun/Desktop/UIColor Work/HelloWorld.xcodeproj</string>
 	</array>

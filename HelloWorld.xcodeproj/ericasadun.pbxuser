@@ -247,6 +247,27 @@
 			8ED6EDB10F3CC4FE004BF073 /* PBXTextBookmark */ = 8ED6EDB10F3CC4FE004BF073 /* PBXTextBookmark */;
 			8ED6EDB20F3CC4FE004BF073 /* PBXTextBookmark */ = 8ED6EDB20F3CC4FE004BF073 /* PBXTextBookmark */;
 			8ED6EDB50F3CC505004BF073 /* PBXTextBookmark */ = 8ED6EDB50F3CC505004BF073 /* PBXTextBookmark */;
+			8ED6EDBB0F3CC87D004BF073 /* PBXBookmark */ = 8ED6EDBB0F3CC87D004BF073 /* PBXBookmark */;
+			8ED6EDBC0F3CC8A2004BF073 /* PBXTextBookmark */ = 8ED6EDBC0F3CC8A2004BF073 /* PBXTextBookmark */;
+			8ED6EDBD0F3CC8A2004BF073 /* PBXTextBookmark */ = 8ED6EDBD0F3CC8A2004BF073 /* PBXTextBookmark */;
+			8ED6EDC00F3CC8A2004BF073 /* PBXTextBookmark */ = 8ED6EDC00F3CC8A2004BF073 /* PBXTextBookmark */;
+			8ED6EDC10F3CC8DF004BF073 /* PBXTextBookmark */ = 8ED6EDC10F3CC8DF004BF073 /* PBXTextBookmark */;
+			8ED6EDC20F3CC8DF004BF073 /* PBXTextBookmark */ = 8ED6EDC20F3CC8DF004BF073 /* PBXTextBookmark */;
+			8ED6EDC30F3CC8F4004BF073 /* PBXTextBookmark */ = 8ED6EDC30F3CC8F4004BF073 /* PBXTextBookmark */;
+			8ED6EDC50F3CCA38004BF073 /* PBXBookmark */ = 8ED6EDC50F3CCA38004BF073 /* PBXBookmark */;
+			8ED6EDC60F3CCA3C004BF073 /* PBXBookmark */ = 8ED6EDC60F3CCA3C004BF073 /* PBXBookmark */;
+			8ED6EDC70F3CCA82004BF073 /* PBXTextBookmark */ = 8ED6EDC70F3CCA82004BF073 /* PBXTextBookmark */;
+			8ED6EDCA0F3CCA82004BF073 /* PBXTextBookmark */ = 8ED6EDCA0F3CCA82004BF073 /* PBXTextBookmark */;
+			8ED6EDCD0F3CCA82004BF073 /* PBXTextBookmark */ = 8ED6EDCD0F3CCA82004BF073 /* PBXTextBookmark */;
+			8ED6EDCE0F3CCA8B004BF073 /* PBXTextBookmark */ = 8ED6EDCE0F3CCA8B004BF073 /* PBXTextBookmark */;
+			8ED6EDCF0F3CCA8B004BF073 /* PBXTextBookmark */ = 8ED6EDCF0F3CCA8B004BF073 /* PBXTextBookmark */;
+			8ED6EDD00F3CCA8B004BF073 /* PBXTextBookmark */ = 8ED6EDD00F3CCA8B004BF073 /* PBXTextBookmark */;
+			8ED6EDD10F3CCAA1004BF073 /* PBXBookmark */ = 8ED6EDD10F3CCAA1004BF073 /* PBXBookmark */;
+			8ED6EDD30F3CCAAD004BF073 /* PBXTextBookmark */ = 8ED6EDD30F3CCAAD004BF073 /* PBXTextBookmark */;
+			8ED6EDD60F3CCAAD004BF073 /* PBXTextBookmark */ = 8ED6EDD60F3CCAAD004BF073 /* PBXTextBookmark */;
+			8ED6EDD70F3CCAAD004BF073 /* PBXTextBookmark */ = 8ED6EDD70F3CCAAD004BF073 /* PBXTextBookmark */;
+			8ED6EDD80F3CCABA004BF073 /* PBXTextBookmark */ = 8ED6EDD80F3CCABA004BF073 /* PBXTextBookmark */;
+			8ED6EDD90F3CCABA004BF073 /* PBXTextBookmark */ = 8ED6EDD90F3CCABA004BF073 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 8E0DD4ED0D8444CC009D1638 /* Source Control */;
 		userBuildSettings = {
@@ -255,8 +276,8 @@
 	29B97316FDCFA39411CA2CEA /* main.m */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {773, 1610}}";
-			sepNavSelRange = "{324, 0}";
-			sepNavVisRange = "{0, 1374}";
+			sepNavSelRange = "{430, 0}";
+			sepNavVisRange = "{0, 1405}";
 			sepNavWindowFrame = "{{651, 57}, {832, 880}}";
 		};
 	};
@@ -309,18 +330,18 @@
 	};
 	8ED61B480F3CA54400B2FE57 /* UIColor-Expanded.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {421, 532}}";
-			sepNavSelRange = "{380, 30}";
-			sepNavVisRange = "{312, 133}";
+			sepNavIntBoundsRect = "{{0, 0}, {880, 538}}";
+			sepNavSelRange = "{477, 0}";
+			sepNavVisRange = "{0, 795}";
 			sepNavWindowFrame = "{{519, 35}, {939, 666}}";
 		};
 	};
 	8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {880, 3766}}";
-			sepNavSelRange = "{5206, 0}";
-			sepNavVisRange = "{0, 1023}";
-			sepNavWindowFrame = "{{38, 336}, {939, 666}}";
+			sepNavSelRange = "{857, 0}";
+			sepNavVisRange = "{0, 1184}";
+			sepNavWindowFrame = "{{518, 362}, {939, 666}}";
 		};
 	};
 	8ED61B5A0F3CA65E00B2FE57 /* PBXBookmark */ = {
@@ -376,7 +397,7 @@
 		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
 		name = "UIColor-Expanded.m: 24";
 		rLen = 0;
-		rLoc = 2233;
+		rLoc = 2460;
 		rType = 0;
 		vrLen = 858;
 		vrLoc = 314;
@@ -437,7 +458,7 @@
 		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
 		name = "UIColor-Expanded.m: 49";
 		rLen = 0;
-		rLoc = 4343;
+		rLoc = 4570;
 		rType = 0;
 		vrLen = 959;
 		vrLoc = 0;
@@ -515,7 +536,7 @@
 		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
 		name = "UIColor-Expanded.m: 103";
 		rLen = 0;
-		rLoc = 2936;
+		rLoc = 3163;
 		rType = 0;
 		vrLen = 999;
 		vrLoc = 2676;
@@ -535,7 +556,7 @@
 		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
 		name = "UIColor-Expanded.m: 162";
 		rLen = 0;
-		rLoc = 4737;
+		rLoc = 4964;
 		rType = 0;
 		vrLen = 758;
 		vrLoc = 3650;
@@ -565,7 +586,7 @@
 		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
 		name = "UIColor-Expanded.m: 19";
 		rLen = 0;
-		rLoc = 629;
+		rLoc = 858;
 		rType = 0;
 		vrLen = 991;
 		vrLoc = 0;
@@ -649,7 +670,7 @@
 		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
 		name = "UIColor-Expanded.m: 80";
 		rLen = 0;
-		rLoc = 2197;
+		rLoc = 2424;
 		rType = 0;
 		vrLen = 1014;
 		vrLoc = 1591;
@@ -693,7 +714,7 @@
 		fRef = 29B97316FDCFA39411CA2CEA /* main.m */;
 		name = "main.m: 22";
 		rLen = 0;
-		rLoc = 535;
+		rLoc = 541;
 		rType = 0;
 		vrLen = 1464;
 		vrLoc = 0;
@@ -703,7 +724,7 @@
 		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
 		name = "UIColor-Expanded.m: 162";
 		rLen = 0;
-		rLoc = 4455;
+		rLoc = 4682;
 		rType = 0;
 		vrLen = 1068;
 		vrLoc = 3553;
@@ -723,7 +744,7 @@
 		fRef = 29B97316FDCFA39411CA2CEA /* main.m */;
 		name = "main.m: 24";
 		rLen = 0;
-		rLoc = 535;
+		rLoc = 541;
 		rType = 0;
 		vrLen = 1462;
 		vrLoc = 0;
@@ -733,7 +754,7 @@
 		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
 		name = "UIColor-Expanded.m: 162";
 		rLen = 0;
-		rLoc = 4455;
+		rLoc = 4682;
 		rType = 0;
 		vrLen = 1068;
 		vrLoc = 3553;
@@ -763,7 +784,7 @@
 		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
 		name = "UIColor-Expanded.m: 162";
 		rLen = 0;
-		rLoc = 4455;
+		rLoc = 4682;
 		rType = 0;
 		vrLen = 1068;
 		vrLoc = 3553;
@@ -783,7 +804,7 @@
 		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
 		name = "UIColor-Expanded.m: 162";
 		rLen = 0;
-		rLoc = 4455;
+		rLoc = 4682;
 		rType = 0;
 		vrLen = 1068;
 		vrLoc = 3553;
@@ -793,7 +814,7 @@
 		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
 		name = "UIColor-Expanded.m: 212";
 		rLen = 0;
-		rLoc = 5541;
+		rLoc = 5768;
 		rType = 0;
 		vrLen = 942;
 		vrLoc = 4930;
@@ -813,7 +834,7 @@
 		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
 		name = "UIColor-Expanded.m: 209";
 		rLen = 0;
-		rLoc = 5540;
+		rLoc = 5767;
 		rType = 0;
 		vrLen = 966;
 		vrLoc = 4930;
@@ -833,7 +854,7 @@
 		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
 		name = "UIColor-Expanded.m: 203";
 		rLen = 0;
-		rLoc = 5486;
+		rLoc = 5713;
 		rType = 0;
 		vrLen = 1107;
 		vrLoc = 4930;
@@ -853,7 +874,7 @@
 		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
 		name = "UIColor-Expanded.m: 203";
 		rLen = 0;
-		rLoc = 5475;
+		rLoc = 5702;
 		rType = 0;
 		vrLen = 1110;
 		vrLoc = 4930;
@@ -873,7 +894,7 @@
 		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
 		name = "UIColor-Expanded.m: 202";
 		rLen = 0;
-		rLoc = 5435;
+		rLoc = 5662;
 		rType = 0;
 		vrLen = 1023;
 		vrLoc = 0;
@@ -893,7 +914,7 @@
 		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
 		name = "UIColor-Expanded.m: 205";
 		rLen = 0;
-		rLoc = 5443;
+		rLoc = 5670;
 		rType = 0;
 		vrLen = 1184;
 		vrLoc = 5020;
@@ -913,7 +934,7 @@
 		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
 		name = "UIColor-Expanded.m: 205";
 		rLen = 0;
-		rLoc = 5443;
+		rLoc = 5670;
 		rType = 0;
 		vrLen = 1023;
 		vrLoc = 0;
@@ -937,7 +958,7 @@
 		fRef = 29B97316FDCFA39411CA2CEA /* main.m */;
 		name = "main.m: 23";
 		rLen = 0;
-		rLoc = 453;
+		rLoc = 456;
 		rType = 0;
 		vrLen = 1362;
 		vrLoc = 0;
@@ -947,7 +968,7 @@
 		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
 		name = "UIColor-Expanded.m: 220";
 		rLen = 0;
-		rLoc = 6039;
+		rLoc = 6266;
 		rType = 0;
 		vrLen = 1394;
 		vrLoc = 5322;
@@ -977,7 +998,7 @@
 		fRef = 29B97316FDCFA39411CA2CEA /* main.m */;
 		name = "main.m: 23";
 		rLen = 0;
-		rLoc = 453;
+		rLoc = 456;
 		rType = 0;
 		vrLen = 1362;
 		vrLoc = 0;
@@ -987,7 +1008,7 @@
 		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
 		name = "UIColor-Expanded.m: 220";
 		rLen = 0;
-		rLoc = 6039;
+		rLoc = 6266;
 		rType = 0;
 		vrLen = 1394;
 		vrLoc = 5322;
@@ -1007,7 +1028,7 @@
 		fRef = 29B97316FDCFA39411CA2CEA /* main.m */;
 		name = "main.m: 23";
 		rLen = 0;
-		rLoc = 453;
+		rLoc = 456;
 		rType = 0;
 		vrLen = 1450;
 		vrLoc = 0;
@@ -1017,7 +1038,7 @@
 		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
 		name = "UIColor-Expanded.m: 220";
 		rLen = 0;
-		rLoc = 6039;
+		rLoc = 6266;
 		rType = 0;
 		vrLen = 1433;
 		vrLoc = 5322;
@@ -1061,7 +1082,7 @@
 		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
 		name = "UIColor-Expanded.m: 220";
 		rLen = 0;
-		rLoc = 6039;
+		rLoc = 6266;
 		rType = 0;
 		vrLen = 1433;
 		vrLoc = 5322;
@@ -1071,7 +1092,7 @@
 		fRef = 29B97316FDCFA39411CA2CEA /* main.m */;
 		name = "main.m: 23";
 		rLen = 0;
-		rLoc = 453;
+		rLoc = 456;
 		rType = 0;
 		vrLen = 1491;
 		vrLoc = 0;
@@ -1091,7 +1112,7 @@
 		fRef = 29B97316FDCFA39411CA2CEA /* main.m */;
 		name = "main.m: 23";
 		rLen = 0;
-		rLoc = 453;
+		rLoc = 456;
 		rType = 0;
 		vrLen = 1491;
 		vrLoc = 0;
@@ -1101,7 +1122,7 @@
 		fRef = 29B97316FDCFA39411CA2CEA /* main.m */;
 		name = "main.m: 24";
 		rLen = 0;
-		rLoc = 534;
+		rLoc = 540;
 		rType = 0;
 		vrLen = 1374;
 		vrLoc = 0;
@@ -1133,5 +1154,191 @@
 		rType = 0;
 		vrLen = 133;
 		vrLoc = 312;
+	};
+	8ED6EDBB0F3CC87D004BF073 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
+	};
+	8ED6EDBC0F3CC8A2004BF073 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8ED61B480F3CA54400B2FE57 /* UIColor-Expanded.h */;
+		name = "UIColor-Expanded.h: 19";
+		rLen = 30;
+		rLoc = 380;
+		rType = 0;
+		vrLen = 133;
+		vrLoc = 312;
+	};
+	8ED6EDBD0F3CC8A2004BF073 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8ED61B480F3CA54400B2FE57 /* UIColor-Expanded.h */;
+		name = "UIColor-Expanded.h: 19";
+		rLen = 30;
+		rLoc = 380;
+		rType = 0;
+		vrLen = 133;
+		vrLoc = 312;
+	};
+	8ED6EDC00F3CC8A2004BF073 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
+		name = "UIColor-Expanded.m: 21";
+		rLen = 0;
+		rLoc = 858;
+		rType = 0;
+		vrLen = 1129;
+		vrLoc = 30;
+	};
+	8ED6EDC10F3CC8DF004BF073 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8ED61B480F3CA54400B2FE57 /* UIColor-Expanded.h */;
+		name = "UIColor-Expanded.h: 19";
+		rLen = 30;
+		rLoc = 380;
+		rType = 0;
+		vrLen = 133;
+		vrLoc = 312;
+	};
+	8ED6EDC20F3CC8DF004BF073 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
+		name = "UIColor-Expanded.m: 21";
+		rLen = 0;
+		rLoc = 857;
+		rType = 0;
+		vrLen = 1123;
+		vrLoc = 30;
+	};
+	8ED6EDC30F3CC8F4004BF073 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8ED61B480F3CA54400B2FE57 /* UIColor-Expanded.h */;
+		name = "UIColor-Expanded.h: 19";
+		rLen = 30;
+		rLoc = 380;
+		rType = 0;
+		vrLen = 133;
+		vrLoc = 312;
+	};
+	8ED6EDC50F3CCA38004BF073 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = 8ED61B480F3CA54400B2FE57 /* UIColor-Expanded.h */;
+	};
+	8ED6EDC60F3CCA3C004BF073 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
+	};
+	8ED6EDC70F3CCA82004BF073 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8ED61B480F3CA54400B2FE57 /* UIColor-Expanded.h */;
+		name = "UIColor-Expanded.h: 19";
+		rLen = 30;
+		rLoc = 380;
+		rType = 0;
+		vrLen = 133;
+		vrLoc = 312;
+	};
+	8ED6EDCA0F3CCA82004BF073 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
+		name = "UIColor-Expanded.m: 21";
+		rLen = 0;
+		rLoc = 857;
+		rType = 0;
+		vrLen = 1184;
+		vrLoc = 0;
+	};
+	8ED6EDCD0F3CCA82004BF073 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8ED61B480F3CA54400B2FE57 /* UIColor-Expanded.h */;
+		name = "UIColor-Expanded.h: 21";
+		rLen = 0;
+		rLoc = 477;
+		rType = 0;
+		vrLen = 795;
+		vrLoc = 0;
+	};
+	8ED6EDCE0F3CCA8B004BF073 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8ED61B480F3CA54400B2FE57 /* UIColor-Expanded.h */;
+		name = "UIColor-Expanded.h: 19";
+		rLen = 30;
+		rLoc = 380;
+		rType = 0;
+		vrLen = 133;
+		vrLoc = 312;
+	};
+	8ED6EDCF0F3CCA8B004BF073 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */;
+		name = "UIColor-Expanded.m: 21";
+		rLen = 0;
+		rLoc = 857;
+		rType = 0;
+		vrLen = 1184;
+		vrLoc = 0;
+	};
+	8ED6EDD00F3CCA8B004BF073 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8ED61B480F3CA54400B2FE57 /* UIColor-Expanded.h */;
+		name = "UIColor-Expanded.h: 21";
+		rLen = 0;
+		rLoc = 477;
+		rType = 0;
+		vrLen = 795;
+		vrLoc = 0;
+	};
+	8ED6EDD10F3CCAA1004BF073 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = 29B97316FDCFA39411CA2CEA /* main.m */;
+	};
+	8ED6EDD30F3CCAAD004BF073 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8ED61B480F3CA54400B2FE57 /* UIColor-Expanded.h */;
+		name = "UIColor-Expanded.h: 19";
+		rLen = 30;
+		rLoc = 380;
+		rType = 0;
+		vrLen = 133;
+		vrLoc = 312;
+	};
+	8ED6EDD60F3CCAAD004BF073 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 29B97316FDCFA39411CA2CEA /* main.m */;
+		name = "main.m: 24";
+		rLen = 0;
+		rLoc = 505;
+		rType = 0;
+		vrLen = 1380;
+		vrLoc = 0;
+	};
+	8ED6EDD70F3CCAAD004BF073 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8ED61B480F3CA54400B2FE57 /* UIColor-Expanded.h */;
+		name = "UIColor-Expanded.h: 21";
+		rLen = 0;
+		rLoc = 477;
+		rType = 0;
+		vrLen = 795;
+		vrLoc = 0;
+	};
+	8ED6EDD80F3CCABA004BF073 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8ED61B480F3CA54400B2FE57 /* UIColor-Expanded.h */;
+		name = "UIColor-Expanded.h: 19";
+		rLen = 30;
+		rLoc = 380;
+		rType = 0;
+		vrLen = 166;
+		vrLoc = 312;
+	};
+	8ED6EDD90F3CCABA004BF073 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 8ED61B480F3CA54400B2FE57 /* UIColor-Expanded.h */;
+		name = "UIColor-Expanded.h: 21";
+		rLen = 0;
+		rLoc = 477;
+		rType = 0;
+		vrLen = 795;
+		vrLoc = 0;
 	};
 }
