@@ -5,9 +5,10 @@
 @interface UIColor (UIColor_Expanded)
 @property (nonatomic, readonly) CGColorSpaceModel colorSpaceModel;
 @property (nonatomic, readonly) BOOL canProvideRGBComponents;
-@property (nonatomic, readonly) CGFloat red;
-@property (nonatomic, readonly) CGFloat green;
-@property (nonatomic, readonly) CGFloat blue;
+@property (nonatomic, readonly) CGFloat red; // Only valid if canProvideRGBComponents is YES
+@property (nonatomic, readonly) CGFloat green; // Only valid if canProvideRGBComponents is YES
+@property (nonatomic, readonly) CGFloat blue; // Only valid if canProvideRGBComponents is YES
+@property (nonatomic, readonly) CGFloat white; // Only valid if colorSpaceModel == kCGColorSpaceModelMonochrome
 @property (nonatomic, readonly) CGFloat alpha;
 
 - (NSString *) colorSpaceString;

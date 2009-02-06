@@ -135,6 +135,13 @@
 	return c[2];
 }
 
+- (CGFloat) white
+{
+	NSAssert(self.colorSpaceModel == kCGColorSpaceModelMonochrome, @"Must be a Monochrome color to use -white");
+	const CGFloat *c = CGColorGetComponents(self.CGColor);
+	return c[0];
+}
+
 - (CGFloat) alpha
 {
 	const CGFloat *c = CGColorGetComponents(self.CGColor);
