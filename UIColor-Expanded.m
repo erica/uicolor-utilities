@@ -89,6 +89,7 @@
 // Return a UIColor's components
 - (NSArray *) arrayFromRGBAComponents
 {
+	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -arrayFromRGBAComponents");
 	const CGFloat *c = CGColorGetComponents(self.CGColor);
 	
 	// RGB
@@ -150,14 +151,14 @@
 
 - (CGFloat) red
 {
-	NSAssert (self.canProvideRGBComponents, @"Must be a RGB color to use -red, -green, -blue");
+	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -red");
 	const CGFloat *c = CGColorGetComponents(self.CGColor);
 	return c[0];
 }
 
 - (CGFloat) green
 {
-	NSAssert (self.canProvideRGBComponents, @"Must be a RGB color to use -red, -green, -blue");
+	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -green");
 	const CGFloat *c = CGColorGetComponents(self.CGColor);
 	if (self.colorSpaceModel == kCGColorSpaceModelMonochrome) return c[0];
 	return c[1];
@@ -165,7 +166,7 @@
 
 - (CGFloat) blue
 {
-	NSAssert (self.canProvideRGBComponents, @"Must be a RGB color to use -red, -green, -blue");
+	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -blue");
 	const CGFloat *c = CGColorGetComponents(self.CGColor);
 	if (self.colorSpaceModel == kCGColorSpaceModelMonochrome) return c[0];
 	return c[2];
@@ -185,13 +186,13 @@
 
 - (NSString *) stringFromColor
 {
-	NSAssert (self.canProvideRGBComponents, @"Must be a RGB color to use stringFromColor");
+	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -stringFromColor");
 	return [NSString stringWithFormat:@"{%0.3f, %0.3f, %0.3f, %0.3f}", self.red, self.green, self.blue, self.alpha];
 }
 
 - (NSString *) hexStringFromColor
 {
-	NSAssert (self.canProvideRGBComponents, @"Must be a RGB color to use hexStringFromColor");
+	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -hexStringFromColor");
 
 	CGFloat r, g, b;
 	r = self.red;
