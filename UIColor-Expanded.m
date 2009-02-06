@@ -96,26 +96,29 @@
 	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -arrayFromRGBAComponents");
 	const CGFloat *c = CGColorGetComponents(self.CGColor);
 	
-	// RGB
-	if (self.colorSpaceModel == kCGColorSpaceModelRGB)
-		return [NSArray arrayWithObjects:
-				[NSNumber numberWithFloat:c[0]],
-				[NSNumber numberWithFloat:c[1]],
-				[NSNumber numberWithFloat:c[2]],
-				[NSNumber numberWithFloat:c[3]],
-				nil];
-	
-	// Monochrome
-	if (self.colorSpaceModel == kCGColorSpaceModelMonochrome)
-		return [NSArray arrayWithObjects:
-				[NSNumber numberWithFloat:c[0]],
-				[NSNumber numberWithFloat:c[0]],
-				[NSNumber numberWithFloat:c[0]],
-				[NSNumber numberWithFloat:c[1]],
-				nil];
-	
-	// No support at this time for other color spaces yet
-	return nil;
+	NSArray *components;
+	switch (self.colorSpaceModel) {
+		case kCGColorSpaceModelRGB:
+			components = [NSArray arrayWithObjects:
+						  [NSNumber numberWithFloat:c[0]],
+						  [NSNumber numberWithFloat:c[1]],
+						  [NSNumber numberWithFloat:c[2]],
+						  [NSNumber numberWithFloat:c[3]],
+						  nil];
+			break;
+		case kCGColorSpaceModelMonochrome:
+			components = [NSArray arrayWithObjects:
+						  [NSNumber numberWithFloat:c[0]],
+						  [NSNumber numberWithFloat:c[0]],
+						  [NSNumber numberWithFloat:c[0]],
+						  [NSNumber numberWithFloat:c[1]],
+						  nil];
+			break;
+		default:
+			// no support for other color spaces at this time
+			components = nil;
+	}
+	return components;
 }
 
 #if SUPPORTS_UNDOCUMENTED_API
