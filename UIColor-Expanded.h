@@ -3,15 +3,16 @@
 #define SUPPORTS_UNDOCUMENTED_API	1
 
 @interface UIColor (expanded)
-- (CGColorSpaceModel) colorSpaceModel;
+@property (nonatomic, readonly) CGColorSpaceModel colorSpaceModel;
+@property (nonatomic, readonly) BOOL canProvideRGBComponents;
+@property (nonatomic, readonly) CGFloat red;
+@property (nonatomic, readonly) CGFloat green;
+@property (nonatomic, readonly) CGFloat blue;
+@property (nonatomic, readonly) CGFloat alpha;
+
 - (NSString *) colorSpaceString;
 
-- (BOOL) canProvideRGBComponents;
 - (NSArray *) arrayFromRGBAComponents;
-- (CGFloat) red;
-- (CGFloat) blue;
-- (CGFloat) green;
-- (CGFloat) alpha;
 
 - (NSString *) stringFromColor;
 - (NSString *) hexStringFromColor;
@@ -24,9 +25,4 @@
 
 + (UIColor *) colorWithString: (NSString *) stringToConvert;
 + (UIColor *) colorWithHexString: (NSString *) stringToConvert;
-
-@property (nonatomic, readonly)	CGFloat red;
-@property (nonatomic, readonly)	CGFloat green;
-@property (nonatomic, readonly)	CGFloat blue;
-@property (nonatomic, readonly)	CGFloat alpha;
 @end

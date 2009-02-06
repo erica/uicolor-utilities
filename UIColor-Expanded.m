@@ -52,7 +52,7 @@
 
 - (NSString *) colorSpaceString
 {
-	switch ([self colorSpaceModel])
+	switch (self.colorSpaceModel)
 	{
 		case kCGColorSpaceModelUnknown:
 			return @"kCGColorSpaceModelUnknown";
@@ -77,8 +77,13 @@
 
 - (BOOL) canProvideRGBComponents
 {
-	return (([self colorSpaceModel] == kCGColorSpaceModelRGB) || 
-			([self colorSpaceModel] == kCGColorSpaceModelMonochrome));
+	switch (self.colorSpaceModel) {
+		case kCGColorSpaceModelRGB:
+		case kCGColorSpaceModelMonochrome:
+			return YES;
+		default:
+			return NO;
+	}
 }
 
 // Return a UIColor's components
@@ -87,7 +92,7 @@
 	const CGFloat *c = CGColorGetComponents(self.CGColor);
 	
 	// RGB
-	if ([self colorSpaceModel] == kCGColorSpaceModelRGB)
+	if (self.colorSpaceModel == kCGColorSpaceModelRGB)
 		return [NSArray arrayWithObjects:
 				[NSNumber numberWithFloat:c[0]],
 				[NSNumber numberWithFloat:c[1]],
@@ -96,7 +101,7 @@
 				nil];
 	
 	// Monochrome
-	if ([self colorSpaceModel] == kCGColorSpaceModelMonochrome)
+	if (self.colorSpaceModel == kCGColorSpaceModelMonochrome)
 		return [NSArray arrayWithObjects:
 				[NSNumber numberWithFloat:c[0]],
 				[NSNumber numberWithFloat:c[0]],
@@ -154,7 +159,7 @@
 {
 	NSAssert (self.canProvideRGBComponents, @"Must be a RGB color to use -red, -green, -blue");
 	const CGFloat *c = CGColorGetComponents(self.CGColor);
-	if ([self colorSpaceModel] == kCGColorSpaceModelMonochrome) return c[0];
+	if (self.colorSpaceModel == kCGColorSpaceModelMonochrome) return c[0];
 	return c[1];
 }
 
@@ -162,7 +167,7 @@
 {
 	NSAssert (self.canProvideRGBComponents, @"Must be a RGB color to use -red, -green, -blue");
 	const CGFloat *c = CGColorGetComponents(self.CGColor);
-	if ([self colorSpaceModel] == kCGColorSpaceModelMonochrome) return c[0];
+	if (self.colorSpaceModel == kCGColorSpaceModelMonochrome) return c[0];
 	return c[2];
 }
 
