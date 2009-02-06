@@ -25,8 +25,8 @@
 + (UIColor *) colorWithString: (NSString *) stringToConvert;
 + (UIColor *) colorWithHexString: (NSString *) stringToConvert;
 
-@property (readonly)	CGFloat red;
-@property (readonly)	CGFloat green;
-@property (readonly)	CGFloat blue;
-@property (readonly)	CGFloat alpha;
+@property (nonatomic, readonly)	CGFloat red;
+@property (nonatomic, readonly)	CGFloat green;
+@property (nonatomic, readonly)	CGFloat blue;
+@property (nonatomic, readonly)	CGFloat alpha;
 @end
