@@ -2,7 +2,7 @@
 
 #define SUPPORTS_UNDOCUMENTED_API	1
 
-@interface UIColor (expanded)
+@interface UIColor (UIColor_Expanded)
 @property (nonatomic, readonly) CGColorSpaceModel colorSpaceModel;
 @property (nonatomic, readonly) BOOL canProvideRGBComponents;
 @property (nonatomic, readonly) CGFloat red;
