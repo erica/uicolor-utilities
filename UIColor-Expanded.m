@@ -157,7 +157,18 @@
 - (NSString *) stringFromColor
 {
 	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -stringFromColor");
-	return [NSString stringWithFormat:@"{%0.3f, %0.3f, %0.3f, %0.3f}", self.red, self.green, self.blue, self.alpha];
+	NSString *result;
+	switch (self.colorSpaceModel) {
+		case kCGColorSpaceModelRGB:
+			result = [NSString stringWithFormat:@"{%0.3f, %0.3f, %0.3f, %0.3f}", self.red, self.green, self.blue, self.alpha];
+			break;
+		case kCGColorSpaceModelMonochrome:
+			result = [NSString stringWithFormat:@"{%0.3f, %0.3f}", self.white, self.alpha];
+			break;
+		default:
+			result = nil;
+	}
+	return result;
 }
 
 - (NSString *) hexStringFromColor
