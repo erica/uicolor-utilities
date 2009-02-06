@@ -34,15 +34,6 @@
 };
 */
 
-#if SUPPORTS_UNDOCUMENTED_API
-
-// Undocumented UIColor calls
-@interface UIColor (undocumented)
-- (NSString *)styleString;
-@end
-
-#endif // SUPPORTS_UNDOCUMENTED_API
-
 // Color to return when constructor cannot create a proper color -- can be nil
 #define DEFAULT_VOID_COLOR	[UIColor clearColor]
 
@@ -120,41 +111,6 @@
 	}
 	return components;
 }
-
-#if SUPPORTS_UNDOCUMENTED_API
-
-// Return the undocumented style string
-- (NSString *) fetchStyleString
-{
-	return [self styleString];
-}
-
-// Convert a color into RGB Color space, courtesy of Poltras
-// via http://ofcodeandmen.poltras.com/2009/01/22/convert-a-cgcolorref-to-another-cgcolorspaceref/
-//
-- (UIColor *) rgbColor
-{
-	// Call to undocumented method "styleString".
-	NSString*style = [self styleString];
-	
-	// Remove the "rgb(" prefix and the ")" suffix.
-	style = [[style substringToIndex:style.length - 1] substringFromIndex:4];
-	
-	// Split the components.
-	NSArray* rgb = [style componentsSeparatedByString:@","]; 
-	
-	CGFloat red   = [[rgb objectAtIndex:0] floatValue] / 255.0f;
-	CGFloat green = [[rgb objectAtIndex:1] floatValue] / 255.0f; 
-	CGFloat blue  = [[rgb objectAtIndex:2] floatValue] / 255.0f;
-	CGFloat alpha = CGColorGetAlpha(self.CGColor);
-	
-	return [UIColor colorWithRed:red 
-						   green:green 
-							blue:blue
-						   alpha:alpha];
-}
-
-#endif // SUPPORTS_UNDOCUMENTED_API
 
 - (CGFloat) red
 {
@@ -280,3 +236,32 @@
 						   alpha:1.0f];
 }
 @end
+
+#if SUPPORTS_UNDOCUMENTED_API
+@implementation UIColor (UIColor_Undocumented_Expanded)
+// Convert a color into RGB Color space, courtesy of Poltras
+// via http://ofcodeandmen.poltras.com/2009/01/22/convert-a-cgcolorref-to-another-cgcolorspaceref/
+//
+- (UIColor *) rgbColor
+{
+	// Call to undocumented method "styleString".
+	NSString*style = [self styleString];
+	
+	// Remove the "rgb(" prefix and the ")" suffix.
+	style = [[style substringToIndex:style.length - 1] substringFromIndex:4];
+	
+	// Split the components.
+	NSArray* rgb = [style componentsSeparatedByString:@","]; 
+	
+	CGFloat red   = [[rgb objectAtIndex:0] floatValue] / 255.0f;
+	CGFloat green = [[rgb objectAtIndex:1] floatValue] / 255.0f; 
+	CGFloat blue  = [[rgb objectAtIndex:2] floatValue] / 255.0f;
+	CGFloat alpha = CGColorGetAlpha(self.CGColor);
+	
+	return [UIColor colorWithRed:red 
+						   green:green 
+							blue:blue
+						   alpha:alpha];
+}
+@end
+#endif // SUPPORTS_UNDOCUMENTED_API

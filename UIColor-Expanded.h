@@ -17,12 +17,20 @@
 - (NSString *) stringFromColor;
 - (NSString *) hexStringFromColor;
 
-#if SUPPORTS_UNDOCUMENTED_API
-// Optional Undocumented API calls
-- (NSString *) fetchStyleString;
-- (UIColor *) rgbColor; // Via Poltras
-#endif // SUPPORTS_UNDOCUMENTED_API
-
 + (UIColor *) colorWithString: (NSString *) stringToConvert;
 + (UIColor *) colorWithHexString: (NSString *) stringToConvert;
 @end
+
+#if SUPPORTS_UNDOCUMENTED_API
+// UIColor_Undocumented
+// Undocumented methods of UIColor
+@interface UIColor (UIColor_Undocumented)
+- (NSString *) styleString;
+@end
+
+// UIColor_Undocumented_Expanded
+// Methods which rely on undocumented methods of UIColor
+@interface UIColor (UIColor_Undocumented_Expanded)
+- (UIColor *) rgbColor; // Via Poltras
+@end
+#endif // SUPPORTS_UNDOCUMENTED_API
