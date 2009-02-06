@@ -18,7 +18,7 @@
  - Monochromization (something like 0.45 red + 0.35 green + 0.2 blue, what's the best formula?)
  - Eridius - colorWithHex:(NSInteger)hex, e.g. [UIColor colorWithHex:0xaabbcc]
  - Consider UIMutableColor that can be adjusted (brighter, cooler, warmer, thicker-alpha, etc)
- - Eridius - colorByAddingColor: and/or -colorWithAlpha:
+ - Eridius - colorByAddingColor: and/or -colorWithAlpha: <-- Color with Alpha already exists. colorWithAlphaComponent:
  */
 
 /*
@@ -40,7 +40,7 @@
 @end
 
 // Color to return when constructor cannot create a proper color -- can be nil
-#define DEFAULT_VOID_COLOR	[UIColor blackColor]
+#define DEFAULT_VOID_COLOR	[UIColor clearColor]
 
 @implementation UIColor (expanded)
 
