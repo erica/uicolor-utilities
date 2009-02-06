@@ -34,10 +34,14 @@
 };
 */
 
+#if SUPPORTS_UNDOCUMENTED_API
+
 // Undocumented UIColor calls
 @interface UIColor (undocumented)
 - (NSString *)styleString;
 @end
+
+#endif // SUPPORTS_UNDOCUMENTED_API
 
 // Color to return when constructor cannot create a proper color -- can be nil
 #define DEFAULT_VOID_COLOR	[UIColor clearColor]
@@ -147,7 +151,7 @@
 						   alpha:alpha];
 }
 
-#endif
+#endif // SUPPORTS_UNDOCUMENTED_API
 
 - (CGFloat) red
 {

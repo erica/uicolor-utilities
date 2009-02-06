@@ -21,7 +21,7 @@
 // Optional Undocumented API calls
 - (NSString *) fetchStyleString;
 - (UIColor *) rgbColor; // Via Poltras
-#endif
+#endif // SUPPORTS_UNDOCUMENTED_API
 
 + (UIColor *) colorWithString: (NSString *) stringToConvert;
 + (UIColor *) colorWithHexString: (NSString *) stringToConvert;
