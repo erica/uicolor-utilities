@@ -19,7 +19,7 @@
 #if SUPPORTS_UNDOCUMENTED_API
 // Optional Undocumented API calls
 - (NSString *) fetchStyleString;
-- (UIColor*)rgbColor; // Via Poltras
+- (UIColor *) rgbColor; // Via Poltras
 #endif
 
 + (UIColor *) colorWithString: (NSString *) stringToConvert;

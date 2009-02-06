@@ -119,7 +119,7 @@
 // Convert a color into RGB Color space, courtesy of Poltras
 // via http://ofcodeandmen.poltras.com/2009/01/22/convert-a-cgcolorref-to-another-cgcolorspaceref/
 //
-- (UIColor*)rgbColor
+- (UIColor *) rgbColor
 {
 	// Call to undocumented method "styleString".
 	NSString*style = [self styleString];
