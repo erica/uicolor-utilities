@@ -144,8 +144,7 @@
 
 - (CGFloat) alpha
 {
-	const CGFloat *c = CGColorGetComponents(self.CGColor);
-	return c[CGColorGetNumberOfComponents(self.CGColor)-1];
+	return CGColorGetAlpha(self.CGColor);
 }
 
 /*
