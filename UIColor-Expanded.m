@@ -238,23 +238,19 @@
 - (UIColor *) rgbColor
 {
 	// Call to undocumented method "styleString".
-	NSString*style = [self styleString];
+	NSString *style = [self styleString];
+	NSScanner *scanner = [NSScanner scannerWithString:style];
+	CGFloat red, green, blue;
+	if (![scanner scanString:@"rgb(" intoString:NULL]) return nil;
+	if (![scanner scanFloat:&red]) return nil;
+	if (![scanner scanString:@"," intoString:NULL]) return nil;
+	if (![scanner scanFloat:&green]) return nil;
+	if (![scanner scanString:@"," intoString:NULL]) return nil;
+	if (![scanner scanFloat:&blue]) return nil;
+	if (![scanner scanString:@")" intoString:NULL]) return nil;
+	if (![scanner isAtEnd]) return nil;
 	
-	// Remove the "rgb(" prefix and the ")" suffix.
-	style = [[style substringToIndex:style.length - 1] substringFromIndex:4];
-	
-	// Split the components.
-	NSArray* rgb = [style componentsSeparatedByString:@","]; 
-	
-	CGFloat red   = [[rgb objectAtIndex:0] floatValue] / 255.0f;
-	CGFloat green = [[rgb objectAtIndex:1] floatValue] / 255.0f; 
-	CGFloat blue  = [[rgb objectAtIndex:2] floatValue] / 255.0f;
-	CGFloat alpha = CGColorGetAlpha(self.CGColor);
-	
-	return [UIColor colorWithRed:red 
-						   green:green 
-							blue:blue
-						   alpha:alpha];
+	return [UIColor colorWithRed:red green:green blue:blue alpha:self.alpha];
 }
 @end
 #endif // SUPPORTS_UNDOCUMENTED_API
