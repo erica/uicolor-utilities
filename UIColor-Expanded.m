@@ -165,22 +165,13 @@
 	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -hexStringFromColor");
 
 	CGFloat r, g, b;
-	r = self.red;
-	g = self.green;
-	b = self.blue;
-	
-	// Fix range if needed
-	if (r < 0.0f) r = 0.0f;
-	if (g < 0.0f) g = 0.0f;
-	if (b < 0.0f) b = 0.0f;
-	
-	if (r > 1.0f) r = 1.0f;
-	if (g > 1.0f) g = 1.0f;
-	if (b > 1.0f) b = 1.0f;
+	r = MIN(MAX(self.red, 0.0f), 1.0f);
+	g = MIN(MAX(self.green, 0.0f), 1.0f);
+	b = MIN(MAX(self.blue, 0.0f), 1.0f);
 	
 	// Convert to hex string between 0x00 and 0xFF
 	return [NSString stringWithFormat:@"%02X%02X%02X",
-			 (int)(r * 255), (int)(g * 255), (int)(b * 255)];
+			 (int)roundf(r * 255), (int)roundf(g * 255), (int)roundf(b * 255)];
 }
 
 + (UIColor *) colorWithString: (NSString *) stringToConvert
