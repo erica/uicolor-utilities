@@ -203,6 +203,7 @@
 			return nil;
 		}
 	}
+	if (![scanner isAtEnd]) return nil;
 	UIColor *color;
 	switch (i) {
 		case 2: // monochrome
