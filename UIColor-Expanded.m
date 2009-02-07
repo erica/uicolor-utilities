@@ -34,9 +34,6 @@
 };
 */
 
-// Color to return when constructor cannot create a proper color -- can be nil
-#define DEFAULT_VOID_COLOR	[UIColor clearColor]
-
 @implementation UIColor (UIColor_Expanded)
 
 // Return a UIColor's color space model
