@@ -196,26 +196,35 @@
 
 + (UIColor *) colorWithString: (NSString *) stringToConvert
 {
-	NSString *cString = [stringToConvert stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-	
-	// Proper color strings are denoted with braces
-	if (![cString hasPrefix:@"{"]) return DEFAULT_VOID_COLOR;
-	if (![cString hasSuffix:@"}"]) return DEFAULT_VOID_COLOR;
-	
-	// Remove braces	
-	cString = [cString substringFromIndex:1];
-	cString = [cString substringToIndex:([cString length] - 1)];
-	CFShow(cString);
-	
-	// Separate into components by removing commas and spaces
-	NSArray *components = [cString componentsSeparatedByString:@", "];
-	if ([components count] != 4) return DEFAULT_VOID_COLOR;
-	
-	// Create the color
-	return [UIColor colorWithRed:[[components objectAtIndex:0] floatValue]
-						   green:[[components objectAtIndex:1] floatValue] 
-							blue:[[components objectAtIndex:2] floatValue]
-						   alpha:[[components objectAtIndex:3] floatValue]];
+	NSScanner *scanner = [NSScanner scannerWithString:stringToConvert];
+	if (![scanner scanString:@"{" intoString:NULL]) return nil;
+	const NSUInteger kMaxComponents = 4;
+	CGFloat c[kMaxComponents];
+	NSUInteger i = 0;
+	if (![scanner scanFloat:&c[i++]]) return nil;
+	while (1) {
+		if ([scanner scanString:@"}" intoString:NULL]) break;
+		if (i >= kMaxComponents) return nil;
+		if ([scanner scanString:@"," intoString:NULL]) {
+			if (![scanner scanFloat:&c[i++]]) return nil;
+		} else {
+			// either we're at the end of there's an unexpected character here
+			// both cases are error conditions
+			return nil;
+		}
+	}
+	UIColor *color;
+	switch (i) {
+		case 2: // monochrome
+			color = [UIColor colorWithWhite:c[0] alpha:c[1]];
+			break;
+		case 4: // RGB
+			color = [UIColor colorWithRed:c[0] green:c[1] blue:c[2] alpha:c[3]];
+			break;
+		default:
+			color = nil;
+	}
+	return color;
 }
 
 + (UIColor *) colorWithHexString: (NSString *) stringToConvert
