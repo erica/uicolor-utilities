@@ -34,6 +34,12 @@
 };
 */
 
+// UIColor_Undocumented
+// Undocumented methods of UIColor
+@interface UIColor (UIColor_Undocumented)
+- (NSString *) styleString;
+@end
+
 @implementation UIColor (UIColor_Expanded)
 
 // Return a UIColor's color space model
@@ -230,6 +236,11 @@
 
 #if SUPPORTS_UNDOCUMENTED_API
 @implementation UIColor (UIColor_Undocumented_Expanded)
+- (NSString *) fetchStyleString
+{
+	return [self styleString];
+}
+
 // Convert a color into RGB Color space, courtesy of Poltras
 // via http://ofcodeandmen.poltras.com/2009/01/22/convert-a-cgcolorref-to-another-cgcolorspaceref/
 //

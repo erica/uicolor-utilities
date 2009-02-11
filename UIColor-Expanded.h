@@ -23,15 +23,10 @@
 @end
 
 #if SUPPORTS_UNDOCUMENTED_API
-// UIColor_Undocumented
-// Undocumented methods of UIColor
-@interface UIColor (UIColor_Undocumented)
-- (NSString *) styleString;
-@end
-
 // UIColor_Undocumented_Expanded
 // Methods which rely on undocumented methods of UIColor
 @interface UIColor (UIColor_Undocumented_Expanded)
+- (NSString *) fetchStyleString;
 - (UIColor *) rgbColor; // Via Poltras
 @end
 #endif // SUPPORTS_UNDOCUMENTED_API
