@@ -10,6 +10,7 @@
 @property (nonatomic, readonly) CGFloat blue; // Only valid if canProvideRGBComponents is YES
 @property (nonatomic, readonly) CGFloat white; // Only valid if colorSpaceModel == kCGColorSpaceModelMonochrome
 @property (nonatomic, readonly) CGFloat alpha;
+@property (nonatomic, readonly) UInt32 rgbHex;
 
 - (NSString *) colorSpaceString;
 
@@ -39,6 +40,7 @@
 
 + (UIColor *) randomColor;
 + (UIColor *) colorWithString: (NSString *) stringToConvert;
++ (UIColor *) colorWithRGBHex: (UInt32) hex;
 + (UIColor *) colorWithHexString: (NSString *) stringToConvert;
 @end
 

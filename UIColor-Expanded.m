@@ -165,6 +165,24 @@
 	return CGColorGetAlpha(self.CGColor);
 }
 
+- (UInt32) rgbHex
+{
+	NSAssert (self.canProvideRGBComponents, @"Must be a RGB color to use rgbHex");
+	
+	CGFloat r,g,b,a;
+	if (![self red:&r green:&g blue:&b alpha:&a])
+		return 0;
+	
+	r = MIN(MAX(self.red, 0.0f), 1.0f);
+	g = MIN(MAX(self.green, 0.0f), 1.0f);
+	b = MIN(MAX(self.blue, 0.0f), 1.0f);
+	
+	return	(((int)roundf(r * 255)) << 16)
+		|	(((int)roundf(g * 255)) << 8)
+		|	(((int)roundf(b * 255)))
+		;
+}
+
 /*
  * Arithmatic operations
  */
@@ -346,16 +364,8 @@
 
 - (NSString *) hexStringFromColor
 {
-	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -hexStringFromColor");
-
-	CGFloat r, g, b;
-	r = MIN(MAX(self.red, 0.0f), 1.0f);
-	g = MIN(MAX(self.green, 0.0f), 1.0f);
-	b = MIN(MAX(self.blue, 0.0f), 1.0f);
-	
 	// Convert to hex string between 0x00 and 0xFF
-	return [NSString stringWithFormat:@"%02X%02X%02X",
-			 (int)roundf(r * 255), (int)roundf(g * 255), (int)roundf(b * 255)];
+	return [NSString stringWithFormat:@"%06X", self.rgbHex];
 }
 
 + (UIColor *) colorWithString: (NSString *) stringToConvert
@@ -405,16 +415,25 @@
 }
 
 
++ (UIColor *) colorWithRGBHex: (UInt32) hex
+{
+	int r = (hex >> 16) & 0xFF;
+	int g = (hex >> 8) & 0xFF;
+	int b = (hex) & 0xFF;
+	
+	return [UIColor colorWithRed:r / 255.0f
+						   green:g / 255.0f
+							blue:b / 255.0f
+						   alpha:1.0f];
+}
+
+
 + (UIColor *) colorWithHexString: (NSString *) stringToConvert
 {
 	NSScanner *scanner = [NSScanner scannerWithString:stringToConvert];
 	unsigned hexNum;
 	if (![scanner scanHexInt:&hexNum]) return nil;
-	CGFloat r, g, b;
-	r = ((hexNum & 0xFF0000) >> 16) / 255.0f;
-	g = ((hexNum & 0x00FF00) >> 8) / 255.0f;
-	b = (hexNum & 0x0000FF) / 255.0f;
-	return [UIColor colorWithRed:r green:g blue:b alpha:1.0f];
+	return [UIColor colorWithRGBHex:hexNum];
 }
 @end
 
