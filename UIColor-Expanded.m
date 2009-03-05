@@ -84,8 +84,7 @@ static NSMutableDictionary *colorNameCache = nil;
 	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -arrayFromRGBAComponents");
 
 	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a])
-		return nil;
+	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
 	
 	return [NSArray arrayWithObjects:
 			[NSNumber numberWithFloat:r],
@@ -157,8 +156,7 @@ static NSMutableDictionary *colorNameCache = nil;
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use rgbHex");
 	
 	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a])
-		return 0;
+	if (![self red:&r green:&g blue:&b alpha:&a]) return 0;
 	
 	r = MIN(MAX(self.red, 0.0f), 1.0f);
 	g = MIN(MAX(self.green, 0.0f), 1.0f);
@@ -175,8 +173,7 @@ static NSMutableDictionary *colorNameCache = nil;
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
 	
 	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a])
-		return nil;
+	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
 	
 	// http://en.wikipedia.org/wiki/Luma_(video)
 	// Y = 0.2126 R + 0.7152 G + 0.0722 B
@@ -189,8 +186,7 @@ static NSMutableDictionary *colorNameCache = nil;
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
 
 	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a])
-		return nil;
+	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
 		
 	return [UIColor colorWithRed:MAX(0.0, MIN(1.0, r * red))
 						   green:MAX(0.0, MIN(1.0, g * green)) 
@@ -202,8 +198,7 @@ static NSMutableDictionary *colorNameCache = nil;
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
 	
 	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a])
-		return nil;
+	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
 	
 	return [UIColor colorWithRed:MAX(0.0, MIN(1.0, r + red))
 						   green:MAX(0.0, MIN(1.0, g + green)) 
@@ -215,8 +210,7 @@ static NSMutableDictionary *colorNameCache = nil;
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
 	
 	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a])
-		return nil;
+	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
 		
 	return [UIColor colorWithRed:MAX(r, red)
 						   green:MAX(g, green)
@@ -228,8 +222,7 @@ static NSMutableDictionary *colorNameCache = nil;
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
 	
 	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a])
-		return nil;
+	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
 	
 	return [UIColor colorWithRed:MIN(r, red)
 						   green:MIN(g, green)
@@ -257,8 +250,7 @@ static NSMutableDictionary *colorNameCache = nil;
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
 	
 	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a])
-		return nil;
+	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
 	
 	return [self colorByMultiplyingByRed:r green:g blue:b alpha:1.0f];
 }
@@ -267,8 +259,7 @@ static NSMutableDictionary *colorNameCache = nil;
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
 	
 	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a])
-		return nil;
+	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
 	
 	return [self colorByMultiplyingByRed:r green:g blue:b alpha:0.0f];
 }
@@ -277,8 +268,7 @@ static NSMutableDictionary *colorNameCache = nil;
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
 	
 	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a])
-		return nil;
+	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
 		
 	return [self colorByLighteningWithRed:r green:g blue:b alpha:0.0f];
 }
@@ -287,8 +277,7 @@ static NSMutableDictionary *colorNameCache = nil;
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
 	
 	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a])
-		return nil;
+	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
 	
 	return [self colorByDarkeningWithRed:r green:g blue:b alpha:1.0f];
 }
@@ -438,8 +427,9 @@ static const char* colorNameDB = ","
 	if (found) {
 		const char *after = found + strlen(searchString);
 		int hex;
-		if (sscanf(after, "%x", &hex) == 1)
+		if (sscanf(after, "%x", &hex) == 1) {
 			result = [self colorWithRGBHex:hex];
+		}
 	}
 	
 	return result;
