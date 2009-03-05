@@ -15,6 +15,8 @@
 
 - (NSArray *) arrayFromRGBAComponents;
 
+- (BOOL) red:(CGFloat*)r green:(CGFloat*)g blue:(CGFloat*)b alpha:(CGFloat*)a;
+
 - (NSString *) stringFromColor;
 - (NSString *) hexStringFromColor;
 

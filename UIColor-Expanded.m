@@ -88,31 +88,46 @@
 - (NSArray *) arrayFromRGBAComponents
 {
 	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -arrayFromRGBAComponents");
-	const CGFloat *c = CGColorGetComponents(self.CGColor);
+
+	CGFloat r,g,b,a;
+	if (![self red:&r green:&g blue:&b alpha:&a])
+		return nil;
 	
-	NSArray *components;
+	return [NSArray arrayWithObjects:
+			[NSNumber numberWithFloat:r],
+			[NSNumber numberWithFloat:g],
+			[NSNumber numberWithFloat:b],
+			[NSNumber numberWithFloat:a],
+			nil];
+}
+
+- (BOOL) red:(CGFloat*)red green:(CGFloat*)green blue:(CGFloat*)blue alpha:(CGFloat*)alpha;
+{
+	const CGFloat *components = CGColorGetComponents(self.CGColor);
+	
+	CGFloat r,g,b,a;
+	
 	switch (self.colorSpaceModel) {
-		case kCGColorSpaceModelRGB:
-			components = [NSArray arrayWithObjects:
-						  [NSNumber numberWithFloat:c[0]],
-						  [NSNumber numberWithFloat:c[1]],
-						  [NSNumber numberWithFloat:c[2]],
-						  [NSNumber numberWithFloat:c[3]],
-						  nil];
-			break;
 		case kCGColorSpaceModelMonochrome:
-			components = [NSArray arrayWithObjects:
-						  [NSNumber numberWithFloat:c[0]],
-						  [NSNumber numberWithFloat:c[0]],
-						  [NSNumber numberWithFloat:c[0]],
-						  [NSNumber numberWithFloat:c[1]],
-						  nil];
+			r = g = b = components[0];
+			a = components[1];
 			break;
-		default:
-			// no support for other color spaces at this time
-			components = nil;
+		case kCGColorSpaceModelRGB:
+			r = components[0];
+			g = components[1];
+			b = components[2];
+			a = components[3];
+			break;
+		default:	// We don't know how to handle this model
+			return NO;
 	}
-	return components;
+	
+	if (red) *red = r;
+	if (green) *green = g;
+	if (blue) *blue = b;
+	if (alpha) *alpha = a;
+	
+	return YES;
 }
 
 - (CGFloat) red
