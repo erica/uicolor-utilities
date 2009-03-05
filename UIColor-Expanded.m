@@ -45,6 +45,8 @@ static NSMutableDictionary *colorNameCache = nil;
 + (UIColor *)searchForColorByName:(NSString *)cssColorName;
 @end
 
+#pragma mark -
+
 @implementation UIColor (UIColor_Expanded)
 
 - (CGColorSpaceModel)colorSpaceModel {
@@ -393,11 +395,15 @@ static NSMutableDictionary *colorNameCache = nil;
 	return color;
 }
 
+#pragma mark UIColor_Expanded initialization
+
 + (void)load {
 	colorNameCache = [[NSMutableDictionary alloc] init];
 }
 
 @end
+
+#pragma mark -
 
 #if SUPPORTS_UNDOCUMENTED_API
 @implementation UIColor (UIColor_Undocumented_Expanded)
