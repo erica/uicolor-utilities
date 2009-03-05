@@ -1,6 +1,6 @@
 #import <UIKit/UIKit.h>
 
-#define SUPPORTS_UNDOCUMENTED_API	1
+#define SUPPORTS_UNDOCUMENTED_API	0
 
 @interface UIColor (UIColor_Expanded)
 @property (nonatomic, readonly) CGColorSpaceModel colorSpaceModel;
