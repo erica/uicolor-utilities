@@ -5,27 +5,23 @@
 #define GREEN_SLIDER	102
 #define BLUE_SLIDER		103
 
-@interface HelloController : UIViewController
-{
+@interface HelloController : UIViewController {
 	UIColor *bgcolor;
 }
-@property (nonatomic, retain)	UIColor *bgcolor;
+@property (nonatomic, retain) UIColor *bgcolor;
 @end
 
 @implementation HelloController
 @synthesize bgcolor;
 
-- (void) getInfo
-{
-
+- (void)getInfo {
 	self.title = [self.bgcolor hexStringFromColor];
 	// self.bgcolor = [UIColor colorWithString:[self.bgcolor stringFromColor]];
 	// self.title = [self.bgcolor stringFromColor];
 	// printf("%f\n", self.bgcolor.green);
 }
 
-- (void) update:(UISlider *)aSlider
-{
+- (void)update:(UISlider *)aSlider {
 	float r, g, b;
 	
 	r = [(UISlider *)[self.view viewWithTag:RED_SLIDER] value];
@@ -36,8 +32,7 @@
 	[self.view setBackgroundColor:bgcolor];
 }
 
-- (void)loadView
-{
+- (void)loadView {
 	UIView *contentView = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame]];
 	self.view = contentView;
 	self.bgcolor = [UIColor blackColor];
@@ -99,9 +94,8 @@
 }
 @end
 
-int main(int argc, char *argv[])
-{
-	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+int main(int argc, char *argv[]) {
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	int retVal = UIApplicationMain(argc, argv, nil, @"SampleAppDelegate");
 	[pool release];
 	return retVal;
