@@ -10,15 +10,11 @@
 /*
  Current outstanding request list:
  
- - August Joki - CSS named color set 
  - PolarBearFarm - color descriptions ([UIColor warmGrayWithHintOfBlueTouchOfRedAndSplashOfYellowColor])
  - Crayola color set
- - T Hillerson - Random Colors ([UIColor pickSomethingNice])
  - Eridius - UIColor needs a method that takes 2 colors and gives a third complementary one
  - Monochromization (something like 0.45 red + 0.35 green + 0.2 blue, what's the best formula?)
- - Eridius - colorWithHex:(NSInteger)hex, e.g. [UIColor colorWithHex:0xaabbcc]
  - Consider UIMutableColor that can be adjusted (brighter, cooler, warmer, thicker-alpha, etc)
- - Eridius - colorByAddingColor: and/or -colorWithAlpha: <-- Color with Alpha already exists. colorWithAlphaComponent:
  */
 
 /*
@@ -37,11 +33,13 @@
 // Static cache of looked up color names. Used with +colorWithName:
 static NSMutableDictionary* colorNameCache = nil;
 
+#if SUPPORTS_UNDOCUMENTED_API
 // UIColor_Undocumented
 // Undocumented methods of UIColor
 @interface UIColor (UIColor_Undocumented)
 - (NSString *) styleString;
 @end
+#endif // SUPPORTS_UNDOCUMENTED_API
 
 @implementation UIColor (UIColor_Expanded)
 
