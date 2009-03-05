@@ -2,7 +2,7 @@
 
 /*
  
- Thanks to Poltras, Millenomi, Eridius, Nownot, WhatAHam, 
+ Thanks to Poltras, Millenomi, Eridius, Nownot, WhatAHam, James Berry,
  and everyone else who helped out but whose name is inadvertantly omitted
  
 */
