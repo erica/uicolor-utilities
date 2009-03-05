@@ -166,6 +166,162 @@
 }
 
 /*
+ * Arithmatic operations
+ */
+- (UIColor*)colorByLuminanceMapping
+{
+	NSAssert (self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	
+	CGFloat r,g,b,a;
+	if (![self red:&r green:&g blue:&b alpha:&a])
+		return nil;
+	
+	// http://en.wikipedia.org/wiki/Luma_(video):
+	// Y = 0.2126 R + 0.7152 G + 0.0722 B
+	return [UIColor colorWithWhite:r*0.2126 + g*0.7152 + b*0.0722
+							 alpha:a];
+	
+}
+
+
+- (UIColor*)colorByMultiplyingByRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha
+{
+	NSAssert (self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+
+	CGFloat r,g,b,a;
+	if (![self red:&r green:&g blue:&b alpha:&a])
+		return nil;
+		
+	return [UIColor colorWithRed:MAX(0.0, MIN(1.0, r * red))
+						   green:MAX(0.0, MIN(1.0, g * green)) 
+							blue:MAX(0.0, MIN(1.0, b * blue))
+						   alpha:MAX(0.0, MIN(1.0, a * alpha))
+		];
+}
+
+
+- (UIColor*)colorByAddingRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha
+{
+	NSAssert (self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	
+	CGFloat r,g,b,a;
+	if (![self red:&r green:&g blue:&b alpha:&a])
+		return nil;
+	
+	return [UIColor colorWithRed:MAX(0.0, MIN(1.0, r + red))
+						   green:MAX(0.0, MIN(1.0, g + green)) 
+							blue:MAX(0.0, MIN(1.0, b + blue))
+						   alpha:MAX(0.0, MIN(1.0, a + alpha))
+			];
+}
+
+
+- (UIColor*)colorByLighteningWithRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha
+{
+	NSAssert (self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	
+	CGFloat r,g,b,a;
+	if (![self red:&r green:&g blue:&b alpha:&a])
+		return nil;
+		
+	return [UIColor colorWithRed:MAX(r, red)
+						   green:MAX(g, green)
+							blue:MAX(b, blue)
+						   alpha:MAX(a, alpha)
+			];
+}
+
+
+- (UIColor*)colorByDarkeningWithRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha
+{
+	NSAssert (self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	
+	CGFloat r,g,b,a;
+	if (![self red:&r green:&g blue:&b alpha:&a])
+		return nil;
+	
+	return [UIColor colorWithRed:MIN(r, red)
+						   green:MIN(g, green)
+							blue:MIN(b, blue)
+						   alpha:MIN(a, alpha)
+			];
+}
+
+
+- (UIColor*)colorByMultiplyingBy:(CGFloat)f
+{
+	return [self colorByMultiplyingByRed:f green:f blue:f alpha:1.0f];
+}
+
+
+- (UIColor*)colorByAdding:(CGFloat)f
+{
+	return [self colorByMultiplyingByRed:f green:f blue:f alpha:0.0f];
+}
+
+
+- (UIColor*)colorByLighteningWith:(CGFloat)f
+{
+	return [self colorByLighteningWithRed:f green:f blue:f alpha:0.0f];
+}
+
+
+- (UIColor*)colorByDarkeningWith:(CGFloat)f
+{
+	return [self colorByDarkeningWithRed:f green:f blue:f alpha:1.0f];
+}
+
+
+- (UIColor*)colorByMultiplyingByColor:(UIColor*)color
+{
+	NSAssert (self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	
+	CGFloat r,g,b,a;
+	if (![self red:&r green:&g blue:&b alpha:&a])
+		return nil;
+	
+	return [self colorByMultiplyingByRed:r green:g blue:b alpha:1.0f];
+}
+
+
+- (UIColor*)colorByAddingColor:(UIColor*)color
+{
+	NSAssert (self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	
+	CGFloat r,g,b,a;
+	if (![self red:&r green:&g blue:&b alpha:&a])
+		return nil;
+	
+	return [self colorByMultiplyingByRed:r green:g blue:b alpha:0.0f];
+}
+
+
+- (UIColor*)colorByLighteningWithColor:(UIColor*)color
+{
+	NSAssert (self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	
+	CGFloat r,g,b,a;
+	if (![self red:&r green:&g blue:&b alpha:&a])
+		return nil;
+		
+	return [self colorByLighteningWithRed:r green:g blue:b alpha:0.0f];
+}
+
+
+- (UIColor*)colorByDarkeningWithColor:(UIColor*)color
+{
+	NSAssert (self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	
+	CGFloat r,g,b,a;
+	if (![self red:&r green:&g blue:&b alpha:&a])
+		return nil;
+	
+	return [self colorByDarkeningWithRed:r green:g blue:b alpha:1.0f];
+}
+
+
+
+/*
  *
  * String Utilities
  *
