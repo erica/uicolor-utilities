@@ -392,6 +392,19 @@
 	return color;
 }
 
+/*
+ * Class methods
+ */
+
++ (UIColor *) randomColor
+{
+	return [UIColor colorWithRed:(CGFloat)RAND_MAX / random()
+						   green:(CGFloat)RAND_MAX / random()
+							blue:(CGFloat)RAND_MAX / random()
+						   alpha:1.0f];
+}
+
+
 + (UIColor *) colorWithHexString: (NSString *) stringToConvert
 {
 	NSScanner *scanner = [NSScanner scannerWithString:stringToConvert];

@@ -37,6 +37,7 @@
 - (NSString *) stringFromColor;
 - (NSString *) hexStringFromColor;
 
++ (UIColor *) randomColor;
 + (UIColor *) colorWithString: (NSString *) stringToConvert;
 + (UIColor *) colorWithHexString: (NSString *) stringToConvert;
 @end
