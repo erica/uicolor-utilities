@@ -211,7 +211,7 @@ static NSMutableDictionary *colorNameCache = nil;
 						   alpha:MAX(0.0, MIN(1.0, a + alpha))];
 }
 
-- (UIColor *)colorByLighteningWithRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
+- (UIColor *)colorByLighteningToRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
 	
 	CGFloat r,g,b,a;
@@ -223,7 +223,7 @@ static NSMutableDictionary *colorNameCache = nil;
 						   alpha:MAX(a, alpha)];
 }
 
-- (UIColor *)colorByDarkeningWithRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
+- (UIColor *)colorByDarkeningToRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
 	
 	CGFloat r,g,b,a;
@@ -243,12 +243,12 @@ static NSMutableDictionary *colorNameCache = nil;
 	return [self colorByMultiplyingByRed:f green:f blue:f alpha:0.0f];
 }
 
-- (UIColor *)colorByLighteningWith:(CGFloat)f {
-	return [self colorByLighteningWithRed:f green:f blue:f alpha:0.0f];
+- (UIColor *)colorByLighteningTo:(CGFloat)f {
+	return [self colorByLighteningToRed:f green:f blue:f alpha:0.0f];
 }
 
-- (UIColor *)colorByDarkeningWith:(CGFloat)f {
-	return [self colorByDarkeningWithRed:f green:f blue:f alpha:1.0f];
+- (UIColor *)colorByDarkeningTo:(CGFloat)f {
+	return [self colorByDarkeningToRed:f green:f blue:f alpha:1.0f];
 }
 
 - (UIColor *)colorByMultiplyingByColor:(UIColor *)color {
@@ -269,22 +269,22 @@ static NSMutableDictionary *colorNameCache = nil;
 	return [self colorByAddingRed:r green:g blue:b alpha:0.0f];
 }
 
-- (UIColor *)colorByLighteningWithColor:(UIColor *)color {
+- (UIColor *)colorByLighteningToColor:(UIColor *)color {
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
 	
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
 		
-	return [self colorByLighteningWithRed:r green:g blue:b alpha:0.0f];
+	return [self colorByLighteningToRed:r green:g blue:b alpha:0.0f];
 }
 
-- (UIColor *)colorByDarkeningWithColor:(UIColor *)color {
+- (UIColor *)colorByDarkeningToColor:(UIColor *)color {
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
 	
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
 	
-	return [self colorByDarkeningWithRed:r green:g blue:b alpha:1.0f];
+	return [self colorByDarkeningToRed:r green:g blue:b alpha:1.0f];
 }
 
 #pragma mark String utilities

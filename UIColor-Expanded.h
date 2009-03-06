@@ -20,20 +20,20 @@
 
 - (UIColor *)colorByLuminanceMapping;
 
-- (UIColor *) colorByMultiplyingByRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha;
-- (UIColor *)        colorByAddingRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha;
-- (UIColor *)colorByLighteningWithRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha;
-- (UIColor *) colorByDarkeningWithRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha;
+- (UIColor *)colorByMultiplyingByRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha;
+- (UIColor *)       colorByAddingRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha;
+- (UIColor *) colorByLighteningToRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha;
+- (UIColor *)  colorByDarkeningToRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha;
 
-- (UIColor *) colorByMultiplyingBy:(CGFloat)f;
-- (UIColor *)        colorByAdding:(CGFloat)f;
-- (UIColor *)colorByLighteningWith:(CGFloat)f;
-- (UIColor *) colorByDarkeningWith:(CGFloat)f;
+- (UIColor *)colorByMultiplyingBy:(CGFloat)f;
+- (UIColor *)       colorByAdding:(CGFloat)f;
+- (UIColor *) colorByLighteningTo:(CGFloat)f;
+- (UIColor *)  colorByDarkeningTo:(CGFloat)f;
 
-- (UIColor *) colorByMultiplyingByColor:(UIColor *)color;
-- (UIColor *)        colorByAddingColor:(UIColor *)color;
-- (UIColor *)colorByLighteningWithColor:(UIColor *)color;
-- (UIColor *) colorByDarkeningWithColor:(UIColor *)color;
+- (UIColor *)colorByMultiplyingByColor:(UIColor *)color;
+- (UIColor *)       colorByAddingColor:(UIColor *)color;
+- (UIColor *) colorByLighteningToColor:(UIColor *)color;
+- (UIColor *)  colorByDarkeningToColor:(UIColor *)color;
 
 - (NSString *)stringFromColor;
 - (NSString *)hexStringFromColor;
