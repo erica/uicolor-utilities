@@ -267,7 +267,7 @@ static NSMutableDictionary *colorNameCache = nil;
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
 	
-	return [self colorByMultiplyingByRed:r green:g blue:b alpha:0.0f];
+	return [self colorByAddingRed:r green:g blue:b alpha:0.0f];
 }
 
 - (UIColor *)colorByLighteningWithColor:(UIColor *)color {
