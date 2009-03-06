@@ -2,7 +2,7 @@
 
 /*
  
- Thanks to Poltras, Millenomi, Eridius, Nownot, WhatAHam, 
+ Thanks to Poltras, Millenomi, Eridius, Nownot, WhatAHam, jberry,
  and everyone else who helped out but whose name is inadvertantly omitted
  
 */
@@ -13,7 +13,6 @@
  - PolarBearFarm - color descriptions ([UIColor warmGrayWithHintOfBlueTouchOfRedAndSplashOfYellowColor])
  - Crayola color set
  - Eridius - UIColor needs a method that takes 2 colors and gives a third complementary one
- - Monochromization (something like 0.45 red + 0.35 green + 0.2 blue, what's the best formula?)
  - Consider UIMutableColor that can be adjusted (brighter, cooler, warmer, thicker-alpha, etc)
  */
 
