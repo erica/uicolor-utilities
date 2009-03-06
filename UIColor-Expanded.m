@@ -371,7 +371,7 @@ static NSMutableDictionary *colorNameCache = nil;
 	return [UIColor colorWithRGBHex:hexNum];
 }
 
-// Lookup a color by name. Not thread safe
+// Lookup a color using css 3/svg color name
 + (UIColor *)colorWithName:(NSString *)cssColorName {
 	UIColor *color;
 	@synchronized(colorNameCache) {
