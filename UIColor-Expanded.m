@@ -29,9 +29,14 @@
 };
 */
 
-// Static cache of looked up color names. Used with +colorWithName:
 static const char *colorNameDB;
+
+// Static cache of looked up color names. Used with +colorWithName:
 static NSMutableDictionary *colorNameCache = nil;
+
+// Complete dictionary of color name -> color mappings, generated
+// by a call to namedColors
+static NSMutableDictionary *completeColorNameDictionary = nil;
 
 #if SUPPORTS_UNDOCUMENTED_API
 // UIColor_Undocumented
@@ -435,10 +440,41 @@ static NSMutableDictionary *colorNameCache = nil;
 	return color;
 }
 
+// Return complete mapping of css3/svg color names --> colors
++ (NSDictionary *)namedColors {
+	@synchronized(completeColorNameDictionary) {
+		if (!completeColorNameDictionary.count) {
+			for (const char* entry = colorNameDB; entry = strchr(entry, ','); ) {
+				
+				// Step forward to the start of the name
+				++entry;
+				
+				// Find the following hash
+				const char* h = strchr(entry, '#');
+				NSAssert(h, @"Malformed colorNameDB");
+				
+				// Get the name
+				NSString* name = [[NSString alloc] initWithBytes:entry length:h - entry encoding:NSUTF8StringEncoding];
+				
+				// Get the color, and add to the dictionary
+				int hex, increment;
+				if (sscanf(++h, "%x%n", &hex, &increment) != 1) break;
+				[completeColorNameDictionary setObject:[self colorWithRGBHex:hex] forKey:name];
+				
+				// Cleanup and move to the next item
+				[name release];
+				entry = h + increment;
+			}
+		}
+	}
+	return completeColorNameDictionary;
+}
+
 #pragma mark UIColor_Expanded initialization
 
 + (void)load {
 	colorNameCache = [[NSMutableDictionary alloc] init];
+	completeColorNameDictionary = [[NSMutableDictionary alloc] init];
 }
 
 @end

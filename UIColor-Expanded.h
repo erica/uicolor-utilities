@@ -45,6 +45,7 @@
 + (UIColor *)colorWithHexString:(NSString *)stringToConvert;
 
 + (UIColor *)colorWithName:(NSString *)cssColorName;
++ (NSDictionary *)namedColors;
 
 @end
 
