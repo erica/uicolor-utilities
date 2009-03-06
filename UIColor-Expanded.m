@@ -30,6 +30,7 @@
 */
 
 // Static cache of looked up color names. Used with +colorWithName:
+static const char *colorNameDB;
 static NSMutableDictionary *colorNameCache = nil;
 
 #if SUPPORTS_UNDOCUMENTED_API
@@ -307,6 +308,46 @@ static NSMutableDictionary *colorNameCache = nil;
 
 - (NSString *)hexStringFromColor {
 	return [NSString stringWithFormat:@"%0.6X", self.rgbHex];
+}
+
+- (NSString *)closestColorName {
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use closestColorName");
+	
+	int targetHex = self.rgbHex;
+	int rInt = (targetHex >> 16) & 0x0ff;
+	int gInt = (targetHex >> 8) & 0x0ff;
+	int bInt = (targetHex >> 0) & 0x0ff;
+	
+	float bestScore = MAXFLOAT;
+	const char* bestPos = nil;
+	
+	// Walk the colorNameDB looking for the name with closest match
+	for (const char* p = colorNameDB; (p = strchr(p, '#')); ++p) {
+		int r,g,b;
+		if (sscanf(p+1, "%2x%2x%2x", &r, &g, &b) == 3) {
+			// Calculate difference between this color and the target color
+			int rDiff = abs(rInt - r);
+			int gDiff = abs(gInt - g);
+			int bDiff = abs(bInt - b);
+			float score = logf(rDiff+1) + logf(gDiff+1) + logf(bDiff+1);
+			
+			// Track the best score/name seen
+			if (score < bestScore) {
+				bestScore = score;
+				bestPos = p;
+			}
+		}
+	}
+	
+	// bestPos now points to the # following the best name seen
+	// Backup to the start of the name and return it
+	const char* name;
+	for (name = bestPos-1; *name != ','; --name)
+		;
+	++name;
+	NSString *result = [[[NSString alloc] initWithBytes:name length:bestPos - name encoding:NSUTF8StringEncoding] autorelease];
+
+	return result;
 }
 
 + (UIColor *)colorWithString:(NSString *)stringToConvert {

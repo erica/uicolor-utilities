@@ -37,6 +37,7 @@
 
 - (NSString *)stringFromColor;
 - (NSString *)hexStringFromColor;
+- (NSString *)closestColorName;
 
 + (UIColor *)randomColor;
 + (UIColor *)colorWithString:(NSString *)stringToConvert;
