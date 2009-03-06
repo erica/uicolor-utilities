@@ -31,12 +31,10 @@
 
 static const char *colorNameDB;
 
-// Static cache of looked up color names. Used with +colorWithName:
-static NSMutableDictionary *colorNameCache = nil;
-
 // Complete dictionary of color name -> color mappings, generated
-// by a call to namedColors
-static NSMutableDictionary *completeColorNameDictionary = nil;
+// by a call to +namedColors or +colorWithName:
+static NSDictionary *colorNameCache = nil;
+static NSLock *colorNameCacheLock;
 
 #if SUPPORTS_UNDOCUMENTED_API
 // UIColor_Undocumented
@@ -47,7 +45,7 @@ static NSMutableDictionary *completeColorNameDictionary = nil;
 #endif // SUPPORTS_UNDOCUMENTED_API
 
 @interface UIColor (UIColor_Expanded_Support)
-+ (UIColor *)searchForColorByName:(NSString *)cssColorName;
++ (void)populateColorNameCache;
 @end
 
 #pragma mark -
@@ -419,62 +417,21 @@ static NSMutableDictionary *completeColorNameDictionary = nil;
 
 // Lookup a color using css 3/svg color name
 + (UIColor *)colorWithName:(NSString *)cssColorName {
-	UIColor *color;
-	@synchronized(colorNameCache) {
-		// Look for the color in the cache
-		color = [colorNameCache objectForKey:cssColorName];
-		
-		if ((id)color == [NSNull null]) {
-			// If it wasn't there previously, it's still not there now
-			color = nil;
-		} else if (!color) {
-			// Color not in cache, so search for it now
-			color = [self searchForColorByName:cssColorName];
-			
-			// Set the value in cache, storing NSNull on failure
-			[colorNameCache setObject:(color ?: (id)[NSNull null])
-							   forKey:cssColorName];
-		}
-	}
-	
-	return color;
+	return [[UIColor namedColors] objectForKey:cssColorName];
 }
 
 // Return complete mapping of css3/svg color names --> colors
 + (NSDictionary *)namedColors {
-	@synchronized(completeColorNameDictionary) {
-		if (!completeColorNameDictionary.count) {
-			for (const char* entry = colorNameDB; entry = strchr(entry, ','); ) {
-				
-				// Step forward to the start of the name
-				++entry;
-				
-				// Find the following hash
-				const char* h = strchr(entry, '#');
-				NSAssert(h, @"Malformed colorNameDB");
-				
-				// Get the name
-				NSString* name = [[NSString alloc] initWithBytes:entry length:h - entry encoding:NSUTF8StringEncoding];
-				
-				// Get the color, and add to the dictionary
-				int hex, increment;
-				if (sscanf(++h, "%x%n", &hex, &increment) != 1) break;
-				[completeColorNameDictionary setObject:[self colorWithRGBHex:hex] forKey:name];
-				
-				// Cleanup and move to the next item
-				[name release];
-				entry = h + increment;
-			}
-		}
-	}
-	return completeColorNameDictionary;
+	[colorNameCacheLock lock];
+	if (colorNameCache == nil) [UIColor populateColorNameCache];
+	[colorNameCacheLock unlock];
+	return colorNameCache;
 }
 
 #pragma mark UIColor_Expanded initialization
 
 + (void)load {
-	colorNameCache = [[NSMutableDictionary alloc] init];
-	completeColorNameDictionary = [[NSMutableDictionary alloc] init];
+	colorNameCacheLock = [[NSLock alloc] init];
 }
 
 @end
@@ -557,25 +514,30 @@ static const char *colorNameDB = ","
 	"thistle#d8bfd8,tomato#ff6347,turquoise#40e0d0,violet#ee82ee,wheat#f5deb3,"
 	"white#ffffff,whitesmoke#f5f5f5,yellow#ffff00,yellowgreen#9acd32";
 
-+ (UIColor *)searchForColorByName:(NSString *)cssColorName {
-	UIColor *result = nil;
-	
-	// Compile the string we'll use to search against the database
-	// We search for ",<colorname>#" to avoid false matches
-	const char *searchString = [[NSString stringWithFormat:@",%@#", cssColorName] UTF8String];
-	
-	// Search for the color name
-	const char *found = strstr(colorNameDB, searchString);
-	
-	// If found, step past the search string and grab the hex representation
-	if (found) {
-		const char *after = found + strlen(searchString);
-		int hex;
-		if (sscanf(after, "%x", &hex) == 1) {
-			result = [self colorWithRGBHex:hex];
-		}
++ (void)populateColorNameCache {
+	NSAssert(colorNameCache == nil, @"+pouplateColorNameCache was called when colorNameCache was not nil");
+	NSMutableDictionary *cache = [NSMutableDictionary dictionary];
+	for (const char* entry = colorNameDB; entry = strchr(entry, ','); ) {
+		
+		// Step forward to the start of the name
+		++entry;
+		
+		// Find the following hash
+		const char* h = strchr(entry, '#');
+		NSAssert(h, @"Malformed colorNameDB");
+		
+		// Get the name
+		NSString* name = [[NSString alloc] initWithBytes:entry length:h - entry encoding:NSUTF8StringEncoding];
+		
+		// Get the color, and add to the dictionary
+		int hex, increment;
+		if (sscanf(++h, "%x%n", &hex, &increment) != 1) break;
+		[cache setObject:[self colorWithRGBHex:hex] forKey:name];
+		
+		// Cleanup and move to the next item
+		[name release];
+		entry = h + increment;
 	}
-	
-	return result;
+	colorNameCache = [cache copy];
 }
 @end
