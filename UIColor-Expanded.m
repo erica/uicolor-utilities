@@ -212,9 +212,9 @@ static NSLock *colorNameCacheLock;
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return 0;
 	
-	r = MIN(MAX(self.red, 0.0f), 1.0f);
-	g = MIN(MAX(self.green, 0.0f), 1.0f);
-	b = MIN(MAX(self.blue, 0.0f), 1.0f);
+	r = MIN(MAX(r, 0.0f), 1.0f);
+	g = MIN(MAX(g, 0.0f), 1.0f);
+	b = MIN(MAX(b, 0.0f), 1.0f);
 	
 	return (((int)roundf(r * 255)) << 16)
 	     | (((int)roundf(g * 255)) << 8)
