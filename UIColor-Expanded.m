@@ -161,6 +161,18 @@ static NSLock *colorNameCacheLock;
 	return CGColorGetAlpha(self.CGColor);
 }
 
+- (CGFloat)luminance {
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use luminance");
+
+	CGFloat r,g,b;
+	if (![self red:&r green:&g blue:&b alpha:nil]) return 0.0f;
+	
+	// http://en.wikipedia.org/wiki/Luma_(video)
+	// Y = 0.2126 R + 0.7152 G + 0.0722 B
+	
+	return r*0.2126f + g*0.7152f + b*0.0722f;
+}
+
 - (UInt32)rgbHex {
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use rgbHex");
 	
@@ -179,16 +191,8 @@ static NSLock *colorNameCacheLock;
 #pragma mark Arithmetic operations
 
 - (UIColor *)colorByLuminanceMapping {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
-	
-	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
-	
-	// http://en.wikipedia.org/wiki/Luma_(video)
-	// Y = 0.2126 R + 0.7152 G + 0.0722 B
-	return [UIColor colorWithWhite:r*0.2126f + g*0.7152f + b*0.0722f
-							 alpha:a];
-	
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
+	return [UIColor colorWithWhite:[self luminance] alpha:1.0f];
 }
 
 - (UIColor *)colorByMultiplyingByRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
