@@ -40,6 +40,11 @@
 - (UIColor *) colorByLighteningToColor:(UIColor *)color;
 - (UIColor *)  colorByDarkeningToColor:(UIColor *)color;
 
+- (UIColor *)contrastingColor;
+- (UIColor *)complementaryColor;
+- (NSArray*)triadicColors;
+- (NSArray*)analogousColorsWithStepAngle:(CGFloat)stepAngle pairCount:(int)pairs;
+
 - (NSString *)stringFromColor;
 - (NSString *)hexStringFromColor;
 - (NSString *)closestColorName;

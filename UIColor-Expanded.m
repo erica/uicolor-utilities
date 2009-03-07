@@ -328,6 +328,58 @@ static NSLock *colorNameCacheLock;
 	return [self colorByDarkeningToRed:r green:g blue:b alpha:1.0f];
 }
 
+#pragma mark Complimentary Colors, etc
+
+// Pick a color that is likely to contrast well with this color
+- (UIColor *)contrastingColor {
+	return ([self luminance] > 0.5f) ? [UIColor blackColor] : [UIColor whiteColor];
+}
+
+// Pick the color that is 180 degrees away in hue
+- (UIColor *)complementaryColor {
+	
+	// Convert to HSB
+	CGFloat h,s,v,a;
+	if (![self hue:&h saturation:&s brightness:&v alpha:&a]) return nil;
+		
+	// Pick color 180 degrees away
+	h += 180.0f;
+	if (h > 360.f) h -= 360.0f;
+	
+	// Create a color in RGB
+	return [UIColor colorWithHue:h saturation:s brightness:v alpha:a];
+}
+
+// Pick two colors more colors such that all three are equidistant on the color wheel
+// (120 degrees and 240 degress difference in hue from self)
+- (NSArray*)triadicColors {
+	return [self analogousColorsWithStepAngle:120.0f pairCount:1];
+}
+
+// Pick n pairs of colors, stepping in increasing steps away from this color around the wheel
+- (NSArray*)analogousColorsWithStepAngle:(CGFloat)stepAngle pairCount:(int)pairs {
+	// Convert to HSB
+	CGFloat h,s,v,a;
+	if (![self hue:&h saturation:&s brightness:&v alpha:&a]) return nil;
+	
+	NSMutableArray* colors = [NSMutableArray arrayWithCapacity:pairs * 2];
+	
+	if (stepAngle < 0.0f)
+		stepAngle *= -1.0f;
+	
+	for (int i = 1; i <= pairs; ++i) {
+		CGFloat a = fmodf(stepAngle * i, 360.0f);
+		
+		CGFloat h1 = fmodf(h + a, 360.0f);
+		CGFloat h2 = fmodf(h + 360.0f - a, 360.0f);
+		
+		[colors addObject:[UIColor colorWithHue:h1 saturation:s brightness:v alpha:a]];
+		[colors addObject:[UIColor colorWithHue:h2 saturation:s brightness:v alpha:a]];
+	}
+	
+	return [[colors copy] autorelease];
+}
+
 #pragma mark String utilities
 
 - (NSString *)stringFromColor {
