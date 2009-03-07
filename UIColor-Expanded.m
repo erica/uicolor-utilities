@@ -229,7 +229,7 @@ static NSLock *colorNameCacheLock;
 }
 
 - (UIColor *)colorByMultiplyingByRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
@@ -241,7 +241,7 @@ static NSLock *colorNameCacheLock;
 }
 
 - (UIColor *)colorByAddingRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
@@ -253,7 +253,7 @@ static NSLock *colorNameCacheLock;
 }
 
 - (UIColor *)colorByLighteningToRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
@@ -265,7 +265,7 @@ static NSLock *colorNameCacheLock;
 }
 
 - (UIColor *)colorByDarkeningToRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
@@ -293,7 +293,7 @@ static NSLock *colorNameCacheLock;
 }
 
 - (UIColor *)colorByMultiplyingByColor:(UIColor *)color {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
@@ -302,7 +302,7 @@ static NSLock *colorNameCacheLock;
 }
 
 - (UIColor *)colorByAddingColor:(UIColor *)color {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
@@ -311,7 +311,7 @@ static NSLock *colorNameCacheLock;
 }
 
 - (UIColor *)colorByLighteningToColor:(UIColor *)color {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
@@ -320,7 +320,7 @@ static NSLock *colorNameCacheLock;
 }
 
 - (UIColor *)colorByDarkeningToColor:(UIColor *)color {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
