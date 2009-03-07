@@ -9,6 +9,9 @@
 @property (nonatomic, readonly) CGFloat green; // Only valid if canProvideRGBComponents is YES
 @property (nonatomic, readonly) CGFloat blue; // Only valid if canProvideRGBComponents is YES
 @property (nonatomic, readonly) CGFloat white; // Only valid if colorSpaceModel == kCGColorSpaceModelMonochrome
+@property (nonatomic, readonly) CGFloat hue;
+@property (nonatomic, readonly) CGFloat saturation;
+@property (nonatomic, readonly) CGFloat brightness;
 @property (nonatomic, readonly) CGFloat alpha;
 @property (nonatomic, readonly) CGFloat luminance;
 @property (nonatomic, readonly) UInt32 rgbHex;
@@ -18,6 +21,7 @@
 - (NSArray *)arrayFromRGBAComponents;
 
 - (BOOL)red:(CGFloat *)r green:(CGFloat *)g blue:(CGFloat *)b alpha:(CGFloat *)a;
+- (BOOL)hue:(CGFloat *)h saturation:(CGFloat *)s brightness:(CGFloat *)b alpha:(CGFloat *)a;
 
 - (UIColor *)colorByLuminanceMapping;
 
@@ -47,6 +51,11 @@
 
 + (UIColor *)colorWithName:(NSString *)cssColorName;
 + (NSDictionary *)namedColors;
+
++ (UIColor *)colorWithHue:(CGFloat)hue saturation:(CGFloat)saturation brightness:(CGFloat)brightness alpha:(CGFloat)alpha;
+
++ (void)hue:(CGFloat)h saturation:(CGFloat)s brightness:(CGFloat)v toRed:(CGFloat *)r green:(CGFloat *)g blue:(CGFloat *)b;
++ (void)red:(CGFloat)r green:(CGFloat)g blue:(CGFloat)b toHue:(CGFloat *)h saturation:(CGFloat *)s brightness:(CGFloat *)v;
 
 @end
 

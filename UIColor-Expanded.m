@@ -131,6 +131,18 @@ static NSLock *colorNameCacheLock;
 	return YES;
 }
 
+- (BOOL)hue:(CGFloat *)hue saturation:(CGFloat *)saturation brightness:(CGFloat *)brightness alpha:(CGFloat *)alpha {
+	
+	CGFloat r,g,b,a;
+	if (![self red:&r green:&g blue:&b alpha:&a]) return 0;
+	
+	[UIColor red:r green:g blue:b toHue:hue saturation:saturation brightness:brightness];
+	
+	if (alpha) *alpha = a;
+	
+	return YES;
+}
+
 - (CGFloat)red {
 	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -red");
 	const CGFloat *c = CGColorGetComponents(self.CGColor);
@@ -155,6 +167,27 @@ static NSLock *colorNameCacheLock;
 	NSAssert(self.colorSpaceModel == kCGColorSpaceModelMonochrome, @"Must be a Monochrome color to use -white");
 	const CGFloat *c = CGColorGetComponents(self.CGColor);
 	return c[0];
+}
+
+- (CGFloat)hue {
+	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -hue");
+	CGFloat h = 0.0f;
+	[self hue:&h saturation:nil brightness:nil alpha:nil];
+	return h;
+}
+
+- (CGFloat)saturation {
+	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -saturation");
+	CGFloat s = 0.0f;
+	[self hue:nil saturation:&s brightness:nil alpha:nil];
+	return s;
+}
+
+- (CGFloat)brightness {
+	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -brightness");
+	CGFloat v = 0.0f;
+	[self hue:nil saturation:nil brightness:&v alpha:nil];
+	return v;
 }
 
 - (CGFloat)alpha {
@@ -431,6 +464,90 @@ static NSLock *colorNameCacheLock;
 	[colorNameCacheLock unlock];
 	return colorNameCache;
 }
+
++ (UIColor *)colorWithHue:(CGFloat)hue saturation:(CGFloat)saturation brightness:(CGFloat)brightness alpha:(CGFloat)alpha {
+	// Convert hsl to rgb
+	CGFloat r,g,b;
+	[self hue:hue saturation:saturation brightness:brightness toRed:&r green:&g blue:&b];
+	
+	// Create a color with rgb
+	return [self colorWithRed:r green:g blue:b alpha:alpha];
+}
+
+
+#pragma mark Color Space Conversions
+
++ (void)hue:(CGFloat)h saturation:(CGFloat)s brightness:(CGFloat)v toRed:(CGFloat *)pR green:(CGFloat *)pG blue:(CGFloat *)pB {
+	CGFloat r,g,b;
+	
+	// From Foley and Van Dam
+	
+	if (s == 0.0f) {
+		// Achromatic color: there is no hue
+		r = g = b = v;
+	} else {
+		// Chromatic color: there is a hue
+		if (h == 360.0f) h = 0.0f;
+		h /= 60.0f;										// h is now in [0, 6)
+		
+		int i = floorf(h);								// largest integer <= h
+		CGFloat f = h - i;								// fractional part of h
+		CGFloat p = v * (1 - s);
+		CGFloat q = v * (1 - (s * f));
+		CGFloat t = v * (1 - (s * (1 - f)));
+		
+		switch (i) {
+			case 0:	r = v; g = t; b = p;	break;
+			case 1:	r = q; g = v; b = p;	break;
+			case 2:	r = p; g = v; b = t;	break;
+			case 3:	r = p; g = q; b = v;	break;
+			case 4:	r = t; g = p; b = v;	break;
+			case 5:	r = v; g = p; b = q;	break;
+		}
+	}
+	
+	if (pR) *pR = r;
+	if (pG) *pG = g;
+	if (pB) *pB = b;
+}
+
+
++ (void)red:(CGFloat)r green:(CGFloat)g blue:(CGFloat)b toHue:(CGFloat *)pH saturation:(CGFloat *)pS brightness:(CGFloat *)pV {
+	CGFloat h,s,v;
+	
+	// From Foley and Van Dam
+	
+	CGFloat max = MAX(r, MAX(g, b));
+	CGFloat min = MIN(r, MIN(g, b));
+	
+	// Brightness
+	v = max;
+	
+	// Saturation
+	s = (max != 0.0f) ? ((max - min) / max) : 0.0f;
+	
+	if (s == 0.0f) {
+		// No saturation, so undefined hue
+		h = 0.0f;
+	} else {
+		// Determine hue
+		CGFloat rc = (max - r) / (max - min);		// Distance of color from red
+		CGFloat gc = (max - g) / (max - min);		// Distance of color from green
+		CGFloat bc = (max - b) / (max - min);		// Distance of color from blue
+		
+		if (r == max) h = bc - gc;					// resulting color between yellow and magenta
+		else if (g == max) h = 2 + rc - bc;			// resulting color between cyan and yellow
+		else /* if (b == max) */ h = 4 + gc - rc;	// resulting color between magenta and cyan
+		
+		h *= 60.0f;									// Convert to degrees
+		if (h < 0.0f) h += 360.0f;					// Make non-negative
+	}
+	
+	if (pH) *pH = h;
+	if (pS) *pS = s;
+	if (pV) *pV = v;
+}
+
 
 #pragma mark UIColor_Expanded initialization
 
