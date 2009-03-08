@@ -577,18 +577,21 @@ static NSLock *colorNameCacheLock;
 	// Saturation
 	s = (max != 0.0f) ? ((max - min) / max) : 0.0f;
 	
+	// Hue
 	if (s == 0.0f) {
 		// No saturation, so undefined hue
 		h = 0.0f;
 	} else {
 		// Determine hue
-		CGFloat rc = (max - r) / (max - min);		// Distance of color from red
-		CGFloat gc = (max - g) / (max - min);		// Distance of color from green
-		CGFloat bc = (max - b) / (max - min);		// Distance of color from blue
+		CGFloat delta = max - min;
 		
-		if (r == max) h = bc - gc;					// resulting color between yellow and magenta
-		else if (g == max) h = 2 + rc - bc;			// resulting color between cyan and yellow
-		else /* if (b == max) */ h = 4 + gc - rc;	// resulting color between magenta and cyan
+		if (r == max) {
+			h = (g - b) / delta;					// resulting color between yellow and magenta
+		} else if (g == max) {
+			h = 2.0f + (b - r) / delta;				// resulting color between cyan and yellow
+		} else /* if (b == max) */ {
+			h = 4.0f + (r - g) / delta;				// resulting color between magenta and cyan
+		}
 		
 		h *= 60.0f;									// Convert to degrees
 		if (h < 0.0f) h += 360.0f;					// Make non-negative
