@@ -224,8 +224,7 @@ static NSLock *colorNameCacheLock;
 #pragma mark Arithmetic operations
 
 - (UIColor *)colorByLuminanceMapping {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
-	return [UIColor colorWithWhite:[self luminance] alpha:1.0f];
+	return [UIColor colorWithWhite:self.luminance alpha:1.0f];
 }
 
 - (UIColor *)colorByMultiplyingByRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
@@ -332,7 +331,7 @@ static NSLock *colorNameCacheLock;
 
 // Pick a color that is likely to contrast well with this color
 - (UIColor *)contrastingColor {
-	return ([self luminance] > 0.5f) ? [UIColor blackColor] : [UIColor whiteColor];
+	return (self.luminance > 0.5f) ? [UIColor blackColor] : [UIColor whiteColor];
 }
 
 // Pick the color that is 180 degrees away in hue
