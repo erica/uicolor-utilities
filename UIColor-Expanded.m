@@ -134,7 +134,7 @@ static NSLock *colorNameCacheLock;
 - (BOOL)hue:(CGFloat *)hue saturation:(CGFloat *)saturation brightness:(CGFloat *)brightness alpha:(CGFloat *)alpha {
 	
 	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a]) return 0;
+	if (![self red:&r green:&g blue:&b alpha:&a]) return NO;
 	
 	[UIColor red:r green:g blue:b toHue:hue saturation:saturation brightness:brightness];
 	
