@@ -327,7 +327,7 @@ static NSLock *colorNameCacheLock;
 	return [self colorByDarkeningToRed:r green:g blue:b alpha:1.0f];
 }
 
-#pragma mark Complimentary Colors, etc
+#pragma mark Complementary Colors, etc
 
 // Pick a color that is likely to contrast well with this color
 - (UIColor *)contrastingColor {
@@ -517,7 +517,7 @@ static NSLock *colorNameCacheLock;
 }
 
 + (UIColor *)colorWithHue:(CGFloat)hue saturation:(CGFloat)saturation brightness:(CGFloat)brightness alpha:(CGFloat)alpha {
-	// Convert hsl to rgb
+	// Convert hsb to rgb
 	CGFloat r,g,b;
 	[self hue:hue saturation:saturation brightness:brightness toRed:&r green:&g blue:&b];
 	
