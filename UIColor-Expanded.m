@@ -11,7 +11,6 @@
  Current outstanding request list:
  
  - PolarBearFarm - color descriptions ([UIColor warmGrayWithHintOfBlueTouchOfRedAndSplashOfYellowColor])
- - Crayola color set
  - Eridius - UIColor needs a method that takes 2 colors and gives a third complementary one
  - Consider UIMutableColor that can be adjusted (brighter, cooler, warmer, thicker-alpha, etc)
  */
@@ -30,11 +29,14 @@
 */
 
 static const char *colorNameDB;
+static const char *crayolaNameDB;
 
 // Complete dictionary of color name -> color mappings, generated
 // by a call to +namedColors or +colorWithName:
 static NSDictionary *colorNameCache = nil;
+static NSDictionary *crayolaNameCache = nil;
 static NSLock *colorNameCacheLock;
+static NSLock *crayolaNameCacheLock;
 
 #if SUPPORTS_UNDOCUMENTED_API
 // UIColor_Undocumented
@@ -46,6 +48,7 @@ static NSLock *colorNameCacheLock;
 
 @interface UIColor (UIColor_Expanded_Support)
 + (void)populateColorNameCache;
++ (void)populateCrayolaNameCache;
 @end
 
 #pragma mark -
@@ -401,7 +404,7 @@ static NSLock *colorNameCacheLock;
 	return [NSString stringWithFormat:@"%0.6X", self.rgbHex];
 }
 
-- (NSString *)closestColorName {
+- (NSString *)closestColorNameFor: (const char *) aColorDatabase {
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use closestColorName");
 	
 	int targetHex = self.rgbHex;
@@ -412,8 +415,8 @@ static NSLock *colorNameCacheLock;
 	float bestScore = MAXFLOAT;
 	const char* bestPos = nil;
 	
-	// Walk the colorNameDB looking for the name with closest match
-	for (const char* p = colorNameDB; (p = strchr(p, '#')); ++p) {
+	// Walk the name db string looking for the name with closest match
+	for (const char* p = aColorDatabase; (p = strchr(p, '#')); ++p) {
 		int r,g,b;
 		if (sscanf(p+1, "%2x%2x%2x", &r, &g, &b) == 3) {
 			// Calculate difference between this color and the target color
@@ -437,8 +440,17 @@ static NSLock *colorNameCacheLock;
 		;
 	++name;
 	NSString *result = [[[NSString alloc] initWithBytes:name length:bestPos - name encoding:NSUTF8StringEncoding] autorelease];
-
+	
 	return result;
+}
+
+
+- (NSString *)closestColorName {
+	return [self closestColorNameFor:colorNameDB];
+}
+
+- (NSString *)closestCrayonName {
+	return [self closestColorNameFor:crayolaNameDB];
 }
 
 + (UIColor *)colorWithString:(NSString *)stringToConvert {
@@ -508,12 +520,24 @@ static NSLock *colorNameCacheLock;
 	return [[UIColor namedColors] objectForKey:cssColorName];
 }
 
+// Lookup a color using a crayola name
++ (UIColor *)crayonWithName:(NSString *)crayolaColorName {
+	return [[UIColor namedCrayons] objectForKey:crayolaColorName];
+}
+
 // Return complete mapping of css3/svg color names --> colors
 + (NSDictionary *)namedColors {
 	[colorNameCacheLock lock];
 	if (colorNameCache == nil) [UIColor populateColorNameCache];
 	[colorNameCacheLock unlock];
 	return colorNameCache;
+}
+
++ (NSDictionary *)namedCrayons {
+	[crayolaNameCacheLock lock];
+	if (crayolaNameCache == nil) [UIColor populateCrayolaNameCache];
+	[crayolaNameCacheLock unlock];
+	return crayolaNameCache;
 }
 
 + (UIColor *)colorWithHue:(CGFloat)hue saturation:(CGFloat)saturation brightness:(CGFloat)brightness alpha:(CGFloat)alpha {
@@ -604,6 +628,7 @@ static NSLock *colorNameCacheLock;
 
 + (void)load {
 	colorNameCacheLock = [[NSLock alloc] init];
+	crayolaNameCacheLock = [[NSLock alloc] init];
 }
 
 @end
@@ -686,6 +711,32 @@ static const char *colorNameDB = ","
 	"thistle#d8bfd8,tomato#ff6347,turquoise#40e0d0,violet#ee82ee,wheat#f5deb3,"
 	"white#ffffff,whitesmoke#f5f5f5,yellow#ffff00,yellowgreen#9acd32";
 
+static const char *crayolaNameDB = ","
+	"Almond#EED9C4,Antique Brass#C88A65,Apricot#FDD5B1,Aquamarine#71D9E2,Asparagus#7BA05B,"
+	"Atomic Tangerine#FF9966,Banana Mania#FBE7B2,Beaver#926F5B,Bittersweet#FE6F5E,Black#000000,"
+	"Blizzard Blue#A3E3ED,Blue#0066FF,Blue Bell#9999CC,Blue Green#0095B6,Blue Violet#6456B7,"
+	"Brick Red#C62D42,Brink Pink#FB607F,Brown#AF593E,Burnt Orange#FF7034,Burnt Sienna#E97451,"
+	"Cadet Blue#A9B2C3,Canary#FFFF99,Caribbean Green#00CC99,Carnation Pink#FFA6C9,Cerise#DA3287,"
+	"Cerulean#02A4D3,Chartreuse#FF9966,Chestnut#B94E48,Copper#DA8A67,Cornflower#93CCEA,Cotton Candy#FFB7D5,"
+	"Cranberry#DB5079,Dandelion#FED85D,Denim#1560BD,Desert Sand#EDC9AF,Eggplant#614051,Electric Lime#CCFF00,"
+	"Fern#63B76C,Flesh#FFCBA4,Forest Green#5FA777,Fuchsia#C154C1,Fuzzy Wuzzy Brown#C45655,Gold#E6BE8A,Goldenrod#FCD667,"
+	"Granny Smith Apple#9DE093,Gray#8B8680,Green#01A368,Green Yellow#F1E788,Happy Ever After#6CDA37,Hot Magenta#FF00CC,"
+	"Inch Worm#B0E313,Indian Red#B94E48,Indigo#4F69C6,Jazzberry Jam#A50B5E,Jungle Green#29AB87,Laser Lemon#FFFF66,"
+	"Lavender#FBAED2,Macaroni And Cheese#FFB97B,Magenta#F653A6,Magic Mint#AAF0D1,Mahogany#CA3435,Manatee#8D90A1,"
+	"Mango Tango#E77200,Maroon#C32148,Mauvelous#F091A9,Melon#FEBAAD,Midnight Blue#003366,Mountain Meadow#1AB385,"
+	"Mulberry#C54B8C,Navy Blue#0066CC,Neon Carrot#FF9933,Olive Green#B5B35C,Orange#FF681F,Orchid#E29CD2,Outer Space#2D383A,"
+	"Outrageous Orange#FF6037,Pacific Blue#009DC4,Peach#FFCBA4,Periwinkle#C3CDE6,Pig Pink#FDD7E4,Pine Green#01796F,"
+	"Pink Flamingo#FF66FF,Plum#843179,Prussian Blue#003366,Purple Heart#652DC1,Purple Mountain's Majesty#9678B6,"
+	"Purple Pizzazz#FF00CC,Radical Red#FF355E,Raw Sienna#D27D46,Razzle Dazzle Rose#FF33CC,Razzmatazz#E30B5C,Red#ED0A3F,"
+	"Red Orange#FF3F34,Red Violet#BB3385,Robin's Egg Blue#00CCCC,Royal Purple#6B3FA0,Salmon#FF91A4,Scarlet#FD0E35,"
+	"Screamin' Green#66FF66,Sea Green#93DFB8,Sepia#9E5B40,Shadow#837050,Shamrock#33CC99,Shocking Pink#FF6FFF,Silver#C9C0BB,"
+	"Sky Blue#76D7EA,Spring Green#ECEBBD,Sunglow#FFCC33,Sunset Orange#FE4C40,Tan#FA9D5A,Tickle Me Pink#FC80A5,Timberwolf#D9D6CF,"
+	"Torch Red#FD0E35,Tropical Rain Forest#00755E,Tumbleweed#DEA681,Turquoise Blue#6CDAE7,Ultra Green#66FF66,Ultra Orange#FF6037,"
+	"Ultra Pink#FF6FFF,Ultra Red#FD5B78,Ultra Yellow#FFFF66,Unmellow Yellow#FFFF66,Violet (purple)#8359A3,Violet Red#F7468A,"
+	"Vivid Tangerine#FF9980,Vivid Violet#803790,White#FFFFFF,Wild Blue Yonder#7A89B8,Wild Strawberry#FF3399,Wild Watermelon#FD5B78,"
+	"Wisteria#C9A0DC,Yellow#FBE870,Yellow Green#C5E17A,Yellow Orange#FFAE42";
+
+
 + (void)populateColorNameCache {
 	NSAssert(colorNameCache == nil, @"+pouplateColorNameCache was called when colorNameCache was not nil");
 	NSMutableDictionary *cache = [NSMutableDictionary dictionary];
@@ -711,5 +762,32 @@ static const char *colorNameDB = ","
 		entry = h + increment;
 	}
 	colorNameCache = [cache copy];
+}
+
++ (void)populateCrayolaNameCache {
+	NSAssert(crayolaNameCache == nil, @"+pouplateCrayolaNameCache was called when crayolaNameCache was not nil");
+	NSMutableDictionary *cache = [NSMutableDictionary dictionary];
+	for (const char* entry = crayolaNameDB; entry = strchr(entry, ','); ) {
+		
+		// Step forward to the start of the name
+		++entry;
+		
+		// Find the following hash
+		const char* h = strchr(entry, '#');
+		NSAssert(h, @"Malformed crayolaNameDB");
+		
+		// Get the name
+		NSString* name = [[NSString alloc] initWithBytes:entry length:h - entry encoding:NSUTF8StringEncoding];
+		
+		// Get the color, and add to the dictionary
+		int hex, increment;
+		if (sscanf(++h, "%x%n", &hex, &increment) != 1) break;
+		[cache setObject:[self colorWithRGBHex:hex] forKey:name];
+		
+		// Cleanup and move to the next item
+		[name release];
+		entry = h + increment;
+	}
+	crayolaNameCache = [cache copy];
 }
 @end

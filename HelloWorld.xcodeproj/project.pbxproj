@@ -74,8 +74,10 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				29B97316FDCFA39411CA2CEA /* main.m */,
+				8ED61B480F3CA54400B2FE57 /* UIColor-Expanded.h */,
+				8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */,
 				8E3143A50D8EFC8A00101D4D /* Images */,
-				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
@@ -83,20 +85,10 @@
 			name = CustomTemplate;
 			sourceTree = "<group>";
 		};
-		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
-			isa = PBXGroup;
-			children = (
-				8ED61B480F3CA54400B2FE57 /* UIColor-Expanded.h */,
-				8ED61B490F3CA54400B2FE57 /* UIColor-Expanded.m */,
-				32CA4F630368D1EE00C91783 /* HelloWorld_Prefix.pch */,
-				29B97316FDCFA39411CA2CEA /* main.m */,
-			);
-			name = "Other Sources";
-			sourceTree = "<group>";
-		};
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				32CA4F630368D1EE00C91783 /* HelloWorld_Prefix.pch */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 			);
 			name = Resources;
@@ -188,6 +180,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Erica Sadun";
+				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "iPhone Distribution: Erica Sadun";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -198,7 +191,8 @@
 				INFOPLIST_FILE = Info.plist;
 				PREBINDING = NO;
 				PRODUCT_NAME = HelloWorld;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "A2FA5C45-7EC1-4FE4-A834-590BCF399409";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				"PROVISIONING_PROFILE[sdk=iphonesimulator*]" = "";
 			};
 			name = Debug;
 		};

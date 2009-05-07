@@ -59,6 +59,7 @@
 
 // The named color that matches this one most closely
 - (NSString *)closestColorName;
+- (NSString *)closestCrayonName;
 
 // Color builders
 + (UIColor *)randomColor;
@@ -66,10 +67,15 @@
 + (UIColor *)colorWithRGBHex:(UInt32)hex;
 + (UIColor *)colorWithHexString:(NSString *)stringToConvert;
 + (UIColor *)colorWithName:(NSString *)cssColorName;
++ (UIColor *)crayonWithName:(NSString *)crayonColorName;
 
 // Return a dictionary mapping color names to colors.
 // The named are from the css3 color specification.
 + (NSDictionary *)namedColors;
+
+// Return a dictionary mapping color names to colors
+// The named are standard Crayola style colors
++ (NSDictionary *)namedCrayons;
 
 // Build a color with the given HSB values
 + (UIColor *)colorWithHue:(CGFloat)hue saturation:(CGFloat)saturation brightness:(CGFloat)brightness alpha:(CGFloat)alpha;

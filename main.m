@@ -7,11 +7,12 @@
 #define GREEN_SLIDER		102
 #define BLUE_SLIDER			103
 
-#define CLOSEST_COLOR		150
-#define COMPLEMENTARY_COLOR	151
-#define CONTRASTING_COLOR	152
-#define TRIADICA_COLOR		153
-#define TRIADICB_COLOR		154
+#define CLOSEST_CRAYON		150
+#define CLOSEST_COLOR		151
+#define COMPLEMENTARY_COLOR	152
+#define CONTRASTING_COLOR	153
+#define TRIADICA_COLOR		154
+#define TRIADICB_COLOR		155
 
 @interface HelloController : UIViewController {
 	UIColor *bgcolor;
@@ -77,6 +78,15 @@
 		slider.backgroundColor = sliderColor;
 		mask >>= 8;
 	}
+	
+	// Set the closest crayon name
+	NSString* closestCrayonName = [color closestCrayonName];
+	UIColor* closestCrayon = [UIColor crayonWithName:closestCrayonName];
+
+	l = (UILabel *)[self.view viewWithTag:CLOSEST_CRAYON];
+	l.text = [NSString stringWithFormat:@"%@ #%@", closestCrayonName, closestCrayon.hexStringFromColor];
+	l.backgroundColor = closestCrayon;
+	l.textColor = [closestCrayon contrastingColor];
 	
 	// Set the closest color
 	NSString* closestColorName = [color closestColorName];
@@ -208,6 +218,14 @@
 	[contentView addSubview:traidicB];
 	[traidicB release];
 	
+	// Create closest crayon well -- placing towards the bottom, out of prominence
+	UILabel *closestCrayon = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 300.0f, 30.0f)];
+	closestCrayon.center = CGPointMake(160.f, 396.0f);
+	closestCrayon.textAlignment = UITextAlignmentCenter;
+	closestCrayon.tag = CLOSEST_CRAYON;
+	[contentView addSubview:closestCrayon];
+	[closestCrayon release];
+		
 	// Update the view
 	[self update:s1];
 	
