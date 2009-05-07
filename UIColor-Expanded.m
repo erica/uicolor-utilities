@@ -29,8 +29,12 @@
 };
 */
 
-// Static cache of looked up color names. Used with +colorWithName:
-static NSMutableDictionary *colorNameCache = nil;
+static const char *colorNameDB;
+
+// Complete dictionary of color name -> color mappings, generated
+// by a call to +namedColors or +colorWithName:
+static NSDictionary *colorNameCache = nil;
+static NSLock *colorNameCacheLock;
 
 #if SUPPORTS_UNDOCUMENTED_API
 // UIColor_Undocumented
@@ -41,7 +45,7 @@ static NSMutableDictionary *colorNameCache = nil;
 #endif // SUPPORTS_UNDOCUMENTED_API
 
 @interface UIColor (UIColor_Expanded_Support)
-+ (UIColor *)searchForColorByName:(NSString *)cssColorName;
++ (void)populateColorNameCache;
 @end
 
 #pragma mark -
@@ -127,6 +131,18 @@ static NSMutableDictionary *colorNameCache = nil;
 	return YES;
 }
 
+- (BOOL)hue:(CGFloat *)hue saturation:(CGFloat *)saturation brightness:(CGFloat *)brightness alpha:(CGFloat *)alpha {
+	
+	CGFloat r,g,b,a;
+	if (![self red:&r green:&g blue:&b alpha:&a]) return NO;
+	
+	[UIColor red:r green:g blue:b toHue:hue saturation:saturation brightness:brightness];
+	
+	if (alpha) *alpha = a;
+	
+	return YES;
+}
+
 - (CGFloat)red {
 	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -red");
 	const CGFloat *c = CGColorGetComponents(self.CGColor);
@@ -153,8 +169,41 @@ static NSMutableDictionary *colorNameCache = nil;
 	return c[0];
 }
 
+- (CGFloat)hue {
+	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -hue");
+	CGFloat h = 0.0f;
+	[self hue:&h saturation:nil brightness:nil alpha:nil];
+	return h;
+}
+
+- (CGFloat)saturation {
+	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -saturation");
+	CGFloat s = 0.0f;
+	[self hue:nil saturation:&s brightness:nil alpha:nil];
+	return s;
+}
+
+- (CGFloat)brightness {
+	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -brightness");
+	CGFloat v = 0.0f;
+	[self hue:nil saturation:nil brightness:&v alpha:nil];
+	return v;
+}
+
 - (CGFloat)alpha {
 	return CGColorGetAlpha(self.CGColor);
+}
+
+- (CGFloat)luminance {
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use luminance");
+
+	CGFloat r,g,b;
+	if (![self red:&r green:&g blue:&b alpha:nil]) return 0.0f;
+	
+	// http://en.wikipedia.org/wiki/Luma_(video)
+	// Y = 0.2126 R + 0.7152 G + 0.0722 B
+	
+	return r*0.2126f + g*0.7152f + b*0.0722f;
 }
 
 - (UInt32)rgbHex {
@@ -163,9 +212,9 @@ static NSMutableDictionary *colorNameCache = nil;
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return 0;
 	
-	r = MIN(MAX(self.red, 0.0f), 1.0f);
-	g = MIN(MAX(self.green, 0.0f), 1.0f);
-	b = MIN(MAX(self.blue, 0.0f), 1.0f);
+	r = MIN(MAX(r, 0.0f), 1.0f);
+	g = MIN(MAX(g, 0.0f), 1.0f);
+	b = MIN(MAX(b, 0.0f), 1.0f);
 	
 	return (((int)roundf(r * 255)) << 16)
 	     | (((int)roundf(g * 255)) << 8)
@@ -175,20 +224,11 @@ static NSMutableDictionary *colorNameCache = nil;
 #pragma mark Arithmetic operations
 
 - (UIColor *)colorByLuminanceMapping {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
-	
-	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
-	
-	// http://en.wikipedia.org/wiki/Luma_(video)
-	// Y = 0.2126 R + 0.7152 G + 0.0722 B
-	return [UIColor colorWithWhite:r*0.2126f + g*0.7152f + b*0.0722f
-							 alpha:a];
-	
+	return [UIColor colorWithWhite:self.luminance alpha:1.0f];
 }
 
 - (UIColor *)colorByMultiplyingByRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
@@ -200,7 +240,7 @@ static NSMutableDictionary *colorNameCache = nil;
 }
 
 - (UIColor *)colorByAddingRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
@@ -212,7 +252,7 @@ static NSMutableDictionary *colorNameCache = nil;
 }
 
 - (UIColor *)colorByLighteningToRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
@@ -224,7 +264,7 @@ static NSMutableDictionary *colorNameCache = nil;
 }
 
 - (UIColor *)colorByDarkeningToRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
@@ -252,7 +292,7 @@ static NSMutableDictionary *colorNameCache = nil;
 }
 
 - (UIColor *)colorByMultiplyingByColor:(UIColor *)color {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
@@ -261,7 +301,7 @@ static NSMutableDictionary *colorNameCache = nil;
 }
 
 - (UIColor *)colorByAddingColor:(UIColor *)color {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
@@ -270,7 +310,7 @@ static NSMutableDictionary *colorNameCache = nil;
 }
 
 - (UIColor *)colorByLighteningToColor:(UIColor *)color {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
@@ -279,12 +319,64 @@ static NSMutableDictionary *colorNameCache = nil;
 }
 
 - (UIColor *)colorByDarkeningToColor:(UIColor *)color {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
 	
 	return [self colorByDarkeningToRed:r green:g blue:b alpha:1.0f];
+}
+
+#pragma mark Complementary Colors, etc
+
+// Pick a color that is likely to contrast well with this color
+- (UIColor *)contrastingColor {
+	return (self.luminance > 0.5f) ? [UIColor blackColor] : [UIColor whiteColor];
+}
+
+// Pick the color that is 180 degrees away in hue
+- (UIColor *)complementaryColor {
+	
+	// Convert to HSB
+	CGFloat h,s,v,a;
+	if (![self hue:&h saturation:&s brightness:&v alpha:&a]) return nil;
+		
+	// Pick color 180 degrees away
+	h += 180.0f;
+	if (h > 360.f) h -= 360.0f;
+	
+	// Create a color in RGB
+	return [UIColor colorWithHue:h saturation:s brightness:v alpha:a];
+}
+
+// Pick two colors more colors such that all three are equidistant on the color wheel
+// (120 degrees and 240 degress difference in hue from self)
+- (NSArray*)triadicColors {
+	return [self analogousColorsWithStepAngle:120.0f pairCount:1];
+}
+
+// Pick n pairs of colors, stepping in increasing steps away from this color around the wheel
+- (NSArray*)analogousColorsWithStepAngle:(CGFloat)stepAngle pairCount:(int)pairs {
+	// Convert to HSB
+	CGFloat h,s,v,a;
+	if (![self hue:&h saturation:&s brightness:&v alpha:&a]) return nil;
+	
+	NSMutableArray* colors = [NSMutableArray arrayWithCapacity:pairs * 2];
+	
+	if (stepAngle < 0.0f)
+		stepAngle *= -1.0f;
+	
+	for (int i = 1; i <= pairs; ++i) {
+		CGFloat a = fmodf(stepAngle * i, 360.0f);
+		
+		CGFloat h1 = fmodf(h + a, 360.0f);
+		CGFloat h2 = fmodf(h + 360.0f - a, 360.0f);
+		
+		[colors addObject:[UIColor colorWithHue:h1 saturation:s brightness:v alpha:a]];
+		[colors addObject:[UIColor colorWithHue:h2 saturation:s brightness:v alpha:a]];
+	}
+	
+	return [[colors copy] autorelease];
 }
 
 #pragma mark String utilities
@@ -307,6 +399,46 @@ static NSMutableDictionary *colorNameCache = nil;
 
 - (NSString *)hexStringFromColor {
 	return [NSString stringWithFormat:@"%0.6X", self.rgbHex];
+}
+
+- (NSString *)closestColorName {
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use closestColorName");
+	
+	int targetHex = self.rgbHex;
+	int rInt = (targetHex >> 16) & 0x0ff;
+	int gInt = (targetHex >> 8) & 0x0ff;
+	int bInt = (targetHex >> 0) & 0x0ff;
+	
+	float bestScore = MAXFLOAT;
+	const char* bestPos = nil;
+	
+	// Walk the colorNameDB looking for the name with closest match
+	for (const char* p = colorNameDB; (p = strchr(p, '#')); ++p) {
+		int r,g,b;
+		if (sscanf(p+1, "%2x%2x%2x", &r, &g, &b) == 3) {
+			// Calculate difference between this color and the target color
+			int rDiff = abs(rInt - r);
+			int gDiff = abs(gInt - g);
+			int bDiff = abs(bInt - b);
+			float score = logf(rDiff+1) + logf(gDiff+1) + logf(bDiff+1);
+			
+			// Track the best score/name seen
+			if (score < bestScore) {
+				bestScore = score;
+				bestPos = p;
+			}
+		}
+	}
+	
+	// bestPos now points to the # following the best name seen
+	// Backup to the start of the name and return it
+	const char* name;
+	for (name = bestPos-1; *name != ','; --name)
+		;
+	++name;
+	NSString *result = [[[NSString alloc] initWithBytes:name length:bestPos - name encoding:NSUTF8StringEncoding] autorelease];
+
+	return result;
 }
 
 + (UIColor *)colorWithString:(NSString *)stringToConvert {
@@ -345,9 +477,9 @@ static NSMutableDictionary *colorNameCache = nil;
 #pragma mark Class methods
 
 + (UIColor *)randomColor {
-	return [UIColor colorWithRed:(CGFloat)RAND_MAX / random()
-						   green:(CGFloat)RAND_MAX / random()
-							blue:(CGFloat)RAND_MAX / random()
+	return [UIColor colorWithRed:random() / (CGFloat)RAND_MAX
+						   green:random() / (CGFloat)RAND_MAX
+							blue:random() / (CGFloat)RAND_MAX
 						   alpha:1.0f];
 }
 
@@ -373,31 +505,105 @@ static NSMutableDictionary *colorNameCache = nil;
 
 // Lookup a color using css 3/svg color name
 + (UIColor *)colorWithName:(NSString *)cssColorName {
-	UIColor *color;
-	@synchronized(colorNameCache) {
-		// Look for the color in the cache
-		color = [colorNameCache objectForKey:cssColorName];
+	return [[UIColor namedColors] objectForKey:cssColorName];
+}
+
+// Return complete mapping of css3/svg color names --> colors
++ (NSDictionary *)namedColors {
+	[colorNameCacheLock lock];
+	if (colorNameCache == nil) [UIColor populateColorNameCache];
+	[colorNameCacheLock unlock];
+	return colorNameCache;
+}
+
++ (UIColor *)colorWithHue:(CGFloat)hue saturation:(CGFloat)saturation brightness:(CGFloat)brightness alpha:(CGFloat)alpha {
+	// Convert hsb to rgb
+	CGFloat r,g,b;
+	[self hue:hue saturation:saturation brightness:brightness toRed:&r green:&g blue:&b];
+	
+	// Create a color with rgb
+	return [self colorWithRed:r green:g blue:b alpha:alpha];
+}
+
+
+#pragma mark Color Space Conversions
+
++ (void)hue:(CGFloat)h saturation:(CGFloat)s brightness:(CGFloat)v toRed:(CGFloat *)pR green:(CGFloat *)pG blue:(CGFloat *)pB {
+	CGFloat r,g,b;
+	
+	// From Foley and Van Dam
+	
+	if (s == 0.0f) {
+		// Achromatic color: there is no hue
+		r = g = b = v;
+	} else {
+		// Chromatic color: there is a hue
+		if (h == 360.0f) h = 0.0f;
+		h /= 60.0f;										// h is now in [0, 6)
 		
-		if ((id)color == [NSNull null]) {
-			// If it wasn't there previously, it's still not there now
-			color = nil;
-		} else if (!color) {
-			// Color not in cache, so search for it now
-			color = [self searchForColorByName:cssColorName];
-			
-			// Set the value in cache, storing NSNull on failure
-			[colorNameCache setObject:(color ?: (id)[NSNull null])
-							   forKey:cssColorName];
+		int i = floorf(h);								// largest integer <= h
+		CGFloat f = h - i;								// fractional part of h
+		CGFloat p = v * (1 - s);
+		CGFloat q = v * (1 - (s * f));
+		CGFloat t = v * (1 - (s * (1 - f)));
+		
+		switch (i) {
+			case 0:	r = v; g = t; b = p;	break;
+			case 1:	r = q; g = v; b = p;	break;
+			case 2:	r = p; g = v; b = t;	break;
+			case 3:	r = p; g = q; b = v;	break;
+			case 4:	r = t; g = p; b = v;	break;
+			case 5:	r = v; g = p; b = q;	break;
 		}
 	}
 	
-	return color;
+	if (pR) *pR = r;
+	if (pG) *pG = g;
+	if (pB) *pB = b;
 }
+
+
++ (void)red:(CGFloat)r green:(CGFloat)g blue:(CGFloat)b toHue:(CGFloat *)pH saturation:(CGFloat *)pS brightness:(CGFloat *)pV {
+	CGFloat h,s,v;
+	
+	// From Foley and Van Dam
+	
+	CGFloat max = MAX(r, MAX(g, b));
+	CGFloat min = MIN(r, MIN(g, b));
+	
+	// Brightness
+	v = max;
+	
+	// Saturation
+	s = (max != 0.0f) ? ((max - min) / max) : 0.0f;
+	
+	if (s == 0.0f) {
+		// No saturation, so undefined hue
+		h = 0.0f;
+	} else {
+		// Determine hue
+		CGFloat rc = (max - r) / (max - min);		// Distance of color from red
+		CGFloat gc = (max - g) / (max - min);		// Distance of color from green
+		CGFloat bc = (max - b) / (max - min);		// Distance of color from blue
+		
+		if (r == max) h = bc - gc;					// resulting color between yellow and magenta
+		else if (g == max) h = 2 + rc - bc;			// resulting color between cyan and yellow
+		else /* if (b == max) */ h = 4 + gc - rc;	// resulting color between magenta and cyan
+		
+		h *= 60.0f;									// Convert to degrees
+		if (h < 0.0f) h += 360.0f;					// Make non-negative
+	}
+	
+	if (pH) *pH = h;
+	if (pS) *pS = s;
+	if (pV) *pV = v;
+}
+
 
 #pragma mark UIColor_Expanded initialization
 
 + (void)load {
-	colorNameCache = [[NSMutableDictionary alloc] init];
+	colorNameCacheLock = [[NSLock alloc] init];
 }
 
 @end
@@ -480,25 +686,30 @@ static const char *colorNameDB = ","
 	"thistle#d8bfd8,tomato#ff6347,turquoise#40e0d0,violet#ee82ee,wheat#f5deb3,"
 	"white#ffffff,whitesmoke#f5f5f5,yellow#ffff00,yellowgreen#9acd32";
 
-+ (UIColor *)searchForColorByName:(NSString *)cssColorName {
-	UIColor *result = nil;
-	
-	// Compile the string we'll use to search against the database
-	// We search for ",<colorname>#" to avoid false matches
-	const char *searchString = [[NSString stringWithFormat:@",%@#", cssColorName] UTF8String];
-	
-	// Search for the color name
-	const char *found = strstr(colorNameDB, searchString);
-	
-	// If found, step past the search string and grab the hex representation
-	if (found) {
-		const char *after = found + strlen(searchString);
-		int hex;
-		if (sscanf(after, "%x", &hex) == 1) {
-			result = [self colorWithRGBHex:hex];
-		}
++ (void)populateColorNameCache {
+	NSAssert(colorNameCache == nil, @"+pouplateColorNameCache was called when colorNameCache was not nil");
+	NSMutableDictionary *cache = [NSMutableDictionary dictionary];
+	for (const char* entry = colorNameDB; entry = strchr(entry, ','); ) {
+		
+		// Step forward to the start of the name
+		++entry;
+		
+		// Find the following hash
+		const char* h = strchr(entry, '#');
+		NSAssert(h, @"Malformed colorNameDB");
+		
+		// Get the name
+		NSString* name = [[NSString alloc] initWithBytes:entry length:h - entry encoding:NSUTF8StringEncoding];
+		
+		// Get the color, and add to the dictionary
+		int hex, increment;
+		if (sscanf(++h, "%x%n", &hex, &increment) != 1) break;
+		[cache setObject:[self colorWithRGBHex:hex] forKey:name];
+		
+		// Cleanup and move to the next item
+		[name release];
+		entry = h + increment;
 	}
-	
-	return result;
+	colorNameCache = [cache copy];
 }
 @end
