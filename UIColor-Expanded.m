@@ -236,10 +236,10 @@ static NSLock *crayolaNameCacheLock;
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
 		
-	return [UIColor colorWithRed:MAX(0.0, MIN(1.0, r * red))
-						   green:MAX(0.0, MIN(1.0, g * green)) 
-							blue:MAX(0.0, MIN(1.0, b * blue))
-						   alpha:MAX(0.0, MIN(1.0, a * alpha))];
+	return [UIColor colorWithRed:MAX(0.0f, MIN(1.0f, r * red))
+						   green:MAX(0.0f, MIN(1.0f, g * green)) 
+							blue:MAX(0.0f, MIN(1.0f, b * blue))
+						   alpha:MAX(0.0f, MIN(1.0f, a * alpha))];
 }
 
 - (UIColor *)colorByAddingRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
@@ -248,10 +248,10 @@ static NSLock *crayolaNameCacheLock;
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
 	
-	return [UIColor colorWithRed:MAX(0.0, MIN(1.0, r + red))
-						   green:MAX(0.0, MIN(1.0, g + green)) 
-							blue:MAX(0.0, MIN(1.0, b + blue))
-						   alpha:MAX(0.0, MIN(1.0, a + alpha))];
+	return [UIColor colorWithRed:MAX(0.0f, MIN(1.0f, r + red))
+						   green:MAX(0.0f, MIN(1.0f, g + green)) 
+							blue:MAX(0.0f, MIN(1.0f, b + blue))
+						   alpha:MAX(0.0f, MIN(1.0f, a + alpha))];
 }
 
 - (UIColor *)colorByLighteningToRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
@@ -370,10 +370,10 @@ static NSLock *crayolaNameCacheLock;
 		stepAngle *= -1.0f;
 	
 	for (int i = 1; i <= pairs; ++i) {
-		CGFloat a = fmodf(stepAngle * i, 360.0f);
+		CGFloat angle = fmodf(stepAngle * i, 360.0f);
 		
-		CGFloat h1 = fmodf(h + a, 360.0f);
-		CGFloat h2 = fmodf(h + 360.0f - a, 360.0f);
+		CGFloat h1 = fmodf(h + angle, 360.0f);
+		CGFloat h2 = fmodf(h + 360.0f - angle, 360.0f);
 		
 		[colors addObject:[UIColor colorWithHue:h1 saturation:s brightness:v alpha:a]];
 		[colors addObject:[UIColor colorWithHue:h2 saturation:s brightness:v alpha:a]];
@@ -740,7 +740,7 @@ static const char *crayolaNameDB = ","
 + (void)populateColorNameCache {
 	NSAssert(colorNameCache == nil, @"+pouplateColorNameCache was called when colorNameCache was not nil");
 	NSMutableDictionary *cache = [NSMutableDictionary dictionary];
-	for (const char* entry = colorNameDB; entry = strchr(entry, ','); ) {
+	for (const char* entry = colorNameDB; (entry = strchr(entry, ',')); ) {
 		
 		// Step forward to the start of the name
 		++entry;
@@ -767,7 +767,7 @@ static const char *crayolaNameDB = ","
 + (void)populateCrayolaNameCache {
 	NSAssert(crayolaNameCache == nil, @"+pouplateCrayolaNameCache was called when crayolaNameCache was not nil");
 	NSMutableDictionary *cache = [NSMutableDictionary dictionary];
-	for (const char* entry = crayolaNameDB; entry = strchr(entry, ','); ) {
+	for (const char* entry = crayolaNameDB; (entry = strchr(entry, ',')); ) {
 		
 		// Step forward to the start of the name
 		++entry;
