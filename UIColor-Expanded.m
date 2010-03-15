@@ -754,7 +754,7 @@ static const char *crayolaNameDB = ","
 		
 		// Get the color, and add to the dictionary
 		int hex, increment;
-		if (sscanf(++h, "%x%n", &hex, &increment) != 1) break;
+		if (sscanf(++h, "%x%n", &hex, &increment) != 1) {[name release]; break;} // thanks Curtis Duhn
 		[cache setObject:[self colorWithRGBHex:hex] forKey:name];
 		
 		// Cleanup and move to the next item
@@ -781,7 +781,7 @@ static const char *crayolaNameDB = ","
 		
 		// Get the color, and add to the dictionary
 		int hex, increment;
-		if (sscanf(++h, "%x%n", &hex, &increment) != 1) break;
+		if (sscanf(++h, "%x%n", &hex, &increment) != 1) {[name release]; break;} // thanks Curtis Duhn
 		[cache setObject:[self colorWithRGBHex:hex] forKey:name];
 		
 		// Cleanup and move to the next item
