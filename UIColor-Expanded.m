@@ -370,10 +370,10 @@ static NSLock *crayolaNameCacheLock;
 		stepAngle *= -1.0f;
 	
 	for (int i = 1; i <= pairs; ++i) {
-		CGFloat a = fmodf(stepAngle * i, 360.0f);
+		CGFloat angle = fmodf(stepAngle * i, 360.0f);
 		
-		CGFloat h1 = fmodf(h + a, 360.0f);
-		CGFloat h2 = fmodf(h + 360.0f - a, 360.0f);
+		CGFloat h1 = fmodf(h + angle, 360.0f);
+		CGFloat h2 = fmodf(h + 360.0f - angle, 360.0f);
 		
 		[colors addObject:[UIColor colorWithHue:h1 saturation:s brightness:v alpha:a]];
 		[colors addObject:[UIColor colorWithHue:h2 saturation:s brightness:v alpha:a]];
