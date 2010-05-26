@@ -63,6 +63,10 @@
 
 // Color builders
 + (UIColor *)randomColor;
++ (UIColor *)randomHSBColor;
++ (UIColor *)randomHSBColorWithMinSaturation:(CGFloat)minSat minBrightness:(CGFloat)minBright;
++ (UIColor *)randomNamedColor;
++ (UIColor *)randomCrayolaColor;
 + (UIColor *)colorWithString:(NSString *)stringToConvert;
 + (UIColor *)colorWithRGBHex:(UInt32)hex;
 + (UIColor *)colorWithHexString:(NSString *)stringToConvert;

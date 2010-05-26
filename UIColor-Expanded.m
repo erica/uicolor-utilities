@@ -495,6 +495,35 @@ static NSLock *crayolaNameCacheLock;
 						   alpha:1.0f];
 }
 
++ (UIColor *)randomHSBColor {
+	return [UIColor colorWithHue:random() / (CGFloat)RAND_MAX
+						   saturation:random() / (CGFloat)RAND_MAX
+                        brightness:random() / (CGFloat)RAND_MAX
+						   alpha:1.0f];
+}
+
++ (UIColor *)randomHSBColorWithMinSaturation:(CGFloat)minSat minBrightness:(CGFloat)minBright {
+    CGFloat hue = random() / (CGFloat)RAND_MAX;
+    CGFloat sat = ((random() / (CGFloat)RAND_MAX) * (1-minSat)) + minSat;
+    CGFloat brightness = ((random() / (CGFloat)RAND_MAX) * (1-minBright)) + minBright;
+	return [UIColor colorWithHue:hue
+                      saturation:sat
+                      brightness:brightness
+						   alpha:1.0f];
+}
+
++ (UIColor *)randomNamedColor {
+    NSArray *allColors = [[self namedColors] allValues];
+    int index = arc4random() % [allColors count];
+	return [allColors objectAtIndex:index];
+}
+
++ (UIColor *)randomCrayolaColor {
+    NSArray *allColors = [[self namedCrayons] allValues];
+    int index = arc4random() % [allColors count];
+	return [allColors objectAtIndex:index];
+}
+
 + (UIColor *)colorWithRGBHex:(UInt32)hex {
 	int r = (hex >> 16) & 0xFF;
 	int g = (hex >> 8) & 0xFF;
