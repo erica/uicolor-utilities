@@ -188,15 +188,17 @@ static NSMutableDictionary *colorNameCache = nil;
 }
 
 - (UIColor *)colorByMultiplyingByRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
+
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
 
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
 		
-	return [UIColor colorWithRed:MAX(0.0, MIN(1.0, r * red))
-						   green:MAX(0.0, MIN(1.0, g * green)) 
-							blue:MAX(0.0, MIN(1.0, b * blue))
-						   alpha:MAX(0.0, MIN(1.0, a * alpha))];
+	return [UIColor	colorWithRed:(CGFloat)MAX(0.0, MIN(1.0, r * red))
+			green:(CGFloat)MAX(0.0, MIN(1.0, g * green)) 
+			blue:(CGFloat)MAX(0.0, MIN(1.0, b * blue))
+			alpha:(CGFloat)MAX(0.0, MIN(1.0, a * alpha))];
+
 }
 
 - (UIColor *)colorByAddingRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
@@ -205,10 +207,10 @@ static NSMutableDictionary *colorNameCache = nil;
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
 	
-	return [UIColor colorWithRed:MAX(0.0, MIN(1.0, r + red))
-						   green:MAX(0.0, MIN(1.0, g + green)) 
-							blue:MAX(0.0, MIN(1.0, b + blue))
-						   alpha:MAX(0.0, MIN(1.0, a + alpha))];
+	return [UIColor	colorWithRed:(CGFloat)MAX(0.0, MIN(1.0, r + red))
+			green:(CGFloat)MAX(0.0, MIN(1.0, g + green)) 
+			blue:(CGFloat)MAX(0.0, MIN(1.0, b + blue))
+			alpha:(CGFloat)MAX(0.0, MIN(1.0, a + alpha))];
 }
 
 - (UIColor *)colorByLighteningToRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
