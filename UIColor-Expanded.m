@@ -167,9 +167,9 @@ static NSMutableDictionary *colorNameCache = nil;
 	g = MIN(MAX(self.green, 0.0f), 1.0f);
 	b = MIN(MAX(self.blue, 0.0f), 1.0f);
 	
-	return (((int)roundf(r * 255)) << 16)
+	return (UInt32) ((((int)roundf(r * 255)) << 16)
 	     | (((int)roundf(g * 255)) << 8)
-	     | (((int)roundf(b * 255)));
+	     | (((int)roundf(b * 255))));
 }
 
 #pragma mark Arithmetic operations
@@ -497,7 +497,7 @@ static const char *colorNameDB = ","
 		const char *after = found + strlen(searchString);
 		int hex;
 		if (sscanf(after, "%x", &hex) == 1) {
-			result = [self colorWithRGBHex:hex];
+			result = [self colorWithRGBHex:(UInt32)hex];
 		}
 	}
 	
