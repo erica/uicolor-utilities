@@ -47,7 +47,8 @@
 - (UIColor *) colorByLighteningToColor:(UIColor *)color;
 - (UIColor *)  colorByDarkeningToColor:(UIColor *)color;
 
-/*! Fraction should be between 0.0 and 1.0. */
+// Returns a color the given fraction between the receiver and the
+// target color. Fraction should be between 0.0 and 1.0.
 - (UIColor *)colorByInterpolatingToColor:(UIColor *)color byFraction:(CGFloat)fraction;
 
 // Related colors

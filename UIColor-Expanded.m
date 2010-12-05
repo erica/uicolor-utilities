@@ -336,17 +336,17 @@ static NSLock *crayolaNameCacheLock;
 	
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
-    
-    CGFloat r2,g2,b2,a2;
+
+	CGFloat r2,g2,b2,a2;
 	if (![color red:&r2 green:&g2 blue:&b2 alpha:&a2]) return nil;
-    
-    CGFloat red = r + (fraction * (r2 - r));
-    CGFloat green = g + (fraction * (g2 - g));
-    CGFloat blue = b + (fraction * (b2 - b));
-    CGFloat alpha = a + (fraction * (a2 - a));
-    
-    UIColor *new = [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
-    return new;
+
+	CGFloat red = r + (fraction * (r2 - r));
+	CGFloat green = g + (fraction * (g2 - g));
+	CGFloat blue = b + (fraction * (b2 - b));
+	CGFloat alpha = a + (fraction * (a2 - a));
+
+	UIColor *new = [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
+	return new;
 }
 
 #pragma mark Complementary Colors, etc
