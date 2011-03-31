@@ -689,7 +689,7 @@ static const char *colorNameDB = ","
 + (void)populateColorNameCache {
 	NSAssert(colorNameCache == nil, @"+pouplateColorNameCache was called when colorNameCache was not nil");
 	NSMutableDictionary *cache = [NSMutableDictionary dictionary];
-	for (const char* entry = colorNameDB; entry = strchr(entry, ','); ) {
+	for (const char* entry = colorNameDB; (entry = strchr(entry, ',')); ) {
 		
 		// Step forward to the start of the name
 		++entry;
