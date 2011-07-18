@@ -236,10 +236,10 @@ static NSLock *crayolaNameCacheLock;
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
 		
-	return [UIColor colorWithRed:MAX(0.0, MIN(1.0, r * red))
-						   green:MAX(0.0, MIN(1.0, g * green)) 
-							blue:MAX(0.0, MIN(1.0, b * blue))
-						   alpha:MAX(0.0, MIN(1.0, a * alpha))];
+	return [UIColor colorWithRed:MAX(0.0f, MIN(1.0f, r * red))
+						   green:MAX(0.0f, MIN(1.0f, g * green)) 
+							blue:MAX(0.0f, MIN(1.0f, b * blue))
+						   alpha:MAX(0.0f, MIN(1.0f, a * alpha))];
 }
 
 - (UIColor *)colorByAddingRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
@@ -248,10 +248,10 @@ static NSLock *crayolaNameCacheLock;
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
 	
-	return [UIColor colorWithRed:MAX(0.0, MIN(1.0, r + red))
-						   green:MAX(0.0, MIN(1.0, g + green)) 
-							blue:MAX(0.0, MIN(1.0, b + blue))
-						   alpha:MAX(0.0, MIN(1.0, a + alpha))];
+	return [UIColor colorWithRed:MAX(0.0f, MIN(1.0f, r + red))
+						   green:MAX(0.0f, MIN(1.0f, g + green)) 
+							blue:MAX(0.0f, MIN(1.0f, b + blue))
+						   alpha:MAX(0.0f, MIN(1.0f, a + alpha))];
 }
 
 - (UIColor *)colorByLighteningToRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
@@ -740,7 +740,7 @@ static const char *crayolaNameDB = ","
 + (void)populateColorNameCache {
 	NSAssert(colorNameCache == nil, @"+pouplateColorNameCache was called when colorNameCache was not nil");
 	NSMutableDictionary *cache = [NSMutableDictionary dictionary];
-	for (const char* entry = colorNameDB; entry = strchr(entry, ','); ) {
+	for (const char* entry = colorNameDB; (entry = strchr(entry, ',')); ) {
 		
 		// Step forward to the start of the name
 		++entry;
@@ -767,7 +767,7 @@ static const char *crayolaNameDB = ","
 + (void)populateCrayolaNameCache {
 	NSAssert(crayolaNameCache == nil, @"+pouplateCrayolaNameCache was called when crayolaNameCache was not nil");
 	NSMutableDictionary *cache = [NSMutableDictionary dictionary];
-	for (const char* entry = crayolaNameDB; entry = strchr(entry, ','); ) {
+	for (const char* entry = crayolaNameDB; (entry = strchr(entry, ',')); ) {
 		
 		// Step forward to the start of the name
 		++entry;
