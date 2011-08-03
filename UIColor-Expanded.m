@@ -553,7 +553,7 @@ static NSLock *crayolaNameCacheLock;
 #pragma mark Color Space Conversions
 
 + (void)hue:(CGFloat)h saturation:(CGFloat)s brightness:(CGFloat)v toRed:(CGFloat *)pR green:(CGFloat *)pG blue:(CGFloat *)pB {
-	CGFloat r,g,b;
+	CGFloat r = 0, g = 0, b = 0;
 	
 	// From Foley and Van Dam
 	
