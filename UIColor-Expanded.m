@@ -565,7 +565,7 @@ static NSLock *crayolaNameCacheLock;
 		if (h == 360.0f) h = 0.0f;
 		h /= 60.0f;										// h is now in [0, 6)
 		
-		int i = floorf(h);								// largest integer <= h
+		int i = (int)floorf(h);							// largest integer <= h
 		CGFloat f = h - i;								// fractional part of h
 		CGFloat p = v * (1 - s);
 		CGFloat q = v * (1 - (s * f));
