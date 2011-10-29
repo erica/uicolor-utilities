@@ -56,6 +56,7 @@
 // String representations of the color
 - (NSString *)stringFromColor;
 - (NSString *)hexStringFromColor;
+- (NSString *)cssStringFromColor;
 
 // The named color that matches this one most closely
 - (NSString *)closestColorName;
@@ -64,17 +65,21 @@
 + (UIColor *)randomColor;
 + (UIColor *)colorWithString:(NSString *)stringToConvert;
 + (UIColor *)colorWithRGBHex:(UInt32)hex;
++ (UIColor *)colorWithGray:(CGFloat)gray;
++ (UIColor *)colorWithGrayHex:(UInt8)gray;
 + (UIColor *)colorWithHexString:(NSString *)stringToConvert;
 + (UIColor *)colorWithName:(NSString *)cssColorName;
++ (UIColor *)colorWithCSSDescription:(NSString *)cssDescription;
 
 // Return a dictionary mapping color names to colors.
-// The named are from the css3 color specification.
+// The names are from the css3 color specification.
 + (NSDictionary *)namedColors;
 
 // Build a color with the given HSB values
 + (UIColor *)colorWithHue:(CGFloat)hue saturation:(CGFloat)saturation brightness:(CGFloat)brightness alpha:(CGFloat)alpha;
++ (UIColor *)colorWithHue:(CGFloat)hue saturation:(CGFloat)saturation lightness:(CGFloat)lightness alpha:(CGFloat)alpha;
 
-// Low level conversions between RGB and HSL spaces
+// Low level conversions between RGB and HSB spaces
 + (void)hue:(CGFloat)h saturation:(CGFloat)s brightness:(CGFloat)v toRed:(CGFloat *)r green:(CGFloat *)g blue:(CGFloat *)b;
 + (void)red:(CGFloat)r green:(CGFloat)g blue:(CGFloat)b toHue:(CGFloat *)h saturation:(CGFloat *)s brightness:(CGFloat *)v;
 
