@@ -33,13 +33,14 @@ static void RGBtoHSV( CGFloat r, CGFloat g, CGFloat b, CGFloat *h, CGFloat *s, C
     *h = 2 + ( b - r ) / delta; // between cyan & yellow
   else
     *h = 4 + ( r - g ) / delta; // between magenta & cyan
-  *h *= 60;               // degrees
+  *h /= 6;               // 360 degrees - scaled to 0-1
   if( *h < 0 )
-    *h += 360;
+    *h += 1;
 }
 
 static void HSVtoRGB( CGFloat *r, CGFloat *g, CGFloat *b, CGFloat h, CGFloat s, CGFloat v )
 {
+  /// NOT converted to use the 0-1 Hue
   int i;
   float f, p, q, t;
   if( s == 0 ) {
