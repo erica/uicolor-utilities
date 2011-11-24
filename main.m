@@ -1,9 +1,11 @@
 #import <UIKit/UIKit.h>
 #import "UIColor-Expanded.h"
+#import "UIColor-HSV.h"
 
 #define RED_SLIDER		101
 #define GREEN_SLIDER	102
 #define BLUE_SLIDER		103
+#define HSV_LABEL  		104
 
 @interface HelloController : UIViewController {
 	UIColor *bgcolor;
@@ -15,14 +17,15 @@
 @synthesize bgcolor;
 
 - (void)getInfo {
-	self.title = [self.bgcolor hexStringFromColor];
+  self.title = [self.bgcolor hexStringFromColor];
+
 	// self.bgcolor = [UIColor colorWithString:[self.bgcolor stringFromColor]];
-	// self.title = [self.bgcolor stringFromColor];
+  // self.title = [self.bgcolor stringFromColor];
 	// printf("%f\n", self.bgcolor.green);
 }
 
 - (void)update:(UISlider *)aSlider {
-	float r, g, b;
+	CGFloat r, g, b;
 	
 	r = [(UISlider *)[self.view viewWithTag:RED_SLIDER] value];
 	g = [(UISlider *)[self.view viewWithTag:GREEN_SLIDER] value];
@@ -30,6 +33,14 @@
 	
 	self.bgcolor = [UIColor colorWithRed:r green:g blue:b alpha:1.0f];
 	[self.view setBackgroundColor:bgcolor];
+  
+  CGFloat h, s, v, a;
+  UILabel *label = (UILabel *)[self.view viewWithTag:HSV_LABEL];
+  [self.bgcolor getHue:&h saturation:&s brightness:&v alpha:&a];
+  label.text = [NSString stringWithFormat:@"h:%.0f s:%.02f v:%.02f", h, s, v];
+  label.textColor = (v > 0.6) ? [UIColor blackColor] : [UIColor whiteColor];
+  
+  self.title = [self.bgcolor hexStringFromColor];
 }
 
 - (void)loadView {
@@ -77,6 +88,12 @@
 	[contentView addSubview:s3];
 	[s3 release];
 	
+  UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 350, 320, 30)];
+  label.tag = HSV_LABEL;
+  label.backgroundColor = [UIColor clearColor];
+  label.textAlignment = UITextAlignmentCenter;
+  [contentView addSubview:label];
+  [label release];
 	[contentView release];
 }
 @end
