@@ -11,6 +11,7 @@
 @property (nonatomic, readonly) CGFloat white; // Only valid if colorSpaceModel == kCGColorSpaceModelMonochrome
 @property (nonatomic, readonly) CGFloat alpha;
 @property (nonatomic, readonly) UInt32 rgbHex;
+@property (nonatomic, readonly) UInt32 rgbaHex;
 
 - (NSString *)colorSpaceString;
 
@@ -37,11 +38,14 @@
 
 - (NSString *)stringFromColor;
 - (NSString *)hexStringFromColor;
+- (NSString *)hexStringFromColorAndAlpha;
 
 + (UIColor *)randomColor;
 + (UIColor *)colorWithString:(NSString *)stringToConvert;
 + (UIColor *)colorWithRGBHex:(UInt32)hex;
++ (UIColor *)colorWithRGBAHex:(UInt32)hex;
 + (UIColor *)colorWithHexString:(NSString *)stringToConvert;
++ (UIColor *)colorAndAlphaWithHexString:(NSString *)stringToConvert;
 
 + (UIColor *)colorWithName:(NSString *)cssColorName;
 
