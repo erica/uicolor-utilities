@@ -509,6 +509,9 @@ static NSLock *crayolaNameCacheLock;
 // Returns a UIColor by scanning the string for a hex number and passing that to +[UIColor colorWithRGBHex:]
 // Skips any leading whitespace and ignores any trailing characters
 + (UIColor *)colorWithHexString:(NSString *)stringToConvert {
+	if ([stringToConvert hasPrefix:@"#"]) {
+		stringToConvert = [stringToConvert substringFromIndex:1];
+	}
 	NSScanner *scanner = [NSScanner scannerWithString:stringToConvert];
 	unsigned hexNum;
 	if (![scanner scanHexInt:&hexNum]) return nil;
