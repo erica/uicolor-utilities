@@ -69,6 +69,10 @@
 + (UIColor *)colorWithName:(NSString *)cssColorName;
 + (UIColor *)crayonWithName:(NSString *)crayonColorName;
 
++ (UIColor *)colorWithNormalizedRGBDictionary:(NSDictionary *)colorDict;
++ (UIColor *)colorWithByteRGBDictionary:(NSDictionary *)colorDict;
++ (UIColor *)colorWithRGBDictionary:(NSDictionary *)colorDict;
+
 // Return a dictionary mapping color names to colors.
 // The named are from the css3 color specification.
 + (NSDictionary *)namedColors;
