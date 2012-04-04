@@ -68,8 +68,6 @@
 + (UIColor *)randomColor;
 + (UIColor *)randomHSBColor;
 + (UIColor *)randomHSBColorWithMinSaturation:(CGFloat)minSat minBrightness:(CGFloat)minBright;
-+ (UIColor *)randomNamedColor;
-+ (UIColor *)randomCrayolaColor;
 + (UIColor *)colorWithString:(NSString *)stringToConvert;
 + (UIColor *)colorWithRGBHex:(UInt32)hex;
 + (UIColor *)colorWithRGBAHex:(UInt32)hex;
@@ -85,14 +83,6 @@
 + (UIColor *)colorWithNormalizedRGBDictionary:(NSDictionary *)colorDict;
 + (UIColor *)colorWithByteRGBDictionary:(NSDictionary *)colorDict;
 + (UIColor *)colorWithRGBDictionary:(NSDictionary *)colorDict;
-
-// Return a dictionary mapping color names to colors.
-// The names are from the css3 color specification.
-+ (NSDictionary *)namedColors;
-
-// Return a dictionary mapping color names to colors
-// The named are standard Crayola style colors
-+ (NSDictionary *)namedCrayons;
 
 // Build a color with the given HSB values
 + (UIColor *)colorWithHue:(CGFloat)hue saturation:(CGFloat)saturation brightness:(CGFloat)brightness alpha:(CGFloat)alpha;

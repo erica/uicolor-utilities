@@ -4,10 +4,10 @@
 //  Created by Bill Shirley on 11/23/11.
 //
 
-#import "UIColor-HSV.h"
-#import "UIColor-Expanded.h"
+#import "UIColor+HSV.h"
+#import "UIColor+Expanded.h"
 
-@implementation UIColor (UIColor_HSB)
+@implementation UIColor (HSB)
 
 /* Functions from Dustin at
  http://stackoverflow.com/questions/5284427/how-do-i-get-the-hue-saturation-and-brightness-from-a-uicolor

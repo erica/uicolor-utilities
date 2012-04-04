@@ -6,7 +6,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UIColor (UIColor_HSB)
+@interface UIColor (HSB)
 
 - (BOOL)canProvideHSBComponents;
 - (BOOL)getHue:(CGFloat *)h saturation:(CGFloat *)s brightness:(CGFloat *)v alpha:(CGFloat *)a;
