@@ -1,5 +1,5 @@
 #import <UIKit/UIKit.h>
-#import "UIColor-Expanded.h"
+#import "UIColor+Expanded.h"
 
 #define INFO				100
 

@@ -1,4 +1,4 @@
-#import "UIColor-Expanded.h"
+#import "UIColor+Expanded.h"
 
 /*
  
@@ -542,6 +542,9 @@ static NSLock *crayolaNameCacheLock;
 // Returns a UIColor by scanning the string for a hex number and passing that to +[UIColor colorWithRGBHex:]
 // Skips any leading whitespace and ignores any trailing characters
 + (UIColor *)colorWithHexString:(NSString *)stringToConvert {
+	if ([stringToConvert hasPrefix:@"#"]) {
+		stringToConvert = [stringToConvert substringFromIndex:1];
+	}
 	NSScanner *scanner = [NSScanner scannerWithString:stringToConvert];
 	unsigned hexNum;
 	if (![scanner scanHexInt:&hexNum]) return nil;
@@ -832,4 +835,43 @@ static const char *crayolaNameDB = ","
 	}
 	crayolaNameCache = [cache copy];
 }
+
++ (UIColor *)colorWithByteRGBDictionary:(NSDictionary *)colorDict {
+	UIColor *color = [UIColor colorWithRed:[[colorDict objectForKey:@"red"] floatValue]/255
+									 green:[[colorDict objectForKey:@"green"] floatValue]/255
+									  blue:[[colorDict objectForKey:@"blue"] floatValue]/255
+									 alpha:[[colorDict objectForKey:@"alpha"] floatValue]/255
+					  ];
+	return color;
+}
+
+
++ (UIColor *)colorWithNormalizedRGBDictionary:(NSDictionary *)colorDict {
+	UIColor *color = [UIColor colorWithRed:[[colorDict objectForKey:@"red"] floatValue]
+									 green:[[colorDict objectForKey:@"green"] floatValue]
+									  blue:[[colorDict objectForKey:@"blue"] floatValue]
+									 alpha:[[colorDict objectForKey:@"alpha"] floatValue]
+					  ];
+	return color;
+}
+
+
++ (UIColor *)colorWithRGBDictionary:(NSDictionary *)colorDict {
+	UIColor *color = nil;
+	
+	if (
+		[[colorDict objectForKey:@"red"] floatValue] <= 1.0 &&
+		[[colorDict objectForKey:@"blue"] floatValue] <= 1.0 &&
+		[[colorDict objectForKey:@"green"] floatValue] <= 1.0 &&
+		[[colorDict objectForKey:@"alpha"] floatValue] <= 1.0
+		) {
+		
+		color = [UIColor colorWithNormalizedRGBDictionary:colorDict];
+		
+	} else {
+		color = [UIColor colorWithByteRGBDictionary:colorDict];
+	}
+	return color;
+}
+
 @end
