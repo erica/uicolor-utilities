@@ -19,6 +19,7 @@
 @property (nonatomic, readonly) CGFloat alpha;
 @property (nonatomic, readonly) CGFloat luminance;
 @property (nonatomic, readonly) UInt32 rgbHex;
+@property (nonatomic, readonly) UInt32 rgbaHex;
 
 - (NSString *)colorSpaceString;
 - (NSArray *)arrayFromRGBAComponents;
@@ -56,6 +57,7 @@
 // String representations of the color
 - (NSString *)stringFromColor;
 - (NSString *)hexStringFromColor;
+- (NSString *)hexStringFromColorAndAlpha;
 
 // The named color that matches this one most closely
 - (NSString *)closestColorName;
@@ -65,7 +67,10 @@
 + (UIColor *)randomColor;
 + (UIColor *)colorWithString:(NSString *)stringToConvert;
 + (UIColor *)colorWithRGBHex:(UInt32)hex;
++ (UIColor *)colorWithRGBAHex:(UInt32)hex;
 + (UIColor *)colorWithHexString:(NSString *)stringToConvert;
++ (UIColor *)colorAndAlphaWithHexString:(NSString *)stringToConvert;
+
 + (UIColor *)colorWithName:(NSString *)cssColorName;
 + (UIColor *)crayonWithName:(NSString *)crayonColorName;
 

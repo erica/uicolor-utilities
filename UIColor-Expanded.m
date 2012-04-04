@@ -224,6 +224,23 @@ static NSLock *crayolaNameCacheLock;
 	     | (((int)roundf(b * 255)));
 }
 
+- (UInt32)rgbaHex {
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGBA color to use rgbaHex");
+	
+	CGFloat r,g,b,a;
+	if (![self red:&r green:&g blue:&b alpha:&a]) return 0;
+	
+	r = MIN(MAX(self.red, 0.0f), 1.0f);
+	g = MIN(MAX(self.green, 0.0f), 1.0f);
+	b = MIN(MAX(self.blue, 0.0f), 1.0f);
+	a = MIN(MAX(self.alpha, 0.0f), 1.0f);
+	
+	return (((int)roundf(r * 255)) << 24)
+		 | (((int)roundf(g * 255)) << 16)
+		 | (((int)roundf(b * 255)) <<  8)
+		 | (((int)roundf(b * 255))	    );
+}
+
 #pragma mark Arithmetic operations
 
 - (UIColor *)colorByLuminanceMapping {
@@ -453,6 +470,10 @@ static NSLock *crayolaNameCacheLock;
 	return [self closestColorNameFor:crayolaNameDB];
 }
 
+- (NSString *)hexStringFromColorAndAlpha {
+	return [NSString stringWithFormat:@"%0.8X", self.rgbaHex];
+}
+
 + (UIColor *)colorWithString:(NSString *)stringToConvert {
 	NSScanner *scanner = [NSScanner scannerWithString:stringToConvert];
 	if (![scanner scanString:@"{" intoString:NULL]) return nil;
@@ -506,6 +527,18 @@ static NSLock *crayolaNameCacheLock;
 						   alpha:1.0f];
 }
 
++ (UIColor *)colorWithRGBAHex:(UInt32)hex {
+	int r = (hex >> 24) & 0xFF;
+	int g = (hex >> 16) & 0xFF;
+	int b = (hex >> 8) & 0xFF;
+	int a = (hex) & 0xFF;
+	
+	return [UIColor colorWithRed:r / 255.0f
+						   green:g / 255.0f
+							blue:b / 255.0f
+						   alpha:a / 255.0f];
+}
+
 // Returns a UIColor by scanning the string for a hex number and passing that to +[UIColor colorWithRGBHex:]
 // Skips any leading whitespace and ignores any trailing characters
 + (UIColor *)colorWithHexString:(NSString *)stringToConvert {
@@ -513,6 +546,15 @@ static NSLock *crayolaNameCacheLock;
 	unsigned hexNum;
 	if (![scanner scanHexInt:&hexNum]) return nil;
 	return [UIColor colorWithRGBHex:hexNum];
+}
+
+// Returns a UIColor by scanning the string for a hex number and passing that to +[UIColor colorWithRGBAHex:]
+// Skips any leading whitespace and ignores any trailing characters
++ (UIColor *)colorAndAlphaWithHexString:(NSString *)stringToConvert {
+	NSScanner *scanner = [NSScanner scannerWithString:stringToConvert];
+	unsigned hexNum;
+	if (![scanner scanHexInt:&hexNum]) return nil;
+	return [UIColor colorWithRGBAHex:hexNum];
 }
 
 // Lookup a color using css 3/svg color name
