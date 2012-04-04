@@ -1098,9 +1098,7 @@ static const char *_CrayolaNameDB = ","
 		[[colorDict objectForKey:@"green"] floatValue] <= 1.0 &&
 		[[colorDict objectForKey:@"alpha"] floatValue] <= 1.0
 		) {
-		
 		color = [UIColor colorWithNormalizedRGBDictionary:colorDict];
-		
 	} else {
 		color = [UIColor colorWithByteRGBDictionary:colorDict];
 	}
