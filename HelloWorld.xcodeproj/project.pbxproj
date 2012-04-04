@@ -228,7 +228,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 				PRODUCT_NAME = "Oh Hello";
-				SDKROOT = iphoneos2.0;
+				SDKROOT = iphoneos;
 			};
 			name = Debug;
 		};
@@ -237,7 +237,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				PREBINDING = NO;
-				SDKROOT = iphoneos2.0;
+				SDKROOT = iphoneos;
 			};
 			name = Release;
 		};
