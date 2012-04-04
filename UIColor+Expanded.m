@@ -219,9 +219,9 @@ static NSLock *crayolaNameCacheLock;
 	g = MIN(MAX(g, 0.0f), 1.0f);
 	b = MIN(MAX(b, 0.0f), 1.0f);
 	
-	return (((int)roundf(r * 255)) << 16)
+	return (UInt32) ((((int)roundf(r * 255)) << 16)
 	     | (((int)roundf(g * 255)) << 8)
-	     | (((int)roundf(b * 255)));
+	     | (((int)roundf(b * 255))));
 }
 
 - (UInt32)rgbaHex {
@@ -248,15 +248,16 @@ static NSLock *crayolaNameCacheLock;
 }
 
 - (UIColor *)colorByMultiplyingByRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
+
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
 
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
 		
-	return [UIColor colorWithRed:MAX(0.0f, MIN(1.0f, r * red))
-						   green:MAX(0.0f, MIN(1.0f, g * green)) 
-							blue:MAX(0.0f, MIN(1.0f, b * blue))
-						   alpha:MAX(0.0f, MIN(1.0f, a * alpha))];
+	return [UIColor colorWithRed:(CGFloat)MAX(0.0f, MIN(1.0f, r * red))
+						   green:(CGFloat)MAX(0.0f, MIN(1.0f, g * green)) 
+							blue:(CGFloat)MAX(0.0f, MIN(1.0f, b * blue))
+						   alpha:(CGFloat)MAX(0.0f, MIN(1.0f, a * alpha))];
 }
 
 - (UIColor *)colorByAddingRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
@@ -265,10 +266,10 @@ static NSLock *crayolaNameCacheLock;
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
 	
-	return [UIColor colorWithRed:MAX(0.0f, MIN(1.0f, r + red))
-						   green:MAX(0.0f, MIN(1.0f, g + green)) 
-							blue:MAX(0.0f, MIN(1.0f, b + blue))
-						   alpha:MAX(0.0f, MIN(1.0f, a + alpha))];
+	return [UIColor colorWithRed:(CGFloat)MAX(0.0f, MIN(1.0f, r + red))
+						   green:(CGFloat)MAX(0.0f, MIN(1.0f, g + green)) 
+							blue:(CGFloat)MAX(0.0f, MIN(1.0f, b + blue))
+						   alpha:(CGFloat)MAX(0.0f, MIN(1.0f, a + alpha))];
 }
 
 - (UIColor *)colorByLighteningToRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
@@ -1019,7 +1020,7 @@ static const char *crayolaNameDB = ","
 		// Get the color, and add to the dictionary
 		int hex, increment;
 		if (sscanf(++h, "%x%n", &hex, &increment) != 1) {[name release]; break;} // thanks Curtis Duhn
-		[cache setObject:[self colorWithRGBHex:hex] forKey:name];
+		[cache setObject:[self colorWithRGBHex:(UInt32)hex] forKey:name];
 		
 		// Cleanup and move to the next item
 		[name release];
