@@ -1,18 +1,14 @@
 #import <UIKit/UIKit.h>
 
-#define SUPPORTS_UNDOCUMENTED_API	0
+@interface UIColor (Expanded)
 
-@interface UIColor (UIColor_Expanded)
 @property (nonatomic, readonly) CGColorSpaceModel colorSpaceModel;
 @property (nonatomic, readonly) BOOL canProvideRGBComponents;
 
-// With the exception of -alpha, these properties will function
-// correctly only if this color is an RGB or white color.
-// In these cases, canProvideRGBComponents returns YES.
-@property (nonatomic, readonly) CGFloat red;
-@property (nonatomic, readonly) CGFloat green;
-@property (nonatomic, readonly) CGFloat blue;
-@property (nonatomic, readonly) CGFloat white;
+@property (nonatomic, readonly) CGFloat red;	// Only valid if canProvideRGBComponents is YES
+@property (nonatomic, readonly) CGFloat green;	// Only valid if canProvideRGBComponents is YES
+@property (nonatomic, readonly) CGFloat blue;	// Only valid if canProvideRGBComponents is YES
+@property (nonatomic, readonly) CGFloat white;	// Only valid if colorSpaceModel == kCGColorSpaceModelMonochrome
 @property (nonatomic, readonly) CGFloat hue;
 @property (nonatomic, readonly) CGFloat saturation;
 @property (nonatomic, readonly) CGFloat brightness;
@@ -103,12 +99,3 @@
 + (void)red:(CGFloat)r green:(CGFloat)g blue:(CGFloat)b toHue:(CGFloat *)h saturation:(CGFloat *)s brightness:(CGFloat *)v;
 
 @end
-
-#if SUPPORTS_UNDOCUMENTED_API
-// UIColor_Undocumented_Expanded
-// Methods which rely on undocumented methods of UIColor
-@interface UIColor (UIColor_Undocumented_Expanded)
-- (NSString *)fetchStyleString;
-- (UIColor *)rgbColor; // Via Poltras
-@end
-#endif // SUPPORTS_UNDOCUMENTED_API
