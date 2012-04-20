@@ -85,7 +85,9 @@
 + (UIColor *)colorWithRGBDictionary:(NSDictionary *)colorDict;
 
 // Build a color with the given HSB values
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 50000
 + (UIColor *)colorWithHue:(CGFloat)hue saturation:(CGFloat)saturation brightness:(CGFloat)brightness alpha:(CGFloat)alpha;
+#endif
 + (UIColor *)colorWithHue:(CGFloat)hue saturation:(CGFloat)saturation lightness:(CGFloat)lightness alpha:(CGFloat)alpha;
 
 // Low level conversions between RGB and HSB spaces
