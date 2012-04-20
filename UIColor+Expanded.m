@@ -475,7 +475,12 @@ static NSMutableDictionary *_CrayolaNameCache = nil;
 		[colors addObject:[UIColor colorWithHue:h2 saturation:s brightness:v alpha:a]];
 	}
 	
+#if __has_feature(objc_arc)
 	return [colors copy];
+#else
+    return [[colors copy] autorelease];
+#endif
+    
 }
 
 #pragma mark String utilities
@@ -552,7 +557,9 @@ static NSMutableDictionary *_CrayolaNameCache = nil;
 		;
 	++name;
 	NSString *result = [[NSString alloc] initWithBytes:name length:bestPos - name encoding:NSUTF8StringEncoding];
-	
+#if !__has_feature(objc_arc)
+    [result autorelease];
+#endif
 	return result;
 }
 
