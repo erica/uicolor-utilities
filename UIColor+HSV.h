@@ -9,7 +9,11 @@
 @interface UIColor (HSB)
 
 - (BOOL)canProvideHSBComponents;
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 50000
 - (BOOL)getHue:(CGFloat *)h saturation:(CGFloat *)s brightness:(CGFloat *)v alpha:(CGFloat *)a;
+#endif
+
 - (CGFloat)hue;
 - (CGFloat)saturation;
 - (CGFloat)brightness;

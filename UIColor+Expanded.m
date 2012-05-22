@@ -475,7 +475,12 @@ static NSMutableDictionary *_CrayolaNameCache = nil;
 		[colors addObject:[UIColor colorWithHue:h2 saturation:s brightness:v alpha:a]];
 	}
 	
-	return [[colors copy] autorelease];
+#if __has_feature(objc_arc)
+	return [colors copy];
+#else
+    return [[colors copy] autorelease];
+#endif
+    
 }
 
 #pragma mark String utilities
@@ -551,8 +556,10 @@ static NSMutableDictionary *_CrayolaNameCache = nil;
 	for (name = bestPos-1; *name != ','; --name)
 		;
 	++name;
-	NSString *result = [[[NSString alloc] initWithBytes:name length:bestPos - name encoding:NSUTF8StringEncoding] autorelease];
-	
+	NSString *result = [[NSString alloc] initWithBytes:name length:bestPos - name encoding:NSUTF8StringEncoding];
+#if !__has_feature(objc_arc)
+    [result autorelease];
+#endif
 	return result;
 }
 
@@ -891,6 +898,7 @@ static NSMutableDictionary *_CrayolaNameCache = nil;
 	}
 }
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 50000
 + (UIColor *)colorWithHue:(CGFloat)hue saturation:(CGFloat)saturation brightness:(CGFloat)brightness alpha:(CGFloat)alpha {
 
 	// Convert hsb to rgb
@@ -900,6 +908,7 @@ static NSMutableDictionary *_CrayolaNameCache = nil;
 	// Create a color with rgb
 	return [self colorWithRed:r green:g blue:b alpha:alpha];
 }
+#endif
 
 + (UIColor *)colorWithHue:(CGFloat)hue saturation:(CGFloat)saturation lightness:(CGFloat)lightness alpha:(CGFloat)alpha {
 

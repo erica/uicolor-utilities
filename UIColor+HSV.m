@@ -98,6 +98,7 @@ static void HSVtoRGB( CGFloat *r, CGFloat *g, CGFloat *b, CGFloat h, CGFloat s, 
 	}
 }
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 50000
 - (BOOL)getHue:(CGFloat *)h saturation:(CGFloat *)s brightness:(CGFloat *)v alpha:(CGFloat *)a {
   CGFloat r, g, b;
   BOOL result = [self red:&r green:&g blue:&b alpha:a];
@@ -107,6 +108,7 @@ static void HSVtoRGB( CGFloat *r, CGFloat *g, CGFloat *b, CGFloat h, CGFloat s, 
   RGBtoHSV(r, g, b, h, s, v);
   return YES;
 }
+#endif
 
 - (CGFloat)hue {
   CGFloat h, s, v, a;
