@@ -549,6 +549,7 @@ static NSMutableDictionary *_CrayolaNameCache = nil;
 			}
 		}
 	}
+    assert(bestPos);
 	
 	// bestPos now points to the # following the best name seen
 	// Backup to the start of the name and return it
