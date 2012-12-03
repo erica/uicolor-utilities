@@ -1,24 +1,21 @@
 #import <UIKit/UIKit.h>
 
-#define SUPPORTS_UNDOCUMENTED_API	0
+@interface UIColor (Expanded)
 
-@interface UIColor (UIColor_Expanded)
 @property (nonatomic, readonly) CGColorSpaceModel colorSpaceModel;
 @property (nonatomic, readonly) BOOL canProvideRGBComponents;
 
-// With the exception of -alpha, these properties will function
-// correctly only if this color is an RGB or white color.
-// In these cases, canProvideRGBComponents returns YES.
-@property (nonatomic, readonly) CGFloat red;
-@property (nonatomic, readonly) CGFloat green;
-@property (nonatomic, readonly) CGFloat blue;
-@property (nonatomic, readonly) CGFloat white;
+@property (nonatomic, readonly) CGFloat red;	// Only valid if canProvideRGBComponents is YES
+@property (nonatomic, readonly) CGFloat green;	// Only valid if canProvideRGBComponents is YES
+@property (nonatomic, readonly) CGFloat blue;	// Only valid if canProvideRGBComponents is YES
+@property (nonatomic, readonly) CGFloat white;	// Only valid if colorSpaceModel == kCGColorSpaceModelMonochrome
 @property (nonatomic, readonly) CGFloat hue;
 @property (nonatomic, readonly) CGFloat saturation;
 @property (nonatomic, readonly) CGFloat brightness;
 @property (nonatomic, readonly) CGFloat alpha;
 @property (nonatomic, readonly) CGFloat luminance;
 @property (nonatomic, readonly) UInt32 rgbHex;
+@property (nonatomic, readonly) UInt32 rgbaHex;
 
 - (NSString *)colorSpaceString;
 - (NSArray *)arrayFromRGBAComponents;
@@ -47,6 +44,10 @@
 - (UIColor *) colorByLighteningToColor:(UIColor *)color;
 - (UIColor *)  colorByDarkeningToColor:(UIColor *)color;
 
+// Returns a color the given fraction between the receiver and the
+// target color. Fraction should be between 0.0 and 1.0.
+- (UIColor *)colorByInterpolatingToColor:(UIColor *)color byFraction:(CGFloat)fraction;
+
 // Related colors
 - (UIColor *)contrastingColor;			// A good contrasting color: will be either black or white
 - (UIColor *)complementaryColor;		// A complementary color that should look good with this color
@@ -56,6 +57,8 @@
 // String representations of the color
 - (NSString *)stringFromColor;
 - (NSString *)hexStringFromColor;
+- (NSString *)hexStringFromColorAndAlpha;
+- (NSString *)cssStringFromColor;
 
 // The named color that matches this one most closely
 - (NSString *)closestColorName;
@@ -63,34 +66,32 @@
 
 // Color builders
 + (UIColor *)randomColor;
++ (UIColor *)randomHSBColor;
++ (UIColor *)randomHSBColorWithMinSaturation:(CGFloat)minSat minBrightness:(CGFloat)minBright;
 + (UIColor *)colorWithString:(NSString *)stringToConvert;
 + (UIColor *)colorWithRGBHex:(UInt32)hex;
++ (UIColor *)colorWithRGBAHex:(UInt32)hex;
++ (UIColor *)colorWithGray:(CGFloat)gray;
++ (UIColor *)colorWithGrayHex:(UInt8)gray;
 + (UIColor *)colorWithHexString:(NSString *)stringToConvert;
++ (UIColor *)colorAndAlphaWithHexString:(NSString *)stringToConvert;
+
 + (UIColor *)colorWithName:(NSString *)cssColorName;
++ (UIColor *)colorWithCSSDescription:(NSString *)cssDescription;
 + (UIColor *)crayonWithName:(NSString *)crayonColorName;
 
-// Return a dictionary mapping color names to colors.
-// The named are from the css3 color specification.
-+ (NSDictionary *)namedColors;
-
-// Return a dictionary mapping color names to colors
-// The named are standard Crayola style colors
-+ (NSDictionary *)namedCrayons;
++ (UIColor *)colorWithNormalizedRGBDictionary:(NSDictionary *)colorDict;
++ (UIColor *)colorWithByteRGBDictionary:(NSDictionary *)colorDict;
++ (UIColor *)colorWithRGBDictionary:(NSDictionary *)colorDict;
 
 // Build a color with the given HSB values
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 50000
 + (UIColor *)colorWithHue:(CGFloat)hue saturation:(CGFloat)saturation brightness:(CGFloat)brightness alpha:(CGFloat)alpha;
+#endif
++ (UIColor *)colorWithHue:(CGFloat)hue saturation:(CGFloat)saturation lightness:(CGFloat)lightness alpha:(CGFloat)alpha;
 
-// Low level conversions between RGB and HSL spaces
+// Low level conversions between RGB and HSB spaces
 + (void)hue:(CGFloat)h saturation:(CGFloat)s brightness:(CGFloat)v toRed:(CGFloat *)r green:(CGFloat *)g blue:(CGFloat *)b;
 + (void)red:(CGFloat)r green:(CGFloat)g blue:(CGFloat)b toHue:(CGFloat *)h saturation:(CGFloat *)s brightness:(CGFloat *)v;
 
 @end
-
-#if SUPPORTS_UNDOCUMENTED_API
-// UIColor_Undocumented_Expanded
-// Methods which rely on undocumented methods of UIColor
-@interface UIColor (UIColor_Undocumented_Expanded)
-- (NSString *)fetchStyleString;
-- (UIColor *)rgbColor; // Via Poltras
-@end
-#endif // SUPPORTS_UNDOCUMENTED_API

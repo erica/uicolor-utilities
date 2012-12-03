@@ -1,4 +1,4 @@
-#import "UIColor-Expanded.h"
+#import "UIColor+Expanded.h"
 
 /*
  
@@ -7,60 +7,34 @@
  
 */
 
-/*
- Current outstanding request list:
- 
- - PolarBearFarm - color descriptions ([UIColor warmGrayWithHintOfBlueTouchOfRedAndSplashOfYellowColor])
- - Eridius - UIColor needs a method that takes 2 colors and gives a third complementary one
- - Consider UIMutableColor that can be adjusted (brighter, cooler, warmer, thicker-alpha, etc)
- */
+/* Static cache of looked up color names. Used with +colorWithName: */
+static NSMutableDictionary *_ColorNameCache = nil;
+static NSMutableDictionary *_CrayolaNameCache = nil;
 
-/*
- FOR REFERENCE: Color Space Models: enum CGColorSpaceModel {
-	kCGColorSpaceModelUnknown = -1,
-	kCGColorSpaceModelMonochrome,
-	kCGColorSpaceModelRGB,
-	kCGColorSpaceModelCMYK,
-	kCGColorSpaceModelLab,
-	kCGColorSpaceModelDeviceN,
-	kCGColorSpaceModelIndexed,
-	kCGColorSpaceModelPattern
-};
-*/
+@interface UIColor (Expanded_Private)
 
-static const char *colorNameDB;
-static const char *crayolaNameDB;
++ (UIColor *)__searchForColorByName:(NSString *)cssColorName;
++ (UIColor *)__searchForCrayolaByName:(NSString *)crayolaColorName;
 
-// Complete dictionary of color name -> color mappings, generated
-// by a call to +namedColors or +colorWithName:
-static NSDictionary *colorNameCache = nil;
-static NSDictionary *crayolaNameCache = nil;
-static NSLock *colorNameCacheLock;
-static NSLock *crayolaNameCacheLock;
-
-#if SUPPORTS_UNDOCUMENTED_API
-// UIColor_Undocumented
-// Undocumented methods of UIColor
-@interface UIColor (UIColor_Undocumented)
-- (NSString *)styleString;
-@end
-#endif // SUPPORTS_UNDOCUMENTED_API
-
-@interface UIColor (UIColor_Expanded_Support)
-+ (void)populateColorNameCache;
-+ (void)populateCrayolaNameCache;
 @end
 
-#pragma mark -
+@implementation UIColor (Expanded)
 
-@implementation UIColor (UIColor_Expanded)
++ (void)load {
+	
+	_ColorNameCache = [[NSMutableDictionary alloc] init];
+	_CrayolaNameCache = [[NSMutableDictionary alloc] init];
+}
 
 - (CGColorSpaceModel)colorSpaceModel {
+	
 	return CGColorSpaceGetModel(CGColorGetColorSpace(self.CGColor));
 }
 
 - (NSString *)colorSpaceString {
+	
 	switch (self.colorSpaceModel) {
+			
 		case kCGColorSpaceModelUnknown:
 			return @"kCGColorSpaceModelUnknown";
 		case kCGColorSpaceModelMonochrome:
@@ -83,6 +57,7 @@ static NSLock *crayolaNameCacheLock;
 }
 
 - (BOOL)canProvideRGBComponents {
+	
 	switch (self.colorSpaceModel) {
 		case kCGColorSpaceModelRGB:
 		case kCGColorSpaceModelMonochrome:
@@ -93,10 +68,13 @@ static NSLock *crayolaNameCacheLock;
 }
 
 - (NSArray *)arrayFromRGBAComponents {
+	
 	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -arrayFromRGBAComponents");
 
-	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
+	CGFloat r, g, b, a;
+	if (![self red:&r green:&g blue:&b alpha:&a]) {
+		return nil;
+	}
 	
 	return [NSArray arrayWithObjects:
 			[NSNumber numberWithFloat:r],
@@ -107,6 +85,7 @@ static NSLock *crayolaNameCacheLock;
 }
 
 - (BOOL)red:(CGFloat *)red green:(CGFloat *)green blue:(CGFloat *)blue alpha:(CGFloat *)alpha {
+	
 	const CGFloat *components = CGColorGetComponents(self.CGColor);
 	
 	CGFloat r,g,b,a;
@@ -126,10 +105,21 @@ static NSLock *crayolaNameCacheLock;
 			return NO;
 	}
 	
-	if (red) *red = r;
-	if (green) *green = g;
-	if (blue) *blue = b;
-	if (alpha) *alpha = a;
+	if (red) {
+		*red = r;
+	}
+	
+	if (green) {
+		*green = g;
+	}
+	
+	if (blue) {
+		*blue = b;
+	}
+	
+	if (alpha) {
+		*alpha = a;
+	}
 	
 	return YES;
 }
@@ -147,27 +137,42 @@ static NSLock *crayolaNameCacheLock;
 }
 
 - (CGFloat)red {
+	
 	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -red");
+	
 	const CGFloat *c = CGColorGetComponents(self.CGColor);
 	return c[0];
 }
 
 - (CGFloat)green {
+	
 	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -green");
+	
 	const CGFloat *c = CGColorGetComponents(self.CGColor);
-	if (self.colorSpaceModel == kCGColorSpaceModelMonochrome) return c[0];
+	
+	if (self.colorSpaceModel == kCGColorSpaceModelMonochrome) {
+		return c[0];
+	}
+	
 	return c[1];
 }
 
 - (CGFloat)blue {
+	
 	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -blue");
+	
 	const CGFloat *c = CGColorGetComponents(self.CGColor);
-	if (self.colorSpaceModel == kCGColorSpaceModelMonochrome) return c[0];
+	if (self.colorSpaceModel == kCGColorSpaceModelMonochrome) {
+		return c[0];
+	}
+	
 	return c[2];
 }
 
 - (CGFloat)white {
+	
 	NSAssert(self.colorSpaceModel == kCGColorSpaceModelMonochrome, @"Must be a Monochrome color to use -white");
+	
 	const CGFloat *c = CGColorGetComponents(self.CGColor);
 	return c[0];
 }
@@ -194,6 +199,7 @@ static NSLock *crayolaNameCacheLock;
 }
 
 - (CGFloat)alpha {
+	
 	return CGColorGetAlpha(self.CGColor);
 }
 
@@ -210,55 +216,98 @@ static NSLock *crayolaNameCacheLock;
 }
 
 - (UInt32)rgbHex {
+	
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use rgbHex");
 	
-	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a]) return 0;
+	CGFloat r, g, b, a;
+	
+	if (![self red:&r green:&g blue:&b alpha:&a]) {
+		return 0;
+	}
 	
 	r = MIN(MAX(r, 0.0f), 1.0f);
 	g = MIN(MAX(g, 0.0f), 1.0f);
 	b = MIN(MAX(b, 0.0f), 1.0f);
 	
-	return (((int)roundf(r * 255)) << 16)
+	return (UInt32) ((((int)roundf(r * 255)) << 16)
 	     | (((int)roundf(g * 255)) << 8)
-	     | (((int)roundf(b * 255)));
+	     | (((int)roundf(b * 255))));
+}
+
+- (UInt32)rgbaHex {
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGBA color to use rgbaHex");
+	
+	CGFloat r,g,b,a;
+	if (![self red:&r green:&g blue:&b alpha:&a]) return 0;
+	
+	r = MIN(MAX(self.red, 0.0f), 1.0f);
+	g = MIN(MAX(self.green, 0.0f), 1.0f);
+	b = MIN(MAX(self.blue, 0.0f), 1.0f);
+	a = MIN(MAX(self.alpha, 0.0f), 1.0f);
+	
+	return (((int)roundf(r * 255)) << 24)
+		 | (((int)roundf(g * 255)) << 16)
+		 | (((int)roundf(b * 255)) <<  8)
+		 | (((int)roundf(b * 255))	    );
 }
 
 #pragma mark Arithmetic operations
 
 - (UIColor *)colorByLuminanceMapping {
-	return [UIColor colorWithWhite:self.luminance alpha:1.0f];
+	
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	
+	CGFloat r, g, b, a;
+	if (![self red:&r green:&g blue:&b alpha:&a]) {
+		return nil;
+	}
+	
+	// http://en.wikipedia.org/wiki/Luma_(video)
+	// Y = 0.2126 R + 0.7152 G + 0.0722 B
+	return [UIColor colorWithWhite:r * 0.2126f + g * 0.7152f + b * 0.0722f alpha:a];
 }
 
 - (UIColor *)colorByMultiplyingByRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
+	
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
 
-	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
+	CGFloat r, g, b, a;
+	
+	if (![self red:&r green:&g blue:&b alpha:&a]) {
+		return nil;
+	}
 		
-	return [UIColor colorWithRed:MAX(0.0, MIN(1.0, r * red))
-						   green:MAX(0.0, MIN(1.0, g * green)) 
-							blue:MAX(0.0, MIN(1.0, b * blue))
-						   alpha:MAX(0.0, MIN(1.0, a * alpha))];
+	return [UIColor colorWithRed:(CGFloat)MAX(0.0f, MIN(1.0f, r * red))
+						   green:(CGFloat)MAX(0.0f, MIN(1.0f, g * green)) 
+							blue:(CGFloat)MAX(0.0f, MIN(1.0f, b * blue))
+						   alpha:(CGFloat)MAX(0.0f, MIN(1.0f, a * alpha))];
 }
 
 - (UIColor *)colorByAddingRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
-	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
 	
-	return [UIColor colorWithRed:MAX(0.0, MIN(1.0, r + red))
-						   green:MAX(0.0, MIN(1.0, g + green)) 
-							blue:MAX(0.0, MIN(1.0, b + blue))
-						   alpha:MAX(0.0, MIN(1.0, a + alpha))];
+	CGFloat r, g, b, a;
+	
+	if (![self red:&r green:&g blue:&b alpha:&a]) {
+		return nil;
+	}
+	
+	return [UIColor colorWithRed:(CGFloat)MAX(0.0f, MIN(1.0f, r + red))
+						   green:(CGFloat)MAX(0.0f, MIN(1.0f, g + green)) 
+							blue:(CGFloat)MAX(0.0f, MIN(1.0f, b + blue))
+						   alpha:(CGFloat)MAX(0.0f, MIN(1.0f, a + alpha))];
 }
 
 - (UIColor *)colorByLighteningToRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
-	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	
+	CGFloat r, g, b, a;
+	
+	if (![self red:&r green:&g blue:&b alpha:&a]) {
+		return nil;
+	}
 		
 	return [UIColor colorWithRed:MAX(r, red)
 						   green:MAX(g, green)
@@ -267,10 +316,14 @@ static NSLock *crayolaNameCacheLock;
 }
 
 - (UIColor *)colorByDarkeningToRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
-	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	
+	CGFloat r, g, b, a;
+	
+	if (![self red:&r green:&g blue:&b alpha:&a]) {
+		return nil;
+	}
 	
 	return [UIColor colorWithRed:MIN(r, red)
 						   green:MIN(g, green)
@@ -279,61 +332,102 @@ static NSLock *crayolaNameCacheLock;
 }
 
 - (UIColor *)colorByMultiplyingBy:(CGFloat)f {
+	
 	return [self colorByMultiplyingByRed:f green:f blue:f alpha:1.0f];
 }
 
 - (UIColor *)colorByAdding:(CGFloat)f {
-	return [self colorByMultiplyingByRed:f green:f blue:f alpha:0.0f];
+
+	return [self colorByAddingRed:f green:f blue:f alpha:0.0f];
 }
 
 - (UIColor *)colorByLighteningTo:(CGFloat)f {
+	
 	return [self colorByLighteningToRed:f green:f blue:f alpha:0.0f];
 }
 
 - (UIColor *)colorByDarkeningTo:(CGFloat)f {
+	
 	return [self colorByDarkeningToRed:f green:f blue:f alpha:1.0f];
 }
 
 - (UIColor *)colorByMultiplyingByColor:(UIColor *)color {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
-	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	
+	CGFloat r, g, b, a;
+	
+	if (![self red:&r green:&g blue:&b alpha:&a]) {
+		return nil;
+	}
 	
 	return [self colorByMultiplyingByRed:r green:g blue:b alpha:1.0f];
 }
 
 - (UIColor *)colorByAddingColor:(UIColor *)color {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
-	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	
+	CGFloat r, g, b, a;
+	
+	if (![self red:&r green:&g blue:&b alpha:&a]) {
+		return nil;
+	}
 	
 	return [self colorByAddingRed:r green:g blue:b alpha:0.0f];
 }
 
 - (UIColor *)colorByLighteningToColor:(UIColor *)color {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
-	CGFloat r,g,b,a;
-	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	
+	CGFloat r, g, b, a;
+	
+	if (![self red:&r green:&g blue:&b alpha:&a]) {
+		return nil;
+	}
 		
 	return [self colorByLighteningToRed:r green:g blue:b alpha:0.0f];
 }
 
 - (UIColor *)colorByDarkeningToColor:(UIColor *)color {
-	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
+	
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	
+	CGFloat r, g, b, a;
+	
+	if (![self red:&r green:&g blue:&b alpha:&a]) {
+		return nil;
+	}
+	
+	return [self colorByDarkeningToRed:r green:g blue:b alpha:1.0f];
+}
+
+- (UIColor *)colorByInterpolatingToColor:(UIColor *)color byFraction:(CGFloat)fraction {
+
+	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
+	NSAssert(color.canProvideRGBComponents, @"Must be a RGB color to use arithmatic operations");
 	
 	CGFloat r,g,b,a;
 	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
-	
-	return [self colorByDarkeningToRed:r green:g blue:b alpha:1.0f];
+
+	CGFloat r2,g2,b2,a2;
+	if (![color red:&r2 green:&g2 blue:&b2 alpha:&a2]) return nil;
+
+	CGFloat red = r + (fraction * (r2 - r));
+	CGFloat green = g + (fraction * (g2 - g));
+	CGFloat blue = b + (fraction * (b2 - b));
+	CGFloat alpha = a + (fraction * (a2 - a));
+
+	UIColor *new = [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
+	return new;
 }
 
 #pragma mark Complementary Colors, etc
 
 // Pick a color that is likely to contrast well with this color
 - (UIColor *)contrastingColor {
+
 	return (self.luminance > 0.5f) ? [UIColor blackColor] : [UIColor whiteColor];
 }
 
@@ -355,11 +449,13 @@ static NSLock *crayolaNameCacheLock;
 // Pick two colors more colors such that all three are equidistant on the color wheel
 // (120 degrees and 240 degress difference in hue from self)
 - (NSArray*)triadicColors {
+
 	return [self analogousColorsWithStepAngle:120.0f pairCount:1];
 }
 
 // Pick n pairs of colors, stepping in increasing steps away from this color around the wheel
 - (NSArray*)analogousColorsWithStepAngle:(CGFloat)stepAngle pairCount:(int)pairs {
+
 	// Convert to HSB
 	CGFloat h,s,v,a;
 	if (![self hue:&h saturation:&s brightness:&v alpha:&a]) return nil;
@@ -370,23 +466,31 @@ static NSLock *crayolaNameCacheLock;
 		stepAngle *= -1.0f;
 	
 	for (int i = 1; i <= pairs; ++i) {
-		CGFloat a = fmodf(stepAngle * i, 360.0f);
+		CGFloat angle = fmodf(stepAngle * i, 360.0f);
 		
-		CGFloat h1 = fmodf(h + a, 360.0f);
-		CGFloat h2 = fmodf(h + 360.0f - a, 360.0f);
+		CGFloat h1 = fmodf(h + angle, 360.0f);
+		CGFloat h2 = fmodf(h + 360.0f - angle, 360.0f);
 		
 		[colors addObject:[UIColor colorWithHue:h1 saturation:s brightness:v alpha:a]];
 		[colors addObject:[UIColor colorWithHue:h2 saturation:s brightness:v alpha:a]];
 	}
 	
-	return [[colors copy] autorelease];
+#if __has_feature(objc_arc)
+	return [colors copy];
+#else
+    return [[colors copy] autorelease];
+#endif
+    
 }
 
 #pragma mark String utilities
 
 - (NSString *)stringFromColor {
+	
 	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -stringFromColor");
+	
 	NSString *result;
+	
 	switch (self.colorSpaceModel) {
 		case kCGColorSpaceModelRGB:
 			result = [NSString stringWithFormat:@"{%0.3f, %0.3f, %0.3f, %0.3f}", self.red, self.green, self.blue, self.alpha];
@@ -397,14 +501,27 @@ static NSLock *crayolaNameCacheLock;
 		default:
 			result = nil;
 	}
+	
 	return result;
 }
 
 - (NSString *)hexStringFromColor {
-	return [NSString stringWithFormat:@"%0.6X", self.rgbHex];
+	
+	return [NSString stringWithFormat:@"%0.6lX", self.rgbHex];
 }
 
-- (NSString *)closestColorNameFor: (const char *) aColorDatabase {
+- (NSString *)cssStringFromColor {
+	
+    NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use cssStringFromColor");
+    
+	CGFloat r,g,b,a;
+	if (![self red:&r green:&g blue:&b alpha:&a]) return @"rgba(0,0,0,1)";
+
+	return [NSString stringWithFormat:@"rgba(%d,%d,%d,%g)", (int)(r*255.0f),(int)(g*255.0f),(int)(b*255.0f),a];
+}
+
+- (NSString *)closestColorNameFor:(const char *) aColorDatabase {
+
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use closestColorName");
 	
 	int targetHex = self.rgbHex;
@@ -432,6 +549,7 @@ static NSLock *crayolaNameCacheLock;
 			}
 		}
 	}
+    assert(bestPos);
 	
 	// bestPos now points to the # following the best name seen
 	// Backup to the start of the name and return it
@@ -439,40 +557,73 @@ static NSLock *crayolaNameCacheLock;
 	for (name = bestPos-1; *name != ','; --name)
 		;
 	++name;
-	NSString *result = [[[NSString alloc] initWithBytes:name length:bestPos - name encoding:NSUTF8StringEncoding] autorelease];
-	
+	NSString *result = [[NSString alloc] initWithBytes:name length:bestPos - name encoding:NSUTF8StringEncoding];
+#if !__has_feature(objc_arc)
+    [result autorelease];
+#endif
 	return result;
 }
 
 
 - (NSString *)closestColorName {
-	return [self closestColorNameFor:colorNameDB];
+    
+	return [self closestColorNameFor:_ColorNameDB];
 }
 
 - (NSString *)closestCrayonName {
-	return [self closestColorNameFor:crayolaNameDB];
+	
+    return [self closestColorNameFor:_CrayolaNameDB];
+}
+
+- (NSString *)hexStringFromColorAndAlpha {
+	
+    return [NSString stringWithFormat:@"%0.8lX", self.rgbaHex];
 }
 
 + (UIColor *)colorWithString:(NSString *)stringToConvert {
+	
 	NSScanner *scanner = [NSScanner scannerWithString:stringToConvert];
-	if (![scanner scanString:@"{" intoString:NULL]) return nil;
+	
+	if (![scanner scanString:@"{" intoString:NULL]) {
+		return nil;
+	}
+	
 	const NSUInteger kMaxComponents = 4;
 	CGFloat c[kMaxComponents];
 	NSUInteger i = 0;
-	if (![scanner scanFloat:&c[i++]]) return nil;
+	
+	if (![scanner scanFloat:&c[i++]]) {
+		return nil;
+	}
+	
 	while (1) {
-		if ([scanner scanString:@"}" intoString:NULL]) break;
-		if (i >= kMaxComponents) return nil;
+		
+		if ([scanner scanString:@"}" intoString:NULL]) {
+			break;
+		}
+		
+		if (i >= kMaxComponents) {
+			return nil;
+		}
+		
 		if ([scanner scanString:@"," intoString:NULL]) {
-			if (![scanner scanFloat:&c[i++]]) return nil;
+			
+			if (![scanner scanFloat:&c[i++]]) {
+				return nil;
+			}
 		} else {
 			// either we're at the end of there's an unexpected character here
 			// both cases are error conditions
 			return nil;
 		}
 	}
-	if (![scanner isAtEnd]) return nil;
+	
+	if (![scanner isAtEnd]) {
+		return nil;
+	}
+	
 	UIColor *color;
+	
 	switch (i) {
 		case 2: // monochrome
 			color = [UIColor colorWithWhite:c[0] alpha:c[1]];
@@ -483,19 +634,40 @@ static NSLock *crayolaNameCacheLock;
 		default:
 			color = nil;
 	}
+	
 	return color;
 }
 
 #pragma mark Class methods
 
 + (UIColor *)randomColor {
-	return [UIColor colorWithRed:random() / (CGFloat)RAND_MAX
-						   green:random() / (CGFloat)RAND_MAX
-							blue:random() / (CGFloat)RAND_MAX
+
+	return [UIColor colorWithRed:(arc4random() % ((unsigned)RAND_MAX + 1)) / (CGFloat)RAND_MAX
+						   green:(arc4random() % ((unsigned)RAND_MAX + 1)) / (CGFloat)RAND_MAX
+							blue:(arc4random() % ((unsigned)RAND_MAX + 1)) / (CGFloat)RAND_MAX
+						   alpha:1.0f];
+}
+
++ (UIColor *)randomHSBColor {
+	return [UIColor colorWithHue:random() / (CGFloat)RAND_MAX
+					  saturation:random() / (CGFloat)RAND_MAX
+                      brightness:random() / (CGFloat)RAND_MAX
+						   alpha:1.0f];
+}
+
++ (UIColor *)randomHSBColorWithMinSaturation:(CGFloat)minSat minBrightness:(CGFloat)minBright {
+
+    CGFloat hue = random() / (CGFloat)RAND_MAX;
+    CGFloat sat = ((random() / (CGFloat)RAND_MAX) * (1-minSat)) + minSat;
+    CGFloat brightness = ((random() / (CGFloat)RAND_MAX) * (1-minBright)) + minBright;
+	return [UIColor colorWithHue:hue
+                      saturation:sat
+                      brightness:brightness
 						   alpha:1.0f];
 }
 
 + (UIColor *)colorWithRGBHex:(UInt32)hex {
+	
 	int r = (hex >> 16) & 0xFF;
 	int g = (hex >> 8) & 0xFF;
 	int b = (hex) & 0xFF;
@@ -506,41 +678,230 @@ static NSLock *crayolaNameCacheLock;
 						   alpha:1.0f];
 }
 
++ (UIColor *)colorWithRGBAHex:(UInt32)hex {
+
+	int r = (hex >> 24) & 0xFF;
+	int g = (hex >> 16) & 0xFF;
+	int b = (hex >> 8) & 0xFF;
+	int a = (hex) & 0xFF;
+	
+	return [UIColor colorWithRed:r / 255.0f
+						   green:g / 255.0f
+							blue:b / 255.0f
+						   alpha:a / 255.0f];
+}
+
++ (UIColor *)colorWithGray:(CGFloat)gray {
+
+	return [UIColor colorWithWhite:gray alpha:1.0f];
+}
+
++ (UIColor *)colorWithGrayHex:(UInt8)gray {
+	
+    return [UIColor colorWithWhite:gray / 255.0f alpha:1.0f];
+}
+
 // Returns a UIColor by scanning the string for a hex number and passing that to +[UIColor colorWithRGBHex:]
 // Skips any leading whitespace and ignores any trailing characters
 + (UIColor *)colorWithHexString:(NSString *)stringToConvert {
+
+	if ([stringToConvert hasPrefix:@"#"]) {
+		stringToConvert = [stringToConvert substringFromIndex:1];
+	}
+	
+	NSScanner *scanner = [NSScanner scannerWithString:stringToConvert];
+	unsigned hexNum;
+	
+	if (![scanner scanHexInt:&hexNum]) {
+		return nil;
+	}
+	
+	return [UIColor colorWithRGBHex:hexNum];
+}
+
+// Returns a UIColor by scanning the string for a hex number and passing that to +[UIColor colorWithRGBAHex:]
+// Skips any leading whitespace and ignores any trailing characters
++ (UIColor *)colorAndAlphaWithHexString:(NSString *)stringToConvert {
+
 	NSScanner *scanner = [NSScanner scannerWithString:stringToConvert];
 	unsigned hexNum;
 	if (![scanner scanHexInt:&hexNum]) return nil;
-	return [UIColor colorWithRGBHex:hexNum];
+	return [UIColor colorWithRGBAHex:hexNum];
 }
 
 // Lookup a color using css 3/svg color name
 + (UIColor *)colorWithName:(NSString *)cssColorName {
-	return [[UIColor namedColors] objectForKey:cssColorName];
+	
+	UIColor *color;
+	
+	@synchronized(_ColorNameCache) {
+		// Look for the color in the cache
+		color = [_ColorNameCache objectForKey:cssColorName];
+		
+		if ((id)color == [NSNull null]) {
+			// If it wasn't there previously, it's still not there now
+			color = nil;
+		} else if (!color) {
+			// Color not in cache, so search for it now
+			color = [self __searchForColorByName:cssColorName];
+			
+			// Set the value in cache, storing NSNull on failure
+			[_ColorNameCache setObject:(color ?: (id)[NSNull null])
+							   forKey:cssColorName];
+        }
+    }
+
+    return color;
 }
 
 // Lookup a color using a crayola name
 + (UIColor *)crayonWithName:(NSString *)crayolaColorName {
-	return [[UIColor namedCrayons] objectForKey:crayolaColorName];
+	
+	UIColor *color;
+	
+	@synchronized(_CrayolaNameCache) {
+		// Look for the color in the cache
+		color = [_CrayolaNameCache objectForKey:crayolaColorName];
+		
+		if ((id)color == [NSNull null]) {
+			// If it wasn't there previously, it's still not there now
+			color = nil;
+		} else if (!color) {
+			// Color not in cache, so search for it now
+			color = [self __searchForCrayolaByName:crayolaColorName];
+			
+			// Set the value in cache, storing NSNull on failure
+			[_CrayolaNameCache setObject:(color ?: (id)[NSNull null])
+							   forKey:crayolaColorName];
+        }
+    }
+
+    return color;
 }
 
-// Return complete mapping of css3/svg color names --> colors
-+ (NSDictionary *)namedColors {
-	[colorNameCacheLock lock];
-	if (colorNameCache == nil) [UIColor populateColorNameCache];
-	[colorNameCacheLock unlock];
-	return colorNameCache;
++ (UIColor *)colorWithCSSDescription:(NSString *)cssDescription {
+
+	// CSS syntax is
+	//	#fff
+	//	#ffffff
+	//	rgb(100, 200 ,255)
+	//	rgb(1%,50% , 30% )
+	//	rgba(100, 200,255, 0.5)
+	//	hsl(260,50%,40%)
+	//	hsla(260,50%,40%,0.8)
+	//	colorName
+	NSScanner* scanner = [NSScanner scannerWithString:cssDescription];
+	BOOL withAlpha = NO;
+	
+	// Look for determining characteristics of the string
+	if ([scanner scanString:@"#" intoString:nil]) {
+		
+		// A hex string like #fff or #ffffff
+		
+		unsigned int hex = 0;
+		if (![scanner scanHexInt:&hex]) return nil;
+		if (![scanner isAtEnd]) return nil;
+		
+		int hexLen = [scanner scanLocation] - 1;
+		if (hexLen == 3) {
+			// A 3 digit hex num
+			int r = (hex >> 8) & 0xF;
+			int g = (hex >> 4) & 0xF;
+			int b = (hex) & 0xF;
+			return [UIColor colorWithRed:r / 15.0f
+								   green:g / 15.0f
+									blue:b / 15.0f
+								   alpha:1.0f];
+		} else if (hexLen == 6) {
+			// A 6 digit hex num
+			return [self colorWithRGBHex:hex];
+		} else {
+			// An unsupported number of digits
+			return nil;
+		}
+		
+	} else if ([scanner scanString:@"rgb(" intoString:nil] || (withAlpha = [scanner scanString:@"rgba(" intoString:nil])) {
+		
+		// It's an rgb color spec like rgb( 100,200, 50) or rgb(50%, 30%, 20%), or rgba(100,200,50,0.8)
+
+		// skip whitespace characters in coming processing
+		[scanner setCharactersToBeSkipped:[NSCharacterSet whitespaceCharacterSet]];
+				
+		// Read 3 comma-separated floats, each with potentially trailing % sign
+		float rgb[3];
+		for (int i = 0; i < 3; ++i) {
+			if (![scanner scanFloat:&rgb[i]]) return nil;
+			if ([scanner scanString:@"%" intoString:nil])
+				rgb[i] = (rgb[i] / 100.0f) * 255.0f;
+			if (i < 2 && ![scanner scanString:@"," intoString:nil]) return nil;
+		}
+		
+		// Read an alpha value if requested
+		float alpha = 1.0f;
+		if (withAlpha) {
+			if (![scanner scanString:@"," intoString:nil]) return nil;
+			if (![scanner scanFloat:&alpha]) return nil;
+		}
+		
+		// Verify end of string
+		if (![scanner scanString:@")" intoString:nil]) return nil;
+		if (![scanner isAtEnd]) return nil;
+		
+		// Form the color, pinning the numbers into range
+		return [UIColor colorWithRed:MAX(0.0, MIN(1.0, rgb[0] / 255.0f))
+							   green:MAX(0.0, MIN(1.0, rgb[1] / 255.0f))
+								blue:MAX(0.0, MIN(1.0, rgb[2] / 255.0f))
+							   alpha:MAX(0.0, MIN(1.0, alpha))];
+		
+	} else if ([scanner scanString:@"hsl(" intoString:nil] || (withAlpha = [scanner scanString:@"hsla(" intoString:nil])) {
+		
+		// It's an hsl color spec like hsl(260,50%,40%) or hsla(260,50%,40%,0.8)
+		
+		// skip whitespace characters in coming processing
+		[scanner setCharactersToBeSkipped:[NSCharacterSet whitespaceCharacterSet]];
+		
+		// Hue
+		float hue;
+		if (![scanner scanFloat:&hue]) return nil;
+		
+		// Saturation
+		float saturation;
+		if (![scanner scanString:@"," intoString:nil]) return nil;
+		if (![scanner scanFloat:&saturation]) return nil;
+		if (![scanner scanString:@"%" intoString:nil]) return nil;
+		
+		// Brightness
+		float lightness;
+		if (![scanner scanString:@"," intoString:nil]) return nil;
+		if (![scanner scanFloat:&lightness]) return nil;
+		if (![scanner scanString:@"%" intoString:nil]) return nil;
+		
+		// Read an alpha value if requested
+		float alpha = 1.0f;
+		if (withAlpha) {
+			if (![scanner scanString:@"," intoString:nil]) return nil;
+			if (![scanner scanFloat:&alpha]) return nil;
+		}
+		
+		// Verify end of string
+		if (![scanner scanString:@")" intoString:nil]) return nil;
+		if (![scanner isAtEnd]) return nil;
+		
+		// Form the color, pinning the numbers into range
+		return [UIColor colorWithHue:MAX(0.0, MIN(360.0, hue))
+						  saturation:MAX(0.0, MIN(1.0, saturation / 100.0f))
+						   lightness:MAX(0.0, MIN(1.0, lightness / 100.0f))
+							   alpha:MAX(0.0, MIN(1.0, alpha))];
+		
+	} else {
+		// Assume it's a css color name
+		return [self colorWithName:cssDescription];
+	}
 }
 
-+ (NSDictionary *)namedCrayons {
-	[crayolaNameCacheLock lock];
-	if (crayolaNameCache == nil) [UIColor populateCrayolaNameCache];
-	[crayolaNameCacheLock unlock];
-	return crayolaNameCache;
-}
-
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 50000
 + (UIColor *)colorWithHue:(CGFloat)hue saturation:(CGFloat)saturation brightness:(CGFloat)brightness alpha:(CGFloat)alpha {
+
 	// Convert hsb to rgb
 	CGFloat r,g,b;
 	[self hue:hue saturation:saturation brightness:brightness toRed:&r green:&g blue:&b];
@@ -548,13 +909,67 @@ static NSLock *crayolaNameCacheLock;
 	// Create a color with rgb
 	return [self colorWithRed:r green:g blue:b alpha:alpha];
 }
+#endif
+
++ (UIColor *)colorWithHue:(CGFloat)hue saturation:(CGFloat)saturation lightness:(CGFloat)lightness alpha:(CGFloat)alpha {
+
+	// Convert from hsl to hsb (hsv)
+	CGFloat h = hue;	
+	saturation *= (lightness <= 0.5f) ? lightness : 1 - lightness;
+	CGFloat v = lightness + saturation;
+	CGFloat s = (v != 0.0f) ? (2 * saturation) / v : 0.0f;		// avoid division by zero
+
+	// Convert from hsb to rgb
+	CGFloat r,g,b;
+	[self hue:h saturation:s brightness:v toRed:&r green:&g blue:&b];
+	
+	// Create a color with rgb
+	return [self colorWithRed:r green:g blue:b alpha:alpha];
+}
+
+
++ (UIColor *)colorWithByteRGBDictionary:(NSDictionary *)colorDict {
+	UIColor *color = [UIColor colorWithRed:[[colorDict objectForKey:@"red"] floatValue]/255
+									 green:[[colorDict objectForKey:@"green"] floatValue]/255
+									  blue:[[colorDict objectForKey:@"blue"] floatValue]/255
+									 alpha:[[colorDict objectForKey:@"alpha"] floatValue]/255
+					  ];
+	return color;
+}
+
+
++ (UIColor *)colorWithNormalizedRGBDictionary:(NSDictionary *)colorDict {
+	UIColor *color = [UIColor colorWithRed:[[colorDict objectForKey:@"red"] floatValue]
+									 green:[[colorDict objectForKey:@"green"] floatValue]
+									  blue:[[colorDict objectForKey:@"blue"] floatValue]
+									 alpha:[[colorDict objectForKey:@"alpha"] floatValue]
+					  ];
+	return color;
+}
+
+
++ (UIColor *)colorWithRGBDictionary:(NSDictionary *)colorDict {
+	UIColor *color = nil;
+	
+	if (
+		[[colorDict objectForKey:@"red"] floatValue] <= 1.0 &&
+		[[colorDict objectForKey:@"blue"] floatValue] <= 1.0 &&
+		[[colorDict objectForKey:@"green"] floatValue] <= 1.0 &&
+		[[colorDict objectForKey:@"alpha"] floatValue] <= 1.0
+		) {
+		color = [UIColor colorWithNormalizedRGBDictionary:colorDict];
+	} else {
+		color = [UIColor colorWithByteRGBDictionary:colorDict];
+	}
+	return color;
+}
 
 
 #pragma mark Color Space Conversions
 
 + (void)hue:(CGFloat)h saturation:(CGFloat)s brightness:(CGFloat)v toRed:(CGFloat *)pR green:(CGFloat *)pG blue:(CGFloat *)pB {
-	CGFloat r,g,b;
-	
+
+	CGFloat r = 0, g = 0, b = 0;
 	// From Foley and Van Dam
 	
 	if (s == 0.0f) {
@@ -565,7 +980,7 @@ static NSLock *crayolaNameCacheLock;
 		if (h == 360.0f) h = 0.0f;
 		h /= 60.0f;										// h is now in [0, 6)
 		
-		int i = floorf(h);								// largest integer <= h
+		int i = (int)floorf(h);							// largest integer <= h
 		CGFloat f = h - i;								// fractional part of h
 		CGFloat p = v * (1 - s);
 		CGFloat q = v * (1 - (s * f));
@@ -578,6 +993,7 @@ static NSLock *crayolaNameCacheLock;
 			case 3:	r = p; g = q; b = v;	break;
 			case 4:	r = t; g = p; b = v;	break;
 			case 5:	r = v; g = p; b = q;	break;
+			default: r = g = b = 0.0f;		break;		// Keep analyzer happy
 		}
 	}
 	
@@ -588,6 +1004,7 @@ static NSLock *crayolaNameCacheLock;
 
 
 + (void)red:(CGFloat)r green:(CGFloat)g blue:(CGFloat)b toHue:(CGFloat *)pH saturation:(CGFloat *)pS brightness:(CGFloat *)pV {
+
 	CGFloat h,s,v;
 	
 	// From Foley and Van Dam
@@ -601,18 +1018,21 @@ static NSLock *crayolaNameCacheLock;
 	// Saturation
 	s = (max != 0.0f) ? ((max - min) / max) : 0.0f;
 	
+	// Hue
 	if (s == 0.0f) {
 		// No saturation, so undefined hue
 		h = 0.0f;
 	} else {
 		// Determine hue
-		CGFloat rc = (max - r) / (max - min);		// Distance of color from red
-		CGFloat gc = (max - g) / (max - min);		// Distance of color from green
-		CGFloat bc = (max - b) / (max - min);		// Distance of color from blue
+		CGFloat delta = max - min;
 		
-		if (r == max) h = bc - gc;					// resulting color between yellow and magenta
-		else if (g == max) h = 2 + rc - bc;			// resulting color between cyan and yellow
-		else /* if (b == max) */ h = 4 + gc - rc;	// resulting color between magenta and cyan
+		if (r == max) {
+			h = (g - b) / delta;					// resulting color between yellow and magenta
+		} else if (g == max) {
+			h = 2.0f + (b - r) / delta;				// resulting color between cyan and yellow
+		} else /* if (b == max) */ {
+			h = 4.0f + (r - g) / delta;				// resulting color between magenta and cyan
+		}
 		
 		h *= 60.0f;									// Convert to degrees
 		if (h < 0.0f) h += 360.0f;					// Make non-negative
@@ -623,47 +1043,6 @@ static NSLock *crayolaNameCacheLock;
 	if (pV) *pV = v;
 }
 
-
-#pragma mark UIColor_Expanded initialization
-
-+ (void)load {
-	colorNameCacheLock = [[NSLock alloc] init];
-	crayolaNameCacheLock = [[NSLock alloc] init];
-}
-
-@end
-
-#pragma mark -
-
-#if SUPPORTS_UNDOCUMENTED_API
-@implementation UIColor (UIColor_Undocumented_Expanded)
-- (NSString *)fetchStyleString {
-	return [self styleString];
-}
-
-// Convert a color into RGB Color space, courtesy of Poltras
-// via http://ofcodeandmen.poltras.com/2009/01/22/convert-a-cgcolorref-to-another-cgcolorspaceref/
-//
-- (UIColor *)rgbColor {
-	// Call to undocumented method "styleString".
-	NSString *style = [self styleString];
-	NSScanner *scanner = [NSScanner scannerWithString:style];
-	CGFloat red, green, blue;
-	if (![scanner scanString:@"rgb(" intoString:NULL]) return nil;
-	if (![scanner scanFloat:&red]) return nil;
-	if (![scanner scanString:@"," intoString:NULL]) return nil;
-	if (![scanner scanFloat:&green]) return nil;
-	if (![scanner scanString:@"," intoString:NULL]) return nil;
-	if (![scanner scanFloat:&blue]) return nil;
-	if (![scanner scanString:@")" intoString:NULL]) return nil;
-	if (![scanner isAtEnd]) return nil;
-	
-	return [UIColor colorWithRed:red green:green blue:blue alpha:self.alpha];
-}
-@end
-#endif // SUPPORTS_UNDOCUMENTED_API
-
-@implementation UIColor (UIColor_Expanded_Support)
 /*
  * Database of color names and hex rgb values, derived
  * from the css 3 color spec:
@@ -676,7 +1055,7 @@ static NSLock *crayolaNameCacheLock;
  * and terminated by '#', so that we don't get false matches.
  * For this reason, the database begins with ','.
  */
-static const char *colorNameDB = ","
+static const char *_ColorNameDB = ","
 	"aliceblue#f0f8ff,antiquewhite#faebd7,aqua#00ffff,aquamarine#7fffd4,azure#f0ffff,"
 	"beige#f5f5dc,bisque#ffe4c4,black#000000,blanchedalmond#ffebcd,blue#0000ff,"
 	"blueviolet#8a2be2,brown#a52a2a,burlywood#deb887,cadetblue#5f9ea0,chartreuse#7fff00,"
@@ -711,7 +1090,7 @@ static const char *colorNameDB = ","
 	"thistle#d8bfd8,tomato#ff6347,turquoise#40e0d0,violet#ee82ee,wheat#f5deb3,"
 	"white#ffffff,whitesmoke#f5f5f5,yellow#ffff00,yellowgreen#9acd32";
 
-static const char *crayolaNameDB = ","
+static const char *_CrayolaNameDB = ","
 	"Almond#EED9C4,Antique Brass#C88A65,Apricot#FDD5B1,Aquamarine#71D9E2,Asparagus#7BA05B,"
 	"Atomic Tangerine#FF9966,Banana Mania#FBE7B2,Beaver#926F5B,Bittersweet#FE6F5E,Black#000000,"
 	"Blizzard Blue#A3E3ED,Blue#0066FF,Blue Bell#9999CC,Blue Green#0095B6,Blue Violet#6456B7,"
@@ -737,57 +1116,50 @@ static const char *crayolaNameDB = ","
 	"Wisteria#C9A0DC,Yellow#FBE870,Yellow Green#C5E17A,Yellow Orange#FFAE42";
 
 
-+ (void)populateColorNameCache {
-	NSAssert(colorNameCache == nil, @"+pouplateColorNameCache was called when colorNameCache was not nil");
-	NSMutableDictionary *cache = [NSMutableDictionary dictionary];
-	for (const char* entry = colorNameDB; entry = strchr(entry, ','); ) {
-		
-		// Step forward to the start of the name
-		++entry;
-		
-		// Find the following hash
-		const char* h = strchr(entry, '#');
-		NSAssert(h, @"Malformed colorNameDB");
-		
-		// Get the name
-		NSString* name = [[NSString alloc] initWithBytes:entry length:h - entry encoding:NSUTF8StringEncoding];
-		
-		// Get the color, and add to the dictionary
-		int hex, increment;
-		if (sscanf(++h, "%x%n", &hex, &increment) != 1) {[name release]; break;} // thanks Curtis Duhn
-		[cache setObject:[self colorWithRGBHex:hex] forKey:name];
-		
-		// Cleanup and move to the next item
-		[name release];
-		entry = h + increment;
-	}
-	colorNameCache = [cache copy];
++ (UIColor *)__searchForColorByName:(NSString *)cssColorName {
+    
+    UIColor *result = nil;
+    
+    // Compile the string we'll use to search against the database
+    // We search for ",<colorname>#" to avoid false matches
+    const char *searchString = [[NSString stringWithFormat:@",%@#", cssColorName] UTF8String];
+    
+    // Search for the color name
+    const char *found = strstr(_ColorNameDB, searchString);
+    
+    // If found, step past the search string and grab the hex representation
+    if (found) {
+        const char *after = found + strlen(searchString);
+        int hex;
+        if (sscanf(after, "%x", &hex) == 1) {
+            result = [self colorWithRGBHex:hex];
+        }
+    }
+    
+    return result;
 }
 
-+ (void)populateCrayolaNameCache {
-	NSAssert(crayolaNameCache == nil, @"+pouplateCrayolaNameCache was called when crayolaNameCache was not nil");
-	NSMutableDictionary *cache = [NSMutableDictionary dictionary];
-	for (const char* entry = crayolaNameDB; entry = strchr(entry, ','); ) {
-		
-		// Step forward to the start of the name
-		++entry;
-		
-		// Find the following hash
-		const char* h = strchr(entry, '#');
-		NSAssert(h, @"Malformed crayolaNameDB");
-		
-		// Get the name
-		NSString* name = [[NSString alloc] initWithBytes:entry length:h - entry encoding:NSUTF8StringEncoding];
-		
-		// Get the color, and add to the dictionary
-		int hex, increment;
-		if (sscanf(++h, "%x%n", &hex, &increment) != 1) {[name release]; break;} // thanks Curtis Duhn
-		[cache setObject:[self colorWithRGBHex:hex] forKey:name];
-		
-		// Cleanup and move to the next item
-		[name release];
-		entry = h + increment;
-	}
-	crayolaNameCache = [cache copy];
++ (UIColor *)__searchForCrayolaByName:(NSString *)crayolaColorName {
+	
+	UIColor *result = nil;
+	
+	// Compile the string we'll use to search against the database
+	// We search for ",<colorname>#" to avoid false matches
+	const char *searchString = [[NSString stringWithFormat:@",%@#", crayolaColorName] UTF8String];
+	
+	// Search for the color name
+	const char *found = strstr(_CrayolaNameDB, searchString);
+    
+    // If found, step past the search string and grab the hex representation
+    if (found) {
+        const char *after = found + strlen(searchString);
+        int hex;
+        if (sscanf(after, "%x", &hex) == 1) {
+            result = [self colorWithRGBHex:hex];
+        }
+    }
+    
+    return result;
 }
+
 @end
