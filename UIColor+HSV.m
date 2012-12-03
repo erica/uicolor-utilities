@@ -9,6 +9,9 @@
 
 @implementation UIColor (HSB)
 
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 50000
+
 /* Functions from Dustin at
  http://stackoverflow.com/questions/5284427/how-do-i-get-the-hue-saturation-and-brightness-from-a-uicolor
  */
@@ -87,6 +90,8 @@ static void HSVtoRGB( CGFloat *r, CGFloat *g, CGFloat *b, CGFloat h, CGFloat s, 
       break;
   }
 }
+
+#endif
 
 - (BOOL)canProvideHSBComponents {
 	switch (self.colorSpaceModel) {
