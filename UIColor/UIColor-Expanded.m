@@ -480,6 +480,27 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 	return [self colorByDarkeningToRed:r green:g blue:b alpha:1.0f];
 }
 
+// Andrew Wooster https://github.com/wooster
+- (UIColor *)colorByInterpolatingToColor:(UIColor *)color byFraction:(CGFloat)fraction
+{
+	NSAssert(self.canProvideRGBComponents, @"Self must be a RGB color to use arithmatic operations");
+	NSAssert(color.canProvideRGBComponents, @"Color must be a RGB color to use arithmatic operations");
+    
+	CGFloat r, g, b, a;
+	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
+    
+	CGFloat r2,g2,b2,a2;
+	if (![color red:&r2 green:&g2 blue:&b2 alpha:&a2]) return nil;
+    
+	CGFloat red = r + (fraction * (r2 - r));
+	CGFloat green = g + (fraction * (g2 - g));
+	CGFloat blue = b + (fraction * (b2 - b));
+	CGFloat alpha = a + (fraction * (a2 - a));
+    
+	UIColor *new = [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
+	return new;
+}
+
 #pragma mark Complementary Colors, etc
 
 // Pick a color that is likely to contrast well with this color

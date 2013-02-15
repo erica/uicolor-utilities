@@ -78,6 +78,8 @@ void YUV2RGB_f(CGFloat y,CGFloat u,CGFloat v,CGFloat *r,CGFloat *g,CGFloat *b);
 - (UIColor *)  colorByLighteningToColor: (UIColor *) color;
 - (UIColor *)   colorByDarkeningToColor: (UIColor *) color;
 
+- (UIColor *)colorByInterpolatingToColor:(UIColor *)color byFraction:(CGFloat)fraction;
+
 // Related colors
 - (UIColor *) contrastingColor;			// A good contrasting color: will be either black or white
 - (UIColor *) complementaryColor;		// A complementary color that should look good with this color
