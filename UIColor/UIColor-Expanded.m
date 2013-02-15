@@ -655,9 +655,14 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 
 // Returns a UIColor by scanning the string for a hex number and passing that to +[UIColor colorWithRGBHex:]
 // Skips any leading whitespace and ignores any trailing characters
+// Added "#" consumer -- via Arnaud Coomans
 + (UIColor *) colorWithHexString: (NSString *)stringToConvert
 {
-	NSScanner *scanner = [NSScanner scannerWithString:stringToConvert];
+    NSString *string = stringToConvert;
+    if ([string hasPrefix:@"#"])
+        string = [string substringFromIndex:1];
+    
+	NSScanner *scanner = [NSScanner scannerWithString:string];
 	unsigned hexNum;
 	if (![scanner scanHexInt: &hexNum]) return nil;
 	return [UIColor colorWithRGBHex:hexNum];
