@@ -31,11 +31,6 @@
 void RGB2YUV_f(CGFloat r, CGFloat g, CGFloat b, CGFloat *y, CGFloat *u, CGFloat *v);
 void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat *b);
 
-// Bulk access to RGB and HSB components of the color
-// HSB components are converted from the RGB components
-- (BOOL) red:(CGFloat *)r green:(CGFloat *)g blue:(CGFloat *)b alpha:(CGFloat *)a;
-- (BOOL) hue:(CGFloat *)h saturation:(CGFloat *)s brightness:(CGFloat *)b alpha:(CGFloat *)a;
-
 void RGB2YUV_f(CGFloat r,CGFloat g,CGFloat b,CGFloat *y,CGFloat *u,CGFloat *v);
 void YUV2RGB_f(CGFloat y,CGFloat u,CGFloat v,CGFloat *r,CGFloat *g,CGFloat *b);
 
@@ -57,6 +52,7 @@ void YUV2RGB_f(CGFloat y,CGFloat u,CGFloat v,CGFloat *r,CGFloat *g,CGFloat *b);
 
 // Return a grey-scale representation of the color
 - (UIColor *) colorByLuminanceMapping;
+@property (nonatomic, readonly) CGFloat colorfulness;
 
 // Color Distance
 - (CGFloat) luminanceDistanceFrom: (UIColor *) anotherColor;
@@ -108,6 +104,7 @@ void YUV2RGB_f(CGFloat y,CGFloat u,CGFloat v,CGFloat *r,CGFloat *g,CGFloat *b);
 
 - (NSString *) closestColorNameUsingDictionary: (NSString *) dictionaryName;
 
+- (NSDictionary *) closestColors;
 @property (nonatomic, readonly) NSString *closestColorName;
 @property (nonatomic, readonly) NSString *closestCrayonName;
 @property (nonatomic, readonly) NSString *closestWikipediaColorName;

@@ -26,42 +26,76 @@
     for (int i = 0; i < self.view.frame.size.height / 45; i++)
     {
         UIColor *color = [UIColor randomColor];
-        CGRect rect = CGRectMake(0, 0, 30, 30);
+        CGRect rect = CGRectMake(4, 0, 30, 30);
         UIBezierPath *path;
         
+        NSString *s;
+        UIFont *font = [UIFont systemFontOfSize:10];
+        
+        // Draw random color
         rect.origin.y = i * 40;
         path = [UIBezierPath bezierPathWithOvalInRect:rect];
         [color set];
         [path fill];
         
+        // Label it
+        [color.contrastingColor set];
+//        s = [NSString stringWithFormat:@"  %0.2f\n  %0.2f\n  %0.2f", color.hue, color.saturation, color.brightness];
+//        [s drawInRect:CGRectOffset(CGRectInset(rect, 0, -12), 3, 10) withFont:[UIFont systemFontOfSize:8]];
+        s = [NSString stringWithFormat:@"  %0.2f", color.colorfulness];
+        [s drawInRect:CGRectInset(rect, 0, 8) withFont:font];
+
+        // Fetch close colors
+        NSDictionary *dict = [color closestColors];
+        
+        // Dot 1
+        NSString *targetDictionary = @"Wikipedia";
+        NSString *targetColorName = dict[targetDictionary];
+        UIColor *targetColor = [UIColor colorWithName:targetColorName inDictionary:targetDictionary];        
+
+        // Draw Dot 1
         rect.origin.x = 40;
         path = [UIBezierPath bezierPathWithOvalInRect:rect];
-        NSString *colorName = color.closestWikipediaColorName;
-        UIColor *closeColor = [UIColor colorWithName:colorName inDictionary:@"Wikipedia"];
-        [closeColor set];
+        [targetColor set];
         [path fill];
         
-        [[UIColor blackColor] set];
-        NSString *s = [NSString stringWithFormat:@"%0.2f %@", [color distanceFrom:closeColor], colorName];
-        [s drawInRect:CGRectMake(rect.origin.x + 40, i * 40 + 10, w, 30) withFont:[UIFont systemFontOfSize:10]];
+        // Label it
+        [targetColor.contrastingColor set];
+        s = [NSString stringWithFormat:@"  %0.2f", [color distanceFrom:targetColor]];
+        [s drawInRect:CGRectInset(rect, 0, 8) withFont:font];
 
+        [[UIColor blackColor] set];
+        [targetColorName drawInRect:CGRectMake(rect.origin.x + 40, i * 40 + 10, w, 30) withFont:font];
         
+        // Dot 2
+        targetDictionary = @"Base";
+        targetColorName = dict[targetDictionary];
+        targetColor = [UIColor colorWithName:targetColorName inDictionary:targetDictionary];
+
+        // Draw Dot 2
         rect.origin.x = 80 + w;
         path = [UIBezierPath bezierPathWithOvalInRect:rect];
-        NSString *cssName = color.closestCSSName;
-        UIColor *cssColor = [UIColor colorWithName:cssName inDictionary:@"CSS"];
-        [cssColor set];
+        [targetColor set];
         [path fill];
         
+        // Label it
+        [targetColor.contrastingColor set];
+        s = [NSString stringWithFormat:@"  %0.2f", [color distanceFrom:targetColor]];
+        [s drawInRect:CGRectInset(rect, 0, 8) withFont:font];
+
         [[UIColor blackColor] set];
-        s = [NSString stringWithFormat:@"%0.2f %@", [color distanceFrom:cssColor], cssName];
-        [s drawInRect:CGRectMake(rect.origin.x + 40, i * 40 + 10, w, 30) withFont:[UIFont systemFontOfSize:10]];
+        [targetColorName drawInRect:CGRectMake(rect.origin.x + 40, i * 40 + 10, w, 30) withFont:font];
         
+        // Dot 3 - Men's Color
         UIColor *mensColor = color.closestMensColor;
         rect.origin.x = size.width - 40;
         path = [UIBezierPath bezierPathWithOvalInRect:rect];
         [mensColor set];
         [path fill];
+        
+        [mensColor.contrastingColor set];
+        s = [NSString stringWithFormat:@"  %0.2f", [color distanceFrom:mensColor]];
+        [s drawInRect:CGRectInset(rect, 0, 8) withFont:font];
     }
     
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();

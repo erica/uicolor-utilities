@@ -179,88 +179,77 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 }
 
 #pragma mark - Components
-
-- (BOOL) red: (CGFloat *) red
-       green: (CGFloat *) green
-        blue: (CGFloat *) blue
-       alpha: (CGFloat *) alpha
-{
-    NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -red:green:blue:alpha:");
-
-	const CGFloat *components = CGColorGetComponents(self.CGColor);
-	CGFloat r, g, b, a;
-	
-	switch (self.colorSpaceModel)
-    {
-		case kCGColorSpaceModelMonochrome:
-			r = g = b = components[0];
-			a = components[1];
-			break;
-		case kCGColorSpaceModelRGB:
-			r = components[0];
-			g = components[1];
-			b = components[2];
-			a = components[3];
-			break;
-		default:	// We don't know how to handle this model
-			return NO;
-	}
-	
-	if (red) *red = r;
-	if (green) *green = g;
-	if (blue) *blue = b;
-	if (alpha) *alpha = a;
-	
-	return YES;
-}
-
-- (BOOL) hue: (CGFloat *) hue
-  saturation: (CGFloat *) saturation
-  brightness: (CGFloat *) brightness
-       alpha: (CGFloat *) alpha
-{
-    NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -hue:saturation:brightness:alpha:");
-
-	CGFloat r, g, b, a;
-	if (![self red: &r green: &g blue: &b alpha: &a]) return NO;
-	
-	[UIColor red:r green:g blue:b toHue:hue saturation:saturation brightness:brightness];
-
-	if (alpha) *alpha = a;
-
-	return YES;
-}
-
 - (CGFloat) red
 {
 	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -red");
-	const CGFloat *c = CGColorGetComponents(self.CGColor);
-	return c[0];
+    CGFloat r = 0.0f;
+    
+    switch (self.colorSpaceModel)
+    {
+        case kCGColorSpaceModelRGB:
+            [self getRed:&r green:NULL blue:NULL alpha:NULL];
+            break;
+        case kCGColorSpaceModelMonochrome:
+            [self getWhite:&r alpha:NULL];
+        default:
+            break;
+    }
+
+    return r;
 }
 
 - (CGFloat) green
 {
 	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -green");
-	const CGFloat *c = CGColorGetComponents(self.CGColor);
-	if (self.colorSpaceModel == kCGColorSpaceModelMonochrome)
-        return c[0];
-	return c[1];
+    CGFloat g = 0.0f;
+    
+    switch (self.colorSpaceModel)
+    {
+        case kCGColorSpaceModelRGB:
+            [self getRed:NULL green:&g blue:NULL alpha:NULL];
+            break;
+        case kCGColorSpaceModelMonochrome:
+            [self getWhite:&g alpha:NULL];
+        default:
+            break;
+    }
+
+    return g;
 }
 
 - (CGFloat) blue
 {
 	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -blue");
-	const CGFloat *c = CGColorGetComponents(self.CGColor);
-	if (self.colorSpaceModel == kCGColorSpaceModelMonochrome)
-        return c[0];
-	return c[2];
+    CGFloat b = 0.0f;
+
+    switch (self.colorSpaceModel)
+    {
+        case kCGColorSpaceModelRGB:
+            [self getRed:NULL green:NULL blue:&b alpha:NULL];
+            break;
+        case kCGColorSpaceModelMonochrome:
+            [self getWhite:&b alpha:NULL];
+        default:
+            break;
+    }
+
+    return b;
+}
+
+- (CGFloat) alpha
+{
+    CGFloat a;
+    [self getWhite:NULL alpha:&a];
+    return a;
 }
 
 - (CGFloat) white
 {
 	NSAssert(self.usesMonochromeColorspace, @"Must be a Monochrome color to use -white");
-	const CGFloat *c = CGColorGetComponents(self.CGColor);
-	return c[0];
+    
+    CGFloat w;
+    [self getWhite:&w alpha:NULL];
+    return w;
 }
 
 
@@ -268,7 +257,18 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 {
 	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -hue");
 	CGFloat h = 0.0f;
-	[self hue: &h saturation:nil brightness:nil alpha:nil];
+    
+    switch (self.colorSpaceModel)
+    {
+        case kCGColorSpaceModelRGB:
+            [self getHue: &h saturation:NULL brightness:NULL alpha:NULL];
+            break;
+        case kCGColorSpaceModelMonochrome:
+            [self getWhite:&h alpha:NULL];
+        default:
+            break;
+    }
+
 	return h;
 }
 
@@ -276,7 +276,18 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 {
 	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -saturation");
 	CGFloat s = 0.0f;
-	[self hue:nil saturation: &s brightness:nil alpha:nil];
+    
+    switch (self.colorSpaceModel)
+    {
+        case kCGColorSpaceModelRGB:
+            [self getHue:NULL saturation: &s brightness:NULL alpha:NULL];
+            break;
+        case kCGColorSpaceModelMonochrome:
+            [self getWhite:&s alpha:NULL];
+        default:
+            break;
+    }
+
 	return s;
 }
 
@@ -284,21 +295,28 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 {
 	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -brightness");
 	CGFloat v = 0.0f;
-	[self hue:nil saturation:nil brightness: &v alpha:nil];
+    
+    switch (self.colorSpaceModel)
+    {
+        case kCGColorSpaceModelRGB:
+            [self getHue:NULL saturation:NULL brightness: &v alpha:NULL];
+            break;
+        case kCGColorSpaceModelMonochrome:
+            [self getWhite:&v alpha:NULL];
+        default:
+            break;
+    }    
+
 	return v;
 }
 
-- (CGFloat) alpha
-{
-	return CGColorGetAlpha(self.CGColor);
-}
 
 - (CGFloat) luminance
 {
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use -luminance");
     
 	CGFloat r, g, b;
-	if (![self red: &r green: &g blue: &b alpha:nil])
+	if (![self getRed: &r green: &g blue: &b alpha:NULL])
         return 0.0f;
 	
 	// http://en.wikipedia.org/wiki/Luma_(video)
@@ -311,7 +329,7 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use -rgbHex");
 	
 	CGFloat r, g, b, a;
-	if (![self red: &r green: &g blue: &b alpha: &a])
+	if (![self getRed: &r green: &g blue: &b alpha: &a])
         return 0.0f;
 	
 	r = MIN(MAX(r, 0.0f), 1.0f);
@@ -326,7 +344,7 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 	NSAssert(self.canProvideRGBComponents, @"Must be an RGB color to use -arrayFromRGBAComponents");
     
 	CGFloat r, g, b, a;
-	if (![self red: &r green: &g blue: &b alpha: &a]) return nil;
+	if (![self getRed: &r green: &g blue: &b alpha: &a]) return nil;
 	
 	return @[@(r), @(g), @(b), @(a)];
 }
@@ -337,11 +355,36 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 	return [UIColor colorWithWhite:self.luminance alpha:1.0f];
 }
 
+- (CGFloat) colorfulness
+{
+    CGFloat d1 = fabsf(self.red - self.green);
+    CGFloat d2 = fabsf(self.green - self.blue);
+    CGFloat d3 = fabsf(self.blue - self.red);
+    CGFloat sum = d1 + d2 + d3;
+    
+    return sum;
+}
+
 #pragma mark - Distance
 - (CGFloat) luminanceDistanceFrom: (UIColor *) anotherColor
 {
     CGFloat base = self.luminance - anotherColor.luminance;
     return sqrtf(base * base);
+}
+
+- (CGFloat) hueDistanceFrom: (UIColor *) anotherColor
+{
+    CGFloat dH = self.hue - anotherColor.hue;
+    
+    return fabsf(dH);
+}
+
+- (CGFloat) hsDistanceFrom: (UIColor *) anotherColor
+{
+    CGFloat dH = self.hue - anotherColor.hue;
+    CGFloat dS = self.saturation - anotherColor.saturation;
+    
+    return sqrtf(dH * dH + dS * dS);
 }
 
 - (CGFloat) distanceFrom: (UIColor *) anotherColor
@@ -364,7 +407,7 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
     
 	CGFloat r, g, b, a;
-	if (![self red: &r green: &g blue: &b alpha: &a]) return nil;
+	if (![self getRed: &r green: &g blue: &b alpha: &a]) return nil;
     
 	return [UIColor colorWithRed:MAX(0.0, MIN(1.0, r * red))
 						   green:MAX(0.0, MIN(1.0, g * green))
@@ -380,7 +423,7 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
 	CGFloat r, g, b, a;
-	if (![self red: &r green: &g blue: &b alpha: &a]) return nil;
+	if (![self getRed: &r green: &g blue: &b alpha: &a]) return nil;
 	
 	return [UIColor colorWithRed:MAX(0.0, MIN(1.0, r + red))
 						   green:MAX(0.0, MIN(1.0, g + green))
@@ -396,7 +439,7 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
 	CGFloat r, g, b, a;
-	if (![self red: &r green: &g blue: &b alpha: &a]) return nil;
+	if (![self getRed: &r green: &g blue: &b alpha: &a]) return nil;
     
 	return [UIColor colorWithRed:MAX(r, red)
 						   green:MAX(g, green)
@@ -412,7 +455,7 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
 	CGFloat r, g, b, a;
-	if (![self red: &r green: &g blue: &b alpha: &a]) return nil;
+	if (![self getRed: &r green: &g blue: &b alpha: &a]) return nil;
 	
 	return [UIColor colorWithRed:MIN(r, red)
 						   green:MIN(g, green)
@@ -445,7 +488,7 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
 	CGFloat r, g, b, a;
-	if (![self red: &r green: &g blue: &b alpha: &a]) return nil;
+	if (![self getRed: &r green: &g blue: &b alpha: &a]) return nil;
 	
 	return [self colorByMultiplyingByRed:r green:g blue:b alpha:1.0f];
 }
@@ -455,7 +498,7 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
 	CGFloat r, g, b, a;
-	if (![self red: &r green: &g blue: &b alpha: &a]) return nil;
+	if (![self getRed: &r green: &g blue: &b alpha: &a]) return nil;
 	
 	return [self colorByAddingRed:r green:g blue:b alpha:0.0f];
 }
@@ -465,7 +508,7 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
 	CGFloat r, g, b, a;
-	if (![self red: &r green: &g blue: &b alpha: &a]) return nil;
+	if (![self getRed: &r green: &g blue: &b alpha: &a]) return nil;
     
 	return [self colorByLighteningToRed:r green:g blue:b alpha:0.0f];
 }
@@ -475,7 +518,7 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 	NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use arithmetic operations");
 	
 	CGFloat r, g, b, a;
-	if (![self red: &r green: &g blue: &b alpha: &a]) return nil;
+	if (![self getRed: &r green: &g blue: &b alpha: &a]) return nil;
 	
 	return [self colorByDarkeningToRed:r green:g blue:b alpha:1.0f];
 }
@@ -487,10 +530,10 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 	NSAssert(color.canProvideRGBComponents, @"Color must be a RGB color to use arithmatic operations");
     
 	CGFloat r, g, b, a;
-	if (![self red:&r green:&g blue:&b alpha:&a]) return nil;
+	if (![self getRed:&r green:&g blue:&b alpha:&a]) return nil;
     
 	CGFloat r2,g2,b2,a2;
-	if (![color red:&r2 green:&g2 blue:&b2 alpha:&a2]) return nil;
+	if (![color getRed:&r2 green:&g2 blue:&b2 alpha:&a2]) return nil;
     
 	CGFloat red = r + (fraction * (r2 - r));
 	CGFloat green = g + (fraction * (g2 - g));
@@ -515,7 +558,7 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 	
 	// Convert to HSB
 	CGFloat h, s, v, a;
-	if (![self hue: &h saturation: &s brightness: &v alpha: &a]) return nil;
+	if (![self getHue: &h saturation: &s brightness: &v alpha: &a]) return nil;
     
 	// Pick color 180 degrees away
 	h += 180.0f;
@@ -537,7 +580,7 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 {
 	// Convert to HSB
 	CGFloat h, s, v, a;
-	if (![self hue: &h saturation: &s brightness: &v alpha: &a]) return nil;
+	if (![self getHue: &h saturation: &s brightness: &v alpha: &a]) return nil;
 	
 	NSMutableArray *colors = [NSMutableArray arrayWithCapacity:pairs * 2];
 	
@@ -831,35 +874,25 @@ static NSDictionary *colorNameDictionaries = nil;
     }
     
     NSDictionary *colorDictionary = colorNameDictionaries[dictionaryName];
-	
-	int targetHex = self.rgbHex;
-	int rInt = (targetHex >> 16) & 0x0ff;
-	int gInt = (targetHex >> 8) & 0x0ff;
-	int bInt = (targetHex >> 0) & 0x0ff;
-	
 	float bestScore = MAXFLOAT;
     NSString *bestKey = nil;
     
     for (NSString *colorName in colorDictionary.allKeys)
     {
         NSString *colorHex = colorDictionary[colorName];
+        UIColor *comparisonColor = [UIColor colorWithHexString:colorHex];
+        if (!comparisonColor)
+            continue;
         
-		int r, g, b;
-		if (sscanf(colorHex.UTF8String, "%2x%2x%2x", &r, &g, &b) == 3)
+        CGFloat score;
+        score = [self distanceFrom:comparisonColor];
+        if (score < bestScore)
         {
-            int dR = rInt - r;
-			int dG = gInt - g;
-			int dB = bInt - b;
-            float score = sqrtf(dR * dR + dG * dG + dB * dB);
-            
-            if (score < bestScore)
-            {
-                bestScore = score;
-                bestKey = colorName;
-            }
+            bestScore = score;
+            bestKey = colorName;
         }
     }
-	
+
 	return bestKey;
 }
 
@@ -916,10 +949,47 @@ static NSDictionary *colorNameDictionaries = nil;
 
 - (UIColor *) closestMensColor
 {
-    NSString *colorName = [self closestColorNameUsingDictionary:@"System"];
-    return [UIColor systemColorWithName:colorName];
+
+    // Even more limited
+//     NSArray *baseColors = @[[UIColor redColor], [UIColor greenColor], [UIColor blueColor], [UIColor yellowColor], [UIColor orangeColor], [UIColor purpleColor]];
+
+    NSArray *baseColors = @[[UIColor redColor], [UIColor greenColor], [UIColor blueColor], [UIColor cyanColor], [UIColor yellowColor], [UIColor magentaColor], [UIColor orangeColor], [UIColor purpleColor], [UIColor brownColor]];
+
+    NSArray *grayColors = @[[UIColor blackColor], [UIColor lightGrayColor], [UIColor grayColor], [UIColor darkGrayColor]];
+    
+    CGFloat bestScore = MAXFLOAT;
+    UIColor *winner = nil;
+    BOOL evaluateAsGray = self.colorfulness < 0.45f;
+    
+    NSArray *colors = evaluateAsGray ? grayColors : baseColors;
+    
+    for (UIColor *color in colors)
+    {
+        
+        CGFloat score = evaluateAsGray ? [self distanceFrom:color] : [self hueDistanceFrom:color];
+        
+        if (score < bestScore)
+        {
+            bestScore = score;
+            winner = color;
+        }
+    }
+
+    
+    return winner;
 }
 
+- (NSDictionary *) closestColors
+{
+    NSMutableDictionary *results = [NSMutableDictionary dictionary];
+    for (NSString *key in [UIColor availableColorDictionaries])
+    {
+        NSString *colorName = [self closestColorNameUsingDictionary:key];
+        results[key] = colorName;
+    }
+    
+    return results;
+}
 
 + (UIColor *) crayonWithName: (NSString *) name
 {
