@@ -49,7 +49,7 @@
         NSDictionary *dict = [color closestColors];
         
         // Dot 1
-        NSString *targetDictionary = @"Wikipedia";
+        NSString *targetDictionary = @"xkcd";
         NSString *targetColorName = dict[targetDictionary];
         UIColor *targetColor = [UIColor colorWithName:targetColorName inDictionary:targetDictionary];        
 
@@ -65,10 +65,10 @@
         [s drawInRect:CGRectInset(rect, 0, 8) withFont:font];
 
         [[UIColor blackColor] set];
-        [targetColorName drawInRect:CGRectMake(rect.origin.x + 40, i * 40 + 10, w, 30) withFont:font];
+        [targetColorName.capitalizedString drawInRect:CGRectMake(rect.origin.x + 40, i * 40 + 10, w, 30) withFont:font];
         
         // Dot 2
-        targetDictionary = @"Base";
+        targetDictionary = @"Moroney";
         targetColorName = dict[targetDictionary];
         targetColor = [UIColor colorWithName:targetColorName inDictionary:targetDictionary];
 
@@ -84,7 +84,7 @@
         [s drawInRect:CGRectInset(rect, 0, 8) withFont:font];
 
         [[UIColor blackColor] set];
-        [targetColorName drawInRect:CGRectMake(rect.origin.x + 40, i * 40 + 10, w, 30) withFont:font];
+        [targetColorName.capitalizedString drawInRect:CGRectMake(rect.origin.x + 40, i * 40 + 10, w, 30) withFont:font];
         
         // Dot 3 - Men's Color
         UIColor *mensColor = color.closestMensColor;
