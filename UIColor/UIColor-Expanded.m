@@ -557,14 +557,19 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 {
 	
 	// Convert to HSB
-	CGFloat h, s, v, a;
-	if (![self getHue: &h saturation: &s brightness: &v alpha: &a]) return nil;
+    CGFloat h = self.hue * 360.0f;
+    CGFloat s = self.saturation;
+    CGFloat v = self.brightness;
+    CGFloat a = self.alpha;
     
 	// Pick color 180 degrees away
 	h += 180.0f;
 	if (h > 360.f) h -= 360.0f;
+    h /= 360.0f;
 	
 	// Create a color in RGB
+    if (a == 0.0f)
+        a = 1.0f;
 	return [UIColor colorWithHue:h saturation:s brightness:v alpha:a];
 }
 
@@ -579,8 +584,9 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 - (NSArray *) analogousColorsWithStepAngle: (CGFloat) stepAngle pairCount: (int) pairs
 {
 	// Convert to HSB
-	CGFloat h, s, v, a;
-	if (![self getHue: &h saturation: &s brightness: &v alpha: &a]) return nil;
+	CGFloat h = self.hue * 360.0f;
+    CGFloat s = self.saturation;
+    CGFloat v = self.brightness;
 	
 	NSMutableArray *colors = [NSMutableArray arrayWithCapacity:pairs * 2];
 	
@@ -594,13 +600,12 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 		CGFloat h1 = fmodf(h + a, 360.0f);
 		CGFloat h2 = fmodf(h + 360.0f - a, 360.0f);
 		
-		[colors addObject:[UIColor colorWithHue:h1 saturation:s brightness:v alpha:a]];
-		[colors addObject:[UIColor colorWithHue:h2 saturation:s brightness:v alpha:a]];
+		[colors addObject:[UIColor colorWithHue:h1 / 360.0f saturation:s brightness:v alpha:a]];
+		[colors addObject:[UIColor colorWithHue:h2 / 360.0f saturation:s brightness:v alpha:a]];
 	}
 	
 	return [colors copy];
 }
-
 #pragma mark - String Support
 - (NSString *) stringValue
 {
@@ -766,15 +771,21 @@ static NSDictionary *colorNameDictionaries = nil;
     if (colorNameDictionaries)
         return;
   
+    /*
+     Popular crayon colors
+     */
     NSDictionary *crayonDictionary = @{@"Carnation Pink":@"FFA6C9", @"Almond":@"EED9C4", @"Burnt Orange":@"FF7034", @"Wisteria":@"C9A0DC", @"Sepia":@"9E5B40", @"Vivid Tangerine":@"FF9980", @"Neon Carrot":@"FF9933", @"Electric Lime":@"CCFF00", @"Sunset Orange":@"FE4C40", @"Jungle Green":@"29AB87", @"Robin's Egg Blue":@"00CCCC", @"Banana Mania":@"FBE7B2", @"Fuchsia":@"C154C1", @"Mango Tango":@"E77200", @"Cranberry":@"DB5079", @"Blue":@"0066FF", @"Raw Sienna":@"D27D46", @"Tickle Me Pink":@"FC80A5", @"Gray":@"8B8680", @"Mountain Meadow":@"1AB385", @"Hot Magenta":@"FF00CC", @"Black":@"000000", @"Pink Flamingo":@"FF66FF", @"Screamin' Green":@"66FF66", @"Mauvelous":@"F091A9", @"Orange":@"FF681F", @"Orchid":@"E29CD2", @"Aquamarine":@"71D9E2", @"Goldenrod":@"FCD667", @"Brick Red":@"C62D42", @"Apricot":@"FDD5B1", @"Razzmatazz":@"E30B5C", @"Mahogany":@"CA3435", @"Flesh":@"FFCBA4", @"Wild Strawberry":@"FF3399", @"Desert Sand":@"EDC9AF", @"Burnt Sienna":@"E97451", @"Midnight Blue":@"003366", @"Shocking Pink":@"FF6FFF", @"Laser Lemon":@"FFFF66", @"White":@"FFFFFF", @"Inch Worm":@"B0E313", @"Pig Pink":@"FDD7E4", @"Vivid Violet":@"803790", @"Antique Brass":@"C88A65", @"Bittersweet":@"FE6F5E", @"Violet (Purple)":@"8359A3", @"Magenta":@"F653A6", @"Eggplant":@"614051", @"Atomic Tangerine":@"FF9966", @"Lavender":@"FBAED2", @"Razzle Dazzle Rose":@"FF33CC", @"Blizzard Blue":@"A3E3ED", @"Salmon":@"FF91A4", @"Granny Smith Apple":@"9DE093", @"Silver":@"C9C0BB", @"Denim":@"1560BD", @"Jazzberry Jam":@"A50B5E", @"Outer Space":@"2D383A", @"Macaroni And Cheese":@"FFB97B", @"Copper":@"DA8A67", @"Tropical Rain Forest":@"00755E", @"Violet Red":@"F7468A", @"Fern":@"63B76C", @"Gold":@"E6BE8A", @"Pacific Blue":@"009DC4", @"Sunglow":@"FFCC33", @"Tumbleweed":@"DEA681", @"Cerise":@"DA3287", @"Chestnut":@"B94E48", @"Forest Green":@"5FA777", @"Indigo":@"4F69C6", @"Ultra Red":@"FD5B78", @"Timberwolf":@"D9D6CF", @"Navy Blue":@"0066CC", @"Royal Purple":@"6B3FA0", @"Yellow Orange":@"FFAE42", @"Beaver":@"926F5B", @"Wild Blue Yonder":@"7A89B8", @"Blue Green":@"0095B6", @"Cotton Candy":@"FFB7D5", @"Dandelion":@"FED85D", @"Green":@"01A368", @"Plum":@"843179", @"Sea Green":@"93DFB8", @"Yellow Green":@"C5E17A", @"Blue Bell":@"9999CC", @"Olive Green":@"B5B35C", @"Canary":@"FFFF99", @"Yellow":@"FBE870", @"Magic Mint":@"AAF0D1", @"Red":@"ED0A3F", @"Cerulean":@"02A4D3", @"Red Violet":@"BB3385", @"Sky Blue":@"76D7EA", @"Brink Pink":@"FB607F", @"Outrageous Orange":@"FF6037", @"Cornflower":@"93CCEA", @"Mulberry":@"C54B8C", @"Purple Mountain's Majesty":@"9678B6", @"Red Orange":@"FF3F34", @"Fuzzy Wuzzy Brown":@"C45655", @"Periwinkle":@"C3CDE6", @"Happy Ever After":@"6CDA37", @"Radical Red":@"FF355E", @"Maroon":@"C32148", @"Spring Green":@"ECEBBD", @"Turquoise Blue":@"6CDAE7", @"Purple Heart":@"652DC1", @"Shamrock":@"33CC99", @"Brown":@"AF593E", @"Blue Violet":@"6456B7", @"Scarlet":@"FD0E35", @"Green Yellow":@"F1E788", @"Melon":@"FEBAAD", @"Manatee":@"8D90A1", @"Tan":@"FA9D5A", @"Asparagus":@"7BA05B", @"Pine Green":@"01796F", @"Caribbean Green":@"00CC99", @"Cadet Blue":@"A9B2C3", @"Shadow":@"837050"};
     
     /*
-     * Database of color names and hex rgb values, derived
-     * from the css 3 color spec:
-     *	http://www.w3.org/TR/css3-color/
+     Database of color names and hex rgb values, derived
+     from the css 3 color spec:
+     http://www.w3.org/TR/css3-color/
      */
     NSDictionary *cssDictionary = @{@"lightseagreen":@"20b2aa", @"floralwhite":@"fffaf0", @"lightgray":@"d3d3d3", @"darkgoldenrod":@"b8860b", @"paleturquoise":@"afeeee", @"goldenrod":@"daa520", @"skyblue":@"87ceeb", @"indianred":@"cd5c5c", @"darkgray":@"a9a9a9", @"khaki":@"f0e68c", @"blue":@"0000ff", @"darkred":@"8b0000", @"lightyellow":@"ffffe0", @"midnightblue":@"191970", @"chartreuse":@"7fff00", @"lightsteelblue":@"b0c4de", @"slateblue":@"6a5acd", @"firebrick":@"b22222", @"moccasin":@"ffe4b5", @"salmon":@"fa8072", @"sienna":@"a0522d", @"slategray":@"708090", @"teal":@"008080", @"lightsalmon":@"ffa07a", @"pink":@"ffc0cb", @"burlywood":@"deb887", @"gold":@"ffd700", @"springgreen":@"00ff7f", @"lightcoral":@"f08080", @"black":@"000000", @"blueviolet":@"8a2be2", @"chocolate":@"d2691e", @"aqua":@"00ffff", @"darkviolet":@"9400d3", @"indigo":@"4b0082", @"darkcyan":@"008b8b", @"orange":@"ffa500", @"antiquewhite":@"faebd7", @"peru":@"cd853f", @"silver":@"c0c0c0", @"purple":@"800080", @"saddlebrown":@"8b4513", @"lawngreen":@"7cfc00", @"dodgerblue":@"1e90ff", @"lime":@"00ff00", @"linen":@"faf0e6", @"lightblue":@"add8e6", @"darkslategray":@"2f4f4f", @"lightskyblue":@"87cefa", @"mintcream":@"f5fffa", @"olive":@"808000", @"hotpink":@"ff69b4", @"papayawhip":@"ffefd5", @"mediumseagreen":@"3cb371", @"mediumspringgreen":@"00fa9a", @"cornflowerblue":@"6495ed", @"plum":@"dda0dd", @"seagreen":@"2e8b57", @"palevioletred":@"db7093", @"bisque":@"ffe4c4", @"beige":@"f5f5dc", @"darkorchid":@"9932cc", @"royalblue":@"4169e1", @"darkolivegreen":@"556b2f", @"darkmagenta":@"8b008b", @"orangered":@"ff4500", @"lavender":@"e6e6fa", @"fuchsia":@"ff00ff", @"darkseagreen":@"8fbc8f", @"lavenderblush":@"fff0f5", @"wheat":@"f5deb3", @"steelblue":@"4682b4", @"lightgoldenrodyellow":@"fafad2", @"lightcyan":@"e0ffff", @"mediumaquamarine":@"66cdaa", @"turquoise":@"40e0d0", @"darkblue":@"00008b", @"darkorange":@"ff8c00", @"brown":@"a52a2a", @"dimgray":@"696969", @"deeppink":@"ff1493", @"powderblue":@"b0e0e6", @"red":@"ff0000", @"darkgreen":@"006400", @"ghostwhite":@"f8f8ff", @"white":@"ffffff", @"navajowhite":@"ffdead", @"navy":@"000080", @"ivory":@"fffff0", @"palegreen":@"98fb98", @"whitesmoke":@"f5f5f5", @"gainsboro":@"dcdcdc", @"mediumslateblue":@"7b68ee", @"olivedrab":@"6b8e23", @"mediumpurple":@"9370db", @"darkslateblue":@"483d8b", @"blanchedalmond":@"ffebcd", @"darkkhaki":@"bdb76b", @"green":@"008000", @"limegreen":@"32cd32", @"snow":@"fffafa", @"tomato":@"ff6347", @"darkturquoise":@"00ced1", @"orchid":@"da70d6", @"yellow":@"ffff00", @"greenyellow":@"adff2f", @"azure":@"f0ffff", @"mistyrose":@"ffe4e1", @"cadetblue":@"5f9ea0", @"oldlace":@"fdf5e6", @"gray":@"808080", @"honeydew":@"f0fff0", @"peachpuff":@"ffdab9", @"tan":@"d2b48c", @"thistle":@"d8bfd8", @"palegoldenrod":@"eee8aa", @"mediumorchid":@"ba55d3", @"rosybrown":@"bc8f8f", @"mediumturquoise":@"48d1cc", @"lemonchiffon":@"fffacd", @"maroon":@"800000", @"mediumvioletred":@"c71585", @"violet":@"ee82ee", @"yellowgreen":@"9acd32", @"coral":@"ff7f50", @"lightgreen":@"90ee90", @"cornsilk":@"fff8dc", @"mediumblue":@"0000cd", @"aliceblue":@"f0f8ff", @"forestgreen":@"228b22", @"aquamarine":@"7fffd4", @"deepskyblue":@"00bfff", @"lightslategray":@"778899", @"darksalmon":@"e9967a", @"crimson":@"dc143c", @"sandybrown":@"f4a460", @"lightpink":@"ffb6c1", @"seashell":@"fff5ee"};
-      
+    
+    /*
+     Similar to CSS but more readable
+     */
     NSDictionary *baseDictionary = @{@"Dodger Blue":@"1E90FF", @"Plum":@"DDA0DD", @"Maroon (X11)":@"B03060", @"Ghost White":@"F8F8FF", @"Moccasin":@"FFE4B5", @"Dark Khaki":@"BDB76B", @"Light Steel Blue":@"B0C4DE", @"Spring Green":@"00FF7F", @"Deep Sky Blue":@"00BFFF", @"Floral White":@"FFFAF0", @"Blue":@"0000FF", @"Dark Slate Blue":@"483D8B", @"Pale Violet Red":@"DB7093", @"Seashell":@"FFF5EE", @"Midnight Blue":@"191970", @"Indian Red":@"CD5C5C", @"Light Goldenrod":@"FAFAD2", @"Slate Gray":@"708090", @"Light Yellow":@"FFFFE0", @"Teal":@"008080", @"Sky Blue":@"87CEEB", @"Medium Aquamarine":@"66CDAA", @"Yellow Green":@"9ACD32", @"Coral":@"FF7F50", @"Dark Goldenrod":@"B8860B", @"Black":@"000000", @"Khaki":@"F0E68C", @"Linen":@"FAF0E6", @"Medium Orchid":@"BA55D3", @"Light Blue":@"ADD8E6", @"Medium Spring Green":@"00FA9A", @"Green Yellow":@"ADFF2F", @"Gray (X11)":@"BEBEBE", @"Deep Pink":@"FF1493", @"Medium Turquoise":@"48D1CC", @"Purple (W3C)":@"7F007F", @"Pale Green":@"98FB98", @"Pink":@"FFC0CB", @"Powder Blue":@"B0E0E6", @"Salmon":@"FA8072", @"Dark Blue":@"00008B", @"Dark Red":@"8B0000", @"Hot Pink":@"FF69B4", @"Sienna":@"A0522D", @"Turquoise":@"40E0D0", @"Bisque":@"FFE4C4", @"Peach Puff":@"FFDAB9", @"Aqua":@"00FFFF", @"Azure":@"F0FFFF", @"Beige":@"F5F5DC", @"Olive":@"808000", @"Chocolate":@"D2691E", @"Sandy Brown":@"F4A460", @"Dark Magenta":@"8B008B", @"Tomato":@"FF6347", @"Dark Orange":@"FF8C00", @"White":@"FFFFFF", @"Cornflower":@"6495ED", @"Cadet Blue":@"5F9EA0", @"Gainsboro":@"DCDCDC", @"Dark Orchid":@"9932CC", @"Dark Slate Gray":@"2F4F4F", @"Mint Cream":@"F5FFFA", @"Chartreuse":@"7FFF00", @"Green (X11)":@"00FF00", @"Light Sky Blue":@"87CEFA", @"Snow":@"FFFAFA", @"Slate Blue":@"6A5ACD", @"Saddle Brown":@"8B4513", @"Dark Violet":@"9400D3", @"Light Salmon":@"FFA07A", @"Violet":@"EE82EE", @"Yellow":@"FFFF00", @"Light Green":@"90EE90", @"Dark Sea Green":@"8FBC8F", @"Medium Sea Green":@"3CB371", @"Aquamarine":@"7FFFD4", @"Olive Drab":@"6B8E23", @"Peru":@"CD853F", @"Firebrick":@"B22222", @"Dim Gray":@"696969", @"Lemon Chiffon":@"FFFACD", @"Forest Green":@"228B22", @"Dark Cyan":@"008B8B", @"Dark Green":@"006400", @"Orange Red":@"FF4500", @"Fuchsia":@"FF00FF", @"Light Cyan":@"E0FFFF", @"Dark Salmon":@"E9967A", @"Honeydew":@"F0FFF0", @"Lawn Green":@"7CFC00", @"Dark Turquoise":@"00CED1", @"Goldenrod":@"DAA520", @"Light Coral":@"F08080", @"Misty Rose":@"FFE4E1", @"Navy":@"000080", @"Old Lace":@"FDF5E6", @"Orchid":@"DA70D6", @"Medium Purple":@"9370DB", @"Maroon (W3C)":@"7F0000", @"Thistle":@"D8BFD8", @"Ivory":@"FFFFF0", @"Green (W3C)":@"008000", @"Light Gray":@"D3D3D3", @"Royal Blue":@"4169E1", @"Purple (X11)":@"A020F0", @"Red":@"FF0000", @"Dark Gray":@"A9A9A9", @"Gray (W3C)":@"808080", @"Sea Green":@"2E8B57", @"Pale Turquoise":@"AFEEEE", @"Antique White":@"FAEBD7", @"Burlywood":@"DEB887", @"Gold":@"FFD700", @"Medium Violet Red":@"C71585", @"Alice Blue":@"F0F8FF", @"Crimson":@"DC143C", @"Lime Green":@"32CD32", @"Orange":@"FFA500", @"Steel Blue":@"4682B4", @"Dark Olive Green":@"556B2F", @"Blue Violet":@"8A2BE2", @"Rosy Brown":@"BC8F8F", @"White Smoke":@"F5F5F5", @"Light Pink":@"FFB6C1", @"Medium Slate Blue":@"7B68EE", @"Tan":@"D2B48C", @"Wheat":@"F5DEB3", @"Lavender":@"E6E6FA", @"Lavender Blush":@"FFF0F5", @"Pale Goldenrod":@"EEE8AA", @"Medium Blue":@"0000CD", @"Navajo White":@"FFDEAD", @"Indigo":@"4B0082", @"Brown":@"A52A2A", @"Papaya Whip":@"FFEFD5", @"Silver (W3C)":@"C0C0C0", @"Light Slate Gray":@"778899", @"Light Sea Green":@"20B2AA", @"Blanched Almond":@"FFEBCD", @"Cornsilk":@"FFF8DC"};
     
     NSDictionary *systemColorDictionary = @{@"Black":@"000000", @"Dark Gray":@"555555", @"Light Gray":@"AAAAAA", @"White":@"FFFFFF", @"Gray":@"7F7F7F", @"Red":@"FF0000", @"Green":@"00FF00", @"Blue":@"0000FF", @"Cyan":@"00FFFF", @"Yellow":@"FFFF00", @"Magenta":@"FF00FF", @"Orange":@"FF7F00", @"Purple":@"7F007F", @"Brown":@"996633"};

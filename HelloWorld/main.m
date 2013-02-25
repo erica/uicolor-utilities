@@ -40,8 +40,12 @@
         
         // Label it
         [color.contrastingColor set];
-//        s = [NSString stringWithFormat:@"  %0.2f\n  %0.2f\n  %0.2f", color.hue, color.saturation, color.brightness];
-//        [s drawInRect:CGRectOffset(CGRectInset(rect, 0, -12), 3, 10) withFont:[UIFont systemFontOfSize:8]];
+        
+        // HSB
+        // s = [NSString stringWithFormat:@"  %0.2f\n  %0.2f\n  %0.2f", color.hue, color.saturation, color.brightness];
+        // [s drawInRect:CGRectOffset(CGRectInset(rect, 0, -12), 3, 10) withFont:[UIFont systemFontOfSize:8]];
+        
+        // Colorfulness
         s = [NSString stringWithFormat:@"  %0.2f", color.colorfulness];
         [s drawInRect:CGRectInset(rect, 0, 8) withFont:font];
 
