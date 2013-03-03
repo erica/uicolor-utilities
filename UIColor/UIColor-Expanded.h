@@ -6,6 +6,22 @@
  */
 
 /*
+ BSD License.
+ 
+ This work 'as-is' I provide.
+ No warranty express or implied.
+ I've done my best,
+ to debug and test.
+ Liability for damages denied.
+ 
+ Licensing is quite a chore.
+ The paperwork's really a bore.
+ The lawyers they laugh;
+ Of profits, take half
+ And leave me distraught to the core.
+ */
+
+/*
  Current outstanding request list: (NONE)
  
  Requests recently added:
