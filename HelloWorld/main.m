@@ -16,7 +16,7 @@
     UIImageView *imageView;
 }
 
-- (void) doPicture
+- (void) randomPic
 {
     CGSize size = self.view.frame.size;
     CGFloat w = size.width / 4;
@@ -124,7 +124,90 @@
     constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[imageView]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(imageView)];
     [self.view addConstraints:constraints];
     
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Go" style:UIBarButtonItemStylePlain target:self action:@selector(doPicture)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Random" style:UIBarButtonItemStylePlain target:self action:@selector(randomPic)];
+    
+#define BUILD_COLOR_WHEEL   0
+#if BUILD_COLOR_WHEEL
+    UIImage *wheel = [UIColor colorWheelOfSize:600];
+    [UIImagePNGRepresentation(wheel) writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/foo.png"] atomically:YES];
+#endif
+    
+#define BUILD_SPECTRUM 0
+#if BUILD_SPECTRUM
+    
+    NSDictionary *dict = [UIColor colorDictionaryNamed:@"xkcd"];
+    NSMutableArray *array = [NSMutableArray array];
+    for (NSString *colorKey in dict.allKeys)
+    {
+        NSString *hexValue = dict[colorKey];
+        UIColor *color = [UIColor colorWithHexString:hexValue];
+        [array addObject:@[colorKey, color]];
+    }
+
+    [array sortUsingComparator:^NSComparisonResult(NSArray *obj1, NSArray *obj2) {
+        UIColor *c1 = obj1[1];
+        UIColor *c2 = obj2[1];
+        // return [c1 compareSaturation:c2];
+        // return [c1 compareHue:c2];
+        // return [c1 compareBrightness:c2];
+        // return [c1 compareWarmth:c2];
+        return [c1 compareColorfulness:c2];
+    }];
+    
+    UIGraphicsBeginImageContext(CGSizeMake(array.count * 10, 100));
+    CGRect rect = CGRectMake(0, 0, 10, 100);
+    for (NSArray *tuple in array)
+    {
+        UIColor *color = tuple[1];
+        CGContextFillRect(UIGraphicsGetCurrentContext(), rect);
+        [color set];
+        rect.origin.x += rect.size.width;
+    }
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+
+    [UIImagePNGRepresentation(image) writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/foo.png"] atomically:YES];
+#endif
+    
+#define GO_KEVIN    1
+#if GO_KEVIN
+
+    // Kevin colors -- supply 2 colors, receive a 3rd that "matches".
+    // It's the complement of the average of the 2
+    
+    NSDictionary *dict = [UIColor colorDictionaryNamed:@"Crayons"];
+    NSArray *keys = dict.allKeys;
+
+    UIGraphicsBeginImageContext(CGSizeMake(keys.count * 30, 116));
+    CGRect rect = CGRectMake(0, 0, 20, 33);
+
+    for (NSString *colorKey in dict.allKeys)
+    {        
+        NSString *key2 = keys[random() % keys.count];
+        
+        UIColor *c1 = [UIColor colorWithHexString:dict[colorKey]];
+        UIColor *c2 = [UIColor colorWithHexString:dict[key2]];
+        
+        CGRect b = rect;
+        [c1 set];
+        CGContextFillRect(UIGraphicsGetCurrentContext(), b);
+        b.origin.y += 33 + 8;
+        [c2 set];
+        CGContextFillRect(UIGraphicsGetCurrentContext(), b);
+        UIColor *c3 = [c1 kevinColorWithColor:c2];
+        b.origin.y += 33 + 8;
+        [c3 set];
+        CGContextFillRect(UIGraphicsGetCurrentContext(), b);
+
+        rect.origin.x += 30;
+    }
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    [UIImagePNGRepresentation(image) writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/foo.png"] atomically:YES];
+#endif
 }
 @end
 

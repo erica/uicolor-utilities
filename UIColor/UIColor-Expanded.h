@@ -9,8 +9,7 @@
  Current outstanding request list:
  
  - PolarBearFarm - color descriptions ([UIColor warmGrayWithHintOfBlueTouchOfRedAndSplashOfYellowColor])
- - Eridius - UIColor needs a method that takes 2 colors and gives a third complementary one
- - Consider UIMutableColor that can be adjusted (brighter, cooler, warmer, thicker-alpha, etc)
+ - Consider UIMutableColor that can be adjusted (brighter, cooler, warmer, thicker-alpha, etc) (Did add some but not as mutable color)
  */
 
 
@@ -18,6 +17,10 @@
 
 @interface UIColor (UIColor_Expanded)
 
+#pragma mark - Color Wheel
++ (UIImage *) colorWheelOfSize: (CGFloat) side border:(BOOL) yorn;
+
+#pragma mark - Color Space
 + (NSString *) colorSpaceString: (CGColorSpaceModel) model;
 @property (nonatomic, readonly) NSString *colorSpaceString;
 @property (nonatomic, readonly) CGColorSpaceModel colorSpaceModel;
@@ -25,16 +28,13 @@
 @property (nonatomic, readonly) BOOL usesMonochromeColorspace;
 @property (nonatomic, readonly) BOOL usesRGBColorspace;
 
-// Color conversion
+#pragma mark - Color Conversion
 + (void) hue:(CGFloat)h saturation:(CGFloat)s brightness:(CGFloat)v toRed:(CGFloat *)pR green:(CGFloat *)pG blue:(CGFloat *)pB;
 + (void) red:(CGFloat)r green:(CGFloat)g blue:(CGFloat)b toHue:(CGFloat *)pH saturation:(CGFloat *)pS brightness:(CGFloat *)pV;
 void RGB2YUV_f(CGFloat r, CGFloat g, CGFloat b, CGFloat *y, CGFloat *u, CGFloat *v);
 void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat *b);
 
-void RGB2YUV_f(CGFloat r,CGFloat g,CGFloat b,CGFloat *y,CGFloat *u,CGFloat *v);
-void YUV2RGB_f(CGFloat y,CGFloat u,CGFloat v,CGFloat *r,CGFloat *g,CGFloat *b);
-
-// Component Access
+#pragma mark - Color Components
 // With the exception of -alpha, these properties will function
 // correctly only if this color is an RGB or white color.
 // In these cases, canProvideRGBComponents returns YES.
@@ -52,12 +52,33 @@ void YUV2RGB_f(CGFloat y,CGFloat u,CGFloat v,CGFloat *r,CGFloat *g,CGFloat *b);
 
 // Return a grey-scale representation of the color
 - (UIColor *) colorByLuminanceMapping;
-@property (nonatomic, readonly) CGFloat colorfulness;
 
+#pragma mark - Alternative Expression
+@property (nonatomic, readonly) CGFloat colorfulness;
+@property (nonatomic, readonly) CGFloat warmth;
+
+#pragma mark - Building
+// Build colors by comparison
+- (UIColor *) adjustWarmth: (CGFloat) delta;
+- (UIColor *) adjustBrightness: (CGFloat) delta;
+- (UIColor *) adjustSaturation: (CGFloat) delta;
+- (UIColor *) adjustHue: (CGFloat) delta;
+
+#pragma mark - Sorting
+// Sorting -- Natural sorting choices
+- (NSComparisonResult) compareWarmth: (UIColor *) anotherColor;
+- (NSComparisonResult) compareColorfulness: (UIColor *) anotherColor;
+- (NSComparisonResult) compareHue: (UIColor *) anotherColor;
+- (NSComparisonResult) compareSaturation: (UIColor *) anotherColor;
+- (NSComparisonResult) compareBrightness: (UIColor *) anotherColor;
+
+#pragma mark - Distance
 // Color Distance
 - (CGFloat) luminanceDistanceFrom: (UIColor *) anotherColor;
 - (CGFloat) distanceFrom: (UIColor *) anotherColor;
+- (BOOL) isEqualToColor: (UIColor *) anotherColor;
 
+#pragma mark - Math
 // Arithmetic operations on the color
 - (UIColor *) colorByMultiplyingByRed: (CGFloat) red green: (CGFloat) green blue: (CGFloat) blue alpha: (CGFloat) alpha;
 - (UIColor *)        colorByAddingRed: (CGFloat) red green: (CGFloat) green blue: (CGFloat) blue alpha: (CGFloat) alpha;
@@ -82,6 +103,10 @@ void YUV2RGB_f(CGFloat y,CGFloat u,CGFloat v,CGFloat *r,CGFloat *g,CGFloat *b);
 - (NSArray *)triadicColors;				// Two colors that should look good with this color
 - (NSArray *)analogousColorsWithStepAngle: (CGFloat) stepAngle pairCount: (int)pairs;	// Multiple pairs of colors
 
+//  - Eridius - UIColor needs a method that takes 2 colors and gives a third complementary one
+- (UIColor *) kevinColorWithColor: (UIColor *) secondColor; // see Eridius request
+
+#pragma mark - Strings
 // String support
 @property (nonatomic, readonly) NSString *stringValue;
 @property (nonatomic, readonly) NSString *hexStringValue;
@@ -89,12 +114,20 @@ void YUV2RGB_f(CGFloat y,CGFloat u,CGFloat v,CGFloat *r,CGFloat *g,CGFloat *b);
 + (UIColor *) colorWithHexString: (NSString *)stringToConvert;
 + (UIColor *) colorWithRGBHex: (UInt32)hex;
 
+#pragma mark - Temperature
+// Temperature support -- preliminary
++ (UIColor *) colorWithKelvin: (CGFloat) kelvin;
++ (NSDictionary *) kelvinDictionary;
+@property (nonatomic, readonly) CGFloat colorTemperature;
+
+#pragma mark - Random
 // Random Color
 + (UIColor *) randomColor;
 + (UIColor *) randomDarkColor : (CGFloat) scaleFactor;
 + (UIColor *) randomLightColor : (CGFloat) scaleFactor;
 @end
 
+#pragma mark - Named Colors
 @interface UIColor (NamedColors)
 + (NSArray *) availableColorDictionaries;
 + (NSDictionary *) colorDictionaryNamed: (NSString *) dictionaryName;
@@ -111,11 +144,5 @@ void YUV2RGB_f(CGFloat y,CGFloat u,CGFloat v,CGFloat *r,CGFloat *g,CGFloat *b);
 @property (nonatomic, readonly) NSString *closestCSSName;
 @property (nonatomic, readonly) NSString *closestBaseName;
 @property (nonatomic, readonly) NSString *closestSystemColorName;
-
-@property (nonatomic, readonly) UIColor *closestMensColor;
-
-+ (UIColor *) crayonWithName: (NSString *) crayonName;
-+ (UIColor *) baseColorWithName: (NSString *) name;
-+ (UIColor *) cssColorWithName: (NSString *) name;
-+ (UIColor *) systemColorWithName: (NSString *) name;
+@property (nonatomic, readonly) UIColor  *closestMensColor;
 @end
