@@ -32,8 +32,7 @@
  new kevinColorWithColor: method
 
  Adjustable colors: brighter, cooler, warmer, etc.
- Added: Various tweakers, warmth property, temperature stuff
- 
+ Added: Various tweakers, warmth property, temperature stuff 
  */
 
 
@@ -57,6 +56,11 @@
 + (void) red:(CGFloat)r green:(CGFloat)g blue:(CGFloat)b toHue:(CGFloat *)pH saturation:(CGFloat *)pS brightness:(CGFloat *)pV;
 void RGB2YUV_f(CGFloat r, CGFloat g, CGFloat b, CGFloat *y, CGFloat *u, CGFloat *v);
 void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat *b);
+
+//  public domain functions by Darel Rex Finley, 2006
+void RGBtoHSP(CGFloat  R, CGFloat  G, CGFloat  B, CGFloat *H, CGFloat *S, CGFloat *P);
+void HSPtoRGB(CGFloat  H, CGFloat  S, CGFloat  P, CGFloat *R, CGFloat *G, CGFloat *B);
+@property (nonatomic, readonly) CGFloat perceivedBrightness;
 
 #pragma mark - Color Components
 // With the exception of -alpha, these properties will function
