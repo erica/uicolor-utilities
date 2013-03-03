@@ -1,9 +1,7 @@
-/*
- 
- Thanks to Poltras, Millenomi, Eridius, Nownot, WhatAHam, jberry,
- and everyone else who helped out but whose name is inadvertantly omitted
- 
- */
+// Erica Sadun 
+
+// Thanks to Poltras, Millenomi, Eridius, Nownot, WhatAHam, jberry,
+// and everyone else who helped out but whose name is inadvertantly omitted
 
 /*
  BSD License.
