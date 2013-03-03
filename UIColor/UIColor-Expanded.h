@@ -6,10 +6,20 @@
  */
 
 /*
- Current outstanding request list:
+ Current outstanding request list: (NONE)
  
- - PolarBearFarm - color descriptions ([UIColor warmGrayWithHintOfBlueTouchOfRedAndSplashOfYellowColor])
- - Consider UIMutableColor that can be adjusted (brighter, cooler, warmer, thicker-alpha, etc) (Did add some but not as mutable color)
+ Requests recently added:
+ Layton at PolarBearFarm - color descriptions 
+    e.g. ([UIColor warmGrayWithHintOfBlueTouchOfRedAndSplashOfYellowColor])
+ Added: Auto color descriptions, especially using xkcd 
+ 
+ Kevin / Eridius 
+ UIColor needs a method that takes 2 colors and gives a third complementary one
+ new kevinColorWithColor: method
+
+ Adjustable colors: brighter, cooler, warmer, etc.
+ Added: Various tweakers, warmth property, temperature stuff
+ 
  */
 
 
@@ -103,7 +113,6 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 - (NSArray *)triadicColors;				// Two colors that should look good with this color
 - (NSArray *)analogousColorsWithStepAngle: (CGFloat) stepAngle pairCount: (int)pairs;	// Multiple pairs of colors
 
-//  - Eridius - UIColor needs a method that takes 2 colors and gives a third complementary one
 - (UIColor *) kevinColorWithColor: (UIColor *) secondColor; // see Eridius request
 
 #pragma mark - Strings
