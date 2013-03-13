@@ -6,7 +6,7 @@
 
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
-#import "UIColor-Expanded.h"
+#import "UIColor+Expanded.h"
 
 @interface TestBedViewController : UIViewController
 @end
@@ -132,7 +132,7 @@
     [UIImagePNGRepresentation(wheel) writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/foo.png"] atomically:YES];
 #endif
     
-#define BUILD_SPECTRUM 0
+#define BUILD_SPECTRUM 1
 #if BUILD_SPECTRUM
     
     NSDictionary *dict = [UIColor colorDictionaryNamed:@"xkcd"];
@@ -170,7 +170,7 @@
     [UIImagePNGRepresentation(image) writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/foo.png"] atomically:YES];
 #endif
     
-#define GO_KEVIN    1
+#define GO_KEVIN    0
 #if GO_KEVIN
 
     // Kevin colors -- supply 2 colors, receive a 3rd that "matches".
