@@ -5,6 +5,9 @@ if ($#argv != 1) then
     exit 1
 endif
 
+# copy over latest
+cp -r /Volumes/MusicAndData/Dev/Canon/Utility\ Pack/Utility/Color .
+
 rm -rf build
 rm .DS_Store
 rm */.DS_Store

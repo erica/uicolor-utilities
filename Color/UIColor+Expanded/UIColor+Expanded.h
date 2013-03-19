@@ -38,6 +38,8 @@
 
 #import <UIKit/UIKit.h>
 
+#define RGBCOLOR(_R_, _G_, _B_) [UIColor colorWithRed:(CGFloat)(_R_)/255.0f green: (CGFloat)(_G_)/255.0f blue: (CGFloat)(_B_)/255.0f alpha: 1.0f]
+
 @interface UIColor (UIColor_Expanded)
 
 #pragma mark - Color Wheel
@@ -126,10 +128,10 @@ void HSPtoRGB(CGFloat  H, CGFloat  S, CGFloat  P, CGFloat *R, CGFloat *G, CGFloa
 - (UIColor *)colorByInterpolatingToColor:(UIColor *)color byFraction:(CGFloat)fraction;
 
 // Related colors
-- (UIColor *) contrastingColor;			// A good contrasting color: will be either black or white
-- (UIColor *) complementaryColor;		// A complementary color that should look good with this color
-- (NSArray *)triadicColors;				// Two colors that should look good with this color
-- (NSArray *)analogousColorsWithStepAngle: (CGFloat) stepAngle pairCount: (int)pairs;	// Multiple pairs of colors
+- (UIColor *) contrastingColor;            // A good contrasting color: will be either black or white
+- (UIColor *) complementaryColor;        // A complementary color that should look good with this color
+- (NSArray *)triadicColors;                // Two colors that should look good with this color
+- (NSArray *)analogousColorsWithStepAngle: (CGFloat) stepAngle pairCount: (int)pairs;    // Multiple pairs of colors
 
 - (UIColor *) kevinColorWithColor: (UIColor *) secondColor; // see Eridius request
 
