@@ -1,5 +1,15 @@
 #import "UIColor+Expanded.h"
 
+float cmax(float a, float b)
+{
+    return (a > b) ? a : b;
+}
+
+float cmin(float a, float b)
+{
+    return (a < b) ? a : b;
+}
+
 @implementation UIColor (UIColor_Expanded)
 
 // Generate a color wheel. You supply the size, e.g.
@@ -177,8 +187,8 @@
     
     // From Foley and Van Dam
     
-    CGFloat max = MAX(r, MAX(g, b));
-    CGFloat min = MIN(r, MIN(g, b));
+    CGFloat max = cmax(r, cmax(g, b));
+    CGFloat min = cmin(r, cmin(g, b));
     
     // Brightness
     v = max;
@@ -217,9 +227,9 @@ void RGB2YUV_f(CGFloat r, CGFloat g, CGFloat b, CGFloat *y, CGFloat *u, CGFloat 
     if (u && y) *u = ((b - *y) * 0.565f + 0.5);
     if (v && y) *v = ((r - *y) * 0.713f + 0.5);
     
-    if (y) *y = MIN(1.0, MAX(0, *y));
-    if (u) *u = MIN(1.0, MAX(0, *u));
-    if (v) *v = MIN(1.0, MAX(0, *v));
+    if (y) *y = cmin(1.0, cmax(0, *y));
+    if (u) *u = cmin(1.0, cmax(0, *u));
+    if (v) *v = cmin(1.0, cmax(0, *v));
 }
 
 void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat *b)
@@ -232,9 +242,9 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
     if (g) *g = ( Y - 0.344f * U - 0.714f * V);
     if (b) *b = ( Y + 1.770f * U);
     
-    if (r) *r = MIN(1.0, MAX(0, *r));
-    if (g) *g = MIN(1.0, MAX(0, *g));
-    if (b) *b = MIN(1.0, MAX(0, *b));
+    if (r) *r = cmin(1.0, cmax(0, *r));
+    if (g) *g = cmin(1.0, cmax(0, *g));
+    if (b) *b = cmin(1.0, cmax(0, *b));
 }
 
 #pragma mark - Component Properties
@@ -459,11 +469,11 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
     else
         hue -= delta;
     
-    hue = MAX(0.0, hue);
+    hue = cmax(0.0, hue);
     if (hue < 0.5f)
-        hue = MIN(0.5f, hue);
+        hue = cmin(0.5f, hue);
     else
-        hue = MAX(0.5f, hue);
+        hue = cmax(0.5f, hue);
     
     hue += WARMTH_OFFSET;
     if (hue > 1.0f)
@@ -477,8 +487,8 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 {
     CGFloat b = self.brightness;
     b += delta;
-    b = MIN(1.0f, b);
-    b = MAX(0.0f, b);
+    b = cmin(1.0f, b);
+    b = cmax(0.0f, b);
     
     return [UIColor colorWithHue:self.hue saturation:self.saturation brightness:b alpha:self.alpha];
 }
@@ -488,8 +498,8 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 {
     CGFloat s = self.saturation;
     s += delta;
-    s = MIN(1.0f, s);
-    s = MAX(0.0f, s);
+    s = cmin(1.0f, s);
+    s = cmax(0.0f, s);
     
     return [UIColor colorWithHue:self.hue saturation:s brightness:self.brightness alpha:self.alpha];
 }
@@ -582,10 +592,10 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
     CGFloat r, g, b, a;
     if (![self getRed: &r green: &g blue: &b alpha: &a]) return nil;
     
-    return [UIColor colorWithRed:MAX(0.0, MIN(1.0, r * red))
-                           green:MAX(0.0, MIN(1.0, g * green))
-                            blue:MAX(0.0, MIN(1.0, b * blue))
-                           alpha:MAX(0.0, MIN(1.0, a * alpha))];
+    return [UIColor colorWithRed:cmax(0.0, cmin(1.0, r * red))
+                           green:cmax(0.0, cmin(1.0, g * green))
+                            blue:cmax(0.0, cmin(1.0, b * blue))
+                           alpha:cmax(0.0, cmin(1.0, a * alpha))];
 }
 
 - (UIColor *) colorByAddingRed: (CGFloat) red
@@ -598,10 +608,10 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
     CGFloat r, g, b, a;
     if (![self getRed: &r green: &g blue: &b alpha: &a]) return nil;
     
-    return [UIColor colorWithRed:MAX(0.0, MIN(1.0, r + red))
-                           green:MAX(0.0, MIN(1.0, g + green))
-                            blue:MAX(0.0, MIN(1.0, b + blue))
-                           alpha:MAX(0.0, MIN(1.0, a + alpha))];
+    return [UIColor colorWithRed:cmax(0.0, cmin(1.0, r + red))
+                           green:cmax(0.0, cmin(1.0, g + green))
+                            blue:cmax(0.0, cmin(1.0, b + blue))
+                           alpha:cmax(0.0, cmin(1.0, a + alpha))];
 }
 
 - (UIColor *) colorByLighteningToRed: (CGFloat) red
@@ -614,10 +624,10 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
     CGFloat r, g, b, a;
     if (![self getRed: &r green: &g blue: &b alpha: &a]) return nil;
     
-    return [UIColor colorWithRed:MAX(r, red)
-                           green:MAX(g, green)
-                            blue:MAX(b, blue)
-                           alpha:MAX(a, alpha)];
+    return [UIColor colorWithRed:cmax(r, red)
+                           green:cmax(g, green)
+                            blue:cmax(b, blue)
+                           alpha:cmax(a, alpha)];
 }
 
 - (UIColor *) colorByDarkeningToRed: (CGFloat) red
@@ -630,10 +640,10 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
     CGFloat r, g, b, a;
     if (![self getRed: &r green: &g blue: &b alpha: &a]) return nil;
     
-    return [UIColor colorWithRed:MIN(r, red)
-                           green:MIN(g, green)
-                            blue:MIN(b, blue)
-                           alpha:MIN(a, alpha)];
+    return [UIColor colorWithRed:cmin(r, red)
+                           green:cmin(g, green)
+                            blue:cmin(b, blue)
+                           alpha:cmin(a, alpha)];
 }
 
 - (UIColor *) colorByMultiplyingBy: (CGFloat) f
@@ -787,12 +797,12 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 //  - Eridius - UIColor needs a method that takes 2 colors and gives a third complementary one
 - (UIColor *)kevinColorWithColor:(UIColor *)secondColor
 {
-    CGFloat startingHue = MIN(self.hue, secondColor.hue);
+    CGFloat startingHue = cmin(self.hue, secondColor.hue);
     CGFloat distance = fabs(self.hue - secondColor.hue);
     if (distance > 0.5)
     {
         distance = 1 - distance;
-        startingHue = MAX(self.hue, secondColor.hue);
+        startingHue = cmax(self.hue, secondColor.hue);
     }
     
     CGFloat target = startingHue + distance / 2;
@@ -934,9 +944,9 @@ void HSPtoRGB(
     if (![self getRed: &r green: &g blue: &b alpha: &a])
         return 0.0f;
     
-    r = MIN(MAX(r, 0.0f), 1.0f);
-    g = MIN(MAX(g, 0.0f), 1.0f);
-    b = MIN(MAX(b, 0.0f), 1.0f);
+    r = cmin(cmax(r, 0.0f), 1.0f);
+    g = cmin(cmax(g, 0.0f), 1.0f);
+    b = cmin(cmax(b, 0.0f), 1.0f);
     
     return (((int)roundf(r * 255)) << 16) | (((int)roundf(g * 255)) << 8) | (((int)roundf(b * 255)));
 }
@@ -1072,12 +1082,12 @@ void HSPtoRGB(
     }
     
     
-    red = MAX(red, 0);
-    red = MIN(red, 255);
-    green = MAX(green, 0);
-    green = MIN(green, 255);
-    blue = MAX(blue, 0);
-    blue = MIN(blue, 255);
+    red = cmax(red, 0);
+    red = cmin(red, 255);
+    green = cmax(green, 0);
+    green = cmin(green, 255);
+    blue = cmax(blue, 0);
+    blue = cmin(blue, 255);
     
     return [UIColor colorWithRed:red / 255.0f green:green / 255.0f blue:blue / 255.0f alpha:1.0f];
 }
