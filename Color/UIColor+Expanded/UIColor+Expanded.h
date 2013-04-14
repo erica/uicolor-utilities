@@ -40,6 +40,10 @@
 
 #define RGBCOLOR(_R_, _G_, _B_) [UIColor colorWithRed:(CGFloat)(_R_)/255.0f green: (CGFloat)(_G_)/255.0f blue: (CGFloat)(_B_)/255.0f alpha: 1.0f]
 
+// Color Space
+CGColorSpaceRef DeviceRGBSpace();
+CGColorSpaceRef DeviceGraySpace();
+
 @interface UIColor (UIColor_Expanded)
 
 #pragma mark - Color Wheel
@@ -71,13 +75,31 @@ void HSPtoRGB(CGFloat  H, CGFloat  S, CGFloat  P, CGFloat *R, CGFloat *G, CGFloa
 @property (nonatomic, readonly) CGFloat red;
 @property (nonatomic, readonly) CGFloat green;
 @property (nonatomic, readonly) CGFloat blue;
+
+@property (nonatomic, readonly) CGFloat premultipliedRed;
+@property (nonatomic, readonly) CGFloat premultipliedGreen;
+@property (nonatomic, readonly) CGFloat premultipliedBlue;
+
+#define MAKEBYTE(_VALUE_) (int)(_VALUE_ * 0xFF) & 0xFF
+@property (nonatomic, readonly) Byte redByte;
+@property (nonatomic, readonly) Byte greenByte;
+@property (nonatomic, readonly) Byte blueByte;
+@property (nonatomic, readonly) Byte alphaByte;
+@property (nonatomic, readonly) Byte whiteByte;
+@property (nonatomic, readonly) NSData *colorBytes;
+@property (nonatomic, readonly) NSData *premultipledColorBytes;
+
 @property (nonatomic, readonly) CGFloat white;
+@property (nonatomic, readonly) CGFloat luminance;
+
 @property (nonatomic, readonly) CGFloat hue;
 @property (nonatomic, readonly) CGFloat saturation;
 @property (nonatomic, readonly) CGFloat brightness;
+
 @property (nonatomic, readonly) CGFloat alpha;
-@property (nonatomic, readonly) CGFloat luminance;
+
 @property (nonatomic, readonly) UInt32 rgbHex;
+
 - (NSArray *)arrayFromRGBAComponents;
 
 // Return a grey-scale representation of the color
