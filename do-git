@@ -6,7 +6,7 @@ if ($#argv != 1) then
 endif
 
 # copy over latest
-cp -r /Volumes/MusicAndData/Dev/Canon/Quartz\ Book\ Pack/Utility/Color .
+cp -r /Volumes/MusicAndData/Dev/Canon/Utility\ Packs/Foundation\ Pack/Color .
 cp -r /Volumes/MusicAndData/Dev/Canon/Snap\ Pack/NSColor .
 
 rm -rf build

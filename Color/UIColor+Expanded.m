@@ -1,5 +1,9 @@
 #import "UIColor+Expanded.h"
 
+static CGFloat cgfmin(CGFloat a, CGFloat b) { return (a < b) ? a : b;}
+static CGFloat cgfmax(CGFloat a, CGFloat b) { return (a > b) ? a : b;}
+static CGFloat cgfunitclamp(CGFloat f) {return cgfmax(0.0, cgfmin(1.0, f));}
+
 CGColorSpaceRef DeviceRGBSpace()
 {
     static CGColorSpaceRef rgbSpace = NULL;
@@ -286,8 +290,8 @@ UIColor *InterpolateColors(UIColor *c1, UIColor *c2, CGFloat amt)
     
     // From Foley and Van Dam
     
-    CGFloat max = fmax(r, fmax(g, b));
-    CGFloat min = fmin(r, fmin(g, b));
+    CGFloat max = cgfmax(r, cgfmax(g, b));
+    CGFloat min = cgfmin(r, cgfmin(g, b));
     
     // Brightness
     v = max;
@@ -326,9 +330,9 @@ void RGB2YUV_f(CGFloat r, CGFloat g, CGFloat b, CGFloat *y, CGFloat *u, CGFloat 
     if (u && y) *u = ((b - *y) * 0.565f + 0.5);
     if (v && y) *v = ((r - *y) * 0.713f + 0.5);
     
-    if (y) *y = fmin(1.0, fmax(0, *y));
-    if (u) *u = fmin(1.0, fmax(0, *u));
-    if (v) *v = fmin(1.0, fmax(0, *v));
+    if (y) *y = cgfunitclamp(*y);
+    if (u) *u = cgfunitclamp(*u);
+    if (v) *v = cgfunitclamp(*v);
 }
 
 void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat *b)
@@ -341,9 +345,9 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
     if (g) *g = ( Y - 0.344f * U - 0.714f * V);
     if (b) *b = ( Y + 1.770f * U);
     
-    if (r) *r = fmin(1.0, fmax(0, *r));
-    if (g) *g = fmin(1.0, fmax(0, *g));
-    if (b) *b = fmin(1.0, fmax(0, *b));
+    if (r) *r = cgfunitclamp(*r);
+    if (g) *g = cgfunitclamp(*g);
+    if (b) *b = cgfunitclamp(*b);
 }
 
 #pragma mark - Component Properties
@@ -591,11 +595,11 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
     else
         hue -= delta;
     
-    hue = fmax(0.0, hue);
+    hue = cgfmax(0.0, hue);
     if (hue < 0.5f)
-        hue = fmin(0.5f, hue);
+        hue = cgfmin(0.5f, hue);
     else
-        hue = fmax(0.5f, hue);
+        hue = cgfmax(0.5f, hue);
     
     hue += WARMTH_OFFSET;
     if (hue > 1.0f)
@@ -609,8 +613,7 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 {
     CGFloat b = self.brightness;
     b += delta;
-    b = fmin(1.0f, b);
-    b = fmax(0.0f, b);
+    b = cgfunitclamp(b);
     
     return [UIColor colorWithHue:self.hue saturation:self.saturation brightness:b alpha:self.alpha];
 }
@@ -620,8 +623,7 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 {
     CGFloat s = self.saturation;
     s += delta;
-    s = fmin(1.0f, s);
-    s = fmax(0.0f, s);
+    s = cgfunitclamp(s);
     
     return [UIColor colorWithHue:self.hue saturation:s brightness:self.brightness alpha:self.alpha];
 }
@@ -630,10 +632,10 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 {
     CGFloat h = self.hue;
     h += delta;
-    if (h < 0.0f)
-        h += 1.0f;
-    if (h > 1.0f)
-        h -= 1.0f;
+    
+    // limit to 0..1
+    while (h < 0.0f) h += 1.0f;
+    while (h > 1.0f) h -= 1.0f;
     
     return [UIColor colorWithHue:h saturation:self.saturation brightness:self.brightness alpha:self.alpha];
 }
@@ -714,10 +716,10 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
     CGFloat r, g, b, a;
     if (![self getRed: &r green: &g blue: &b alpha: &a]) return nil;
     
-    return [UIColor colorWithRed:fmax(0.0, fmin(1.0, r * red))
-                           green:fmax(0.0, fmin(1.0, g * green))
-                            blue:fmax(0.0, fmin(1.0, b * blue))
-                           alpha:fmax(0.0, fmin(1.0, a * alpha))];
+    return [UIColor colorWithRed: cgfunitclamp(r * red)
+                           green: cgfunitclamp(g * green)
+                            blue: cgfunitclamp(b * blue)
+                           alpha: cgfunitclamp(a * alpha)];
 }
 
 - (UIColor *) colorByAddingRed: (CGFloat) red
@@ -730,10 +732,10 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
     CGFloat r, g, b, a;
     if (![self getRed: &r green: &g blue: &b alpha: &a]) return nil;
     
-    return [UIColor colorWithRed:fmax(0.0, fmin(1.0, r + red))
-                           green:fmax(0.0, fmin(1.0, g + green))
-                            blue:fmax(0.0, fmin(1.0, b + blue))
-                           alpha:fmax(0.0, fmin(1.0, a + alpha))];
+    return [UIColor colorWithRed: cgfunitclamp(r + red)
+                           green: cgfunitclamp(g + green)
+                            blue: cgfunitclamp(b + blue)
+                           alpha: cgfunitclamp(a + alpha)];
 }
 
 - (UIColor *) colorByLighteningToRed: (CGFloat) red
@@ -746,10 +748,10 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
     CGFloat r, g, b, a;
     if (![self getRed: &r green: &g blue: &b alpha: &a]) return nil;
     
-    return [UIColor colorWithRed:fmax(r, red)
-                           green:fmax(g, green)
-                            blue:fmax(b, blue)
-                           alpha:fmax(a, alpha)];
+    return [UIColor colorWithRed:cgfmax(r, red)
+                           green:cgfmax(g, green)
+                            blue:cgfmax(b, blue)
+                           alpha:cgfmax(a, alpha)];
 }
 
 - (UIColor *) colorByDarkeningToRed: (CGFloat) red
@@ -762,10 +764,10 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
     CGFloat r, g, b, a;
     if (![self getRed: &r green: &g blue: &b alpha: &a]) return nil;
     
-    return [UIColor colorWithRed:fmin(r, red)
-                           green:fmin(g, green)
-                            blue:fmin(b, blue)
-                           alpha:fmin(a, alpha)];
+    return [UIColor colorWithRed:cgfmin(r, red)
+                           green:cgfmin(g, green)
+                            blue:cgfmin(b, blue)
+                           alpha:cgfmin(a, alpha)];
 }
 
 - (UIColor *) colorByMultiplyingBy: (CGFloat) f
@@ -904,7 +906,7 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 }
 
 // Pick n pairs of colors, stepping in increasing steps away from this color around the wheel
-- (NSArray *) analogousColorsWithStepAngle: (CGFloat) stepAngle pairCount: (int) pairs
+- (NSArray *) analogousColorsWithStepAngle: (CGFloat) stepAngle pairCount: (NSInteger) pairs
 {
     // Convert to HSB
     CGFloat h = self.hue * 360.0f;
@@ -933,12 +935,12 @@ void YUV2RGB_f(CGFloat y, CGFloat u, CGFloat v, CGFloat *r, CGFloat *g, CGFloat 
 //  - Eridius - UIColor needs a method that takes 2 colors and gives a third complementary one
 - (UIColor *)kevinColorWithColor:(UIColor *)secondColor
 {
-    CGFloat startingHue = fmin(self.hue, secondColor.hue);
+    CGFloat startingHue = cgfmin(self.hue, secondColor.hue);
     CGFloat distance = fabs(self.hue - secondColor.hue);
     if (distance > 0.5)
     {
         distance = 1 - distance;
-        startingHue = fmax(self.hue, secondColor.hue);
+        startingHue = cgfmax(self.hue, secondColor.hue);
     }
     
     CGFloat target = startingHue + distance / 2;
@@ -1089,19 +1091,19 @@ void HSPtoRGB(
 }
 
 #pragma mark - String Support
-- (UInt32) rgbHex
+- (uint32_t) rgbHex
 {
     NSAssert(self.canProvideRGBComponents, @"Must be a RGB color to use -rgbHex");
     
     CGFloat r, g, b, a;
     if (![self getRed: &r green: &g blue: &b alpha: &a])
-        return 0.0f;
+        return 0;
     
-    r = fmin(fmax(r, 0.0f), 1.0f);
-    g = fmin(fmax(g, 0.0f), 1.0f);
-    b = fmin(fmax(b, 0.0f), 1.0f);
+    // getRed:green:blue:alpha: now has contractual 0.0 to 1.0 according to docs, so removed clamping
     
-    return (((int)roundf(r * 0xFF)) << 16) | (((int)roundf(g * 0xFF)) << 8) | (((int)roundf(b * 0xFF)));
+    // Thanks gwynne
+    // return (((int)roundf(r * 0xFF)) << 16) | (((int)roundf(g * 0xFF)) << 8) | (((int)roundf(b * 0xFF)));
+    return (lrint(r * 0xFF) << 16) | (lrint(g * 0xFF) << 8) | (lrint(b * 0xFF));
 }
 
 - (NSString *) stringValue
@@ -1196,7 +1198,7 @@ void HSPtoRGB(
     return color;
 }
 
-+ (UIColor *) colorWithRGBHex: (UInt32)hex
++ (UIColor *) colorWithRGBHex: (uint32_t)hex
 {
     int r = (hex >> 16) & 0xFF;
     int g = (hex >> 8) & 0xFF;
@@ -1245,12 +1247,12 @@ void HSPtoRGB(
     }
     
     
-    red = fmax(red, 0);
-    red = fmin(red, 0xFF);
-    green = fmax(green, 0);
-    green = fmin(green, 0xFF);
-    blue = fmax(blue, 0);
-    blue = fmin(blue, 0xFF);
+    red = cgfmax(red, 0);
+    red = cgfmin(red, 0xFF);
+    green = cgfmax(green, 0);
+    green = cgfmin(green, 0xFF);
+    blue = cgfmax(blue, 0);
+    blue = cgfmin(blue, 0xFF);
     
     return [UIColor colorWithRed:red / 255.0f green:green / 255.0f blue:blue / 255.0f alpha:1.0f];
 }
@@ -1368,6 +1370,7 @@ NSDictionary *kelvin = nil;
 @implementation UIColor (NamedColors)
 
 static NSDictionary *colorNameDictionaries = nil;
+static NSMutableArray *colorNames = nil;
 
 + (void) initializeColorDictionaries
 {
@@ -1428,6 +1431,80 @@ static NSDictionary *colorNameDictionaries = nil;
     NSDictionary *pseudoPantone = @{@"100C":@"#F3ED86", @"101C":@"#F5EC62", @"102C":@"#FAE600", @"103C":@"#CAAD00", @"104C":@"#AC9600", @"105C":@"#817214", @"106C":@"#F6E761", @"107C":@"#FAE22F", @"108C":@"#FEDB00", @"109C":@"#FFD100", @"110C":@"#DBAE00", @"111C":@"#AF8F00", @"112C":@"#998000", @"113C":@"#FAE15A", @"114C":@"#FAE051", @"115C":@"#FBDE4A", @"116C":@"#FFCE00", @"117C":@"#CE9D00", @"118C":@"#B38A00", @"119C":@"#8A761A", @"120C":@"#F9DF79", @"1205C":@"#F3E2A7", @"121C":@"#FBDB6E", @"1215C":@"#F5DD92", @"122C":@"#FDD44F", @"1225C":@"#FDC745", @"123C":@"#FFC726", @"1235C":@"#FFB300", @"124C":@"#EBAB00", @"1245C":@"#C69200", @"125C":@"#BB8900", @"1255C":@"#AA800E", @"126C":@"#A17C00", @"1265C":@"#836514", @"127C":@"#EFDF85", @"128C":@"#F2D65E", @"129C":@"#F1CD44", @"130C":@"#F1AB00", @"131C":@"#D49100", @"132C":@"#A67A00", @"133C":@"#715913", @"134C":@"#F8D583", @"1345C":@"#FBCF8D", @"135C":@"#FEC85A", @"1355C":@"#FDC87D", @"136C":@"#FFBC3A", @"1365C":@"#FFB754", @"137C":@"#FF9F00", @"1375C":@"#FF9A00", @"138C":@"#E47F00", @"1385C":@"#D67500", @"139C":@"#B67100", @"1395C":@"#9E6209", @"140C":@"#7A560F", @"1405C":@"#6C4713", @"141C":@"#EFC868", @"142C":@"#F1BB46", @"143C":@"#EFAA23", @"144C":@"#ED8000", @"145C":@"#CF7600", @"146C":@"#9F6000", @"147C":@"#715821", @"148C":@"#FBD09D", @"1485C":@"#FFB57B", @"149C":@"#FEC688", @"1495C":@"#FF963B", @"150C":@"#FFA94F", @"1505C":@"#FF7200", @"151C":@"#FF7300", @"152C":@"#E76F00", @"1525C":@"#CA4E00", @"153C":@"#C06600", @"1535C":@"#933F00", @"154C":@"#995409", @"1545C":@"#51260B", @"155C":@"#ECD6AF", @"1555C":@"#FFBFA0", @"156C":@"#EFC18A", @"1565C":@"#FFA97D", @"157C":@"#ED9B4F", @"1575C":@"#FF8642", @"158C":@"#E96B10", @"1585C":@"#FF6900", @"159C":@"#CD5806", @"1595C":@"#DA5C05", @"160C":@"#A24E12", @"1605C":@"#A24A13", @"161C":@"#613517", @"1615C":@"#853C10", @"162C":@"#FDC3AA", @"1625C":@"#FFA28B", @"163C":@"#FF9C71", @"1635C":@"#FF8E70", @"164C":@"#FF7E43", @"1645C":@"#FF6C3B", @"165C":@"#FF5F00", @"1655C":@"#FF5200", @"166C":@"#E55300", @"1665C":@"#E54800", @"167C":@"#C2510F", @"1675C":@"#A83C0F", @"168C":@"#6F3014", @"1685C":@"#863514", @"169C":@"#FFB6B1", @"170C":@"#FF897B", @"171C":@"#FF6141", @"172C":@"#FD4703", @"173C":@"#D84519", @"174C":@"#9A3416", @"175C":@"#703222", @"176C":@"#FFACB9", @"1765C":@"#FE9DB0", @"1767C":@"#FAAFC2", @"177C":@"#FF818C", @"1775C":@"#FF859A", @"1777C":@"#FB6581", @"178C":@"#FF5B60", @"1785C":@"#F9455B", @"1787C":@"#F9425F", @"1788C":@"#F02233", @"179C":@"#E23828", @"1795C":@"#D81F2A", @"1797C":@"#D02433", @"180C":@"#C0362C", @"1805C":@"#B0232A", @"1807C":@"#A12830", @"181C":@"#792720", @"1815C":@"#7C211E", @"1817C":@"#5E2728", @"182C":@"#F8B8CB", @"183C":@"#FC8DA9", @"184C":@"#F85D7E", @"185C":@"#EA0437", @"186C":@"#D21034", @"187C":@"#B31B34", @"188C":@"#7C2230", @"189C":@"#F8A1BE", @"1895C":@"#F3BCD4", @"190C":@"#F8779E", @"1905C":@"#F59BBD", @"191C":@"#F23F72", @"1915C":@"#F2558A", @"192C":@"#E90649", @"1925C":@"#E40050", @"193C":@"#C30C3E", @"1935C":@"#CB0447", @"194C":@"#9C1E3D", @"1945C":@"#AA113F", @"1955C":@"#93173B", @"196C":@"#EBC6D3", @"197C":@"#EB9BB2", @"198C":@"#E44D6F", @"199C":@"#DB0C41", @"200C":@"#C10435", @"201C":@"#9E1B34", @"202C":@"#892034", @"203C":@"#EBADCD", @"204C":@"#E87BAC", @"205C":@"#E34585", @"206C":@"#D7004D", @"207C":@"#B10042", @"208C":@"#902147", @"209C":@"#752641", @"210C":@"#FA9FCC", @"211C":@"#F97DB8", @"212C":@"#F34E9A", @"213C":@"#E61577", @"214C":@"#D00063", @"215C":@"#AA1054", @"216C":@"#7A1D42", @"217C":@"#ECBBDD", @"218C":@"#E86FB8", @"219C":@"#E0218A", @"220C":@"#AE0055", @"221C":@"#96004B", @"222C":@"#6C193F", @"223C":@"#F293D1", @"224C":@"#EF6ABF", @"225C":@"#E5239D", @"226C":@"#D60077", @"227C":@"#AE005F", @"228C":@"#8A0753", @"229C":@"#6A1D44", @"230C":@"#F7A7DB", @"231C":@"#F575C9", @"232C":@"#EF40B0", @"233C":@"#C90081", @"234C":@"#A6006B", @"235C":@"#890857", @"236C":@"#F2B0DF", @"2365C":@"#EFC3E4", @"237C":@"#EE86D3", @"2375C":@"#E270CD", @"238C":@"#E653BC", @"2385C":@"#D733B4", @"239C":@"#E032AF", @"2395C":@"#C40098", @"240C":@"#C41E99", @"2405C":@"#A70084", @"241C":@"#AC0481", @"2415C":@"#970076", @"242C":@"#7A1A57", @"2425C":@"#820063", @"243C":@"#E8B7E5", @"244C":@"#E6A2E0", @"245C":@"#DF81D6", @"246C":@"#C70BAC", @"247C":@"#B3009D", @"248C":@"#9E0389", @"249C":@"#7B2266", @"250C":@"#E3C0E6", @"251C":@"#D99CE1", @"252C":@"#CA65D1", @"253C":@"#A91BB0", @"254C":@"#962399", @"255C":@"#70266C", @"256C":@"#D9BFE0", @"2562C":@"#CFA5E4", @"2563C":@"#C79DD8", @"2567C":@"#BB99DA", @"257C":@"#CBA4D4", @"2572C":@"#C084DC", @"2573C":@"#B279C8", @"2577C":@"#A276CC", @"258C":@"#92499E", @"2582C":@"#A24CC8", @"2583C":@"#9950B2", @"2587C":@"#8348B5", @"259C":@"#6C1B72", @"2592C":@"#9016B2", @"2593C":@"#7E2B97", @"2597C":@"#59058D", @"260C":@"#5F1D5F", @"2602C":@"#7D0996", @"2603C":@"#68177F", @"2607C":@"#4F027C", @"261C":@"#591E55", @"2612C":@"#6A1A7A", @"2613C":@"#611774", @"2617C":@"#4B0B71", @"262C":@"#4F2248", @"2622C":@"#572458", @"2623C":@"#581963", @"2627C":@"#43125F", @"263C":@"#D8CBEB", @"2635C":@"#BFAFE4", @"264C":@"#BCA8E6", @"2645C":@"#AA94DE", @"265C":@"#8D65D2", @"2655C":@"#9173D3", @"266C":@"#6732BA", @"2665C":@"#7A52C7", @"267C":@"#4F1F91", @"268C":@"#4A217E", @"2685C":@"#3B0084", @"269C":@"#452663", @"2695C":@"#381D59", @"270C":@"#ADACDC", @"2705C":@"#A29FE0", @"2706C":@"#C4CBEA", @"2707C":@"#BDD0EE", @"2708C":@"#B1C5EA", @"271C":@"#9490D2", @"2715C":@"#8580D8", @"2716C":@"#94A1E2", @"2717C":@"#A1BDEA", @"2718C":@"#547ED9", @"272C":@"#7973C2", @"2725C":@"#5E53C7", @"2726C":@"#4555C7", @"2727C":@"#3878DB", @"2728C":@"#0047BE", @"273C":@"#25177A", @"2735C":@"#280092", @"2736C":@"#1E22AE", @"2738C":@"#00129D", @"274C":@"#211265", @"2745C":@"#22007A", @"2746C":@"#1A1C96", @"2747C":@"#00237E", @"2748C":@"#001A7B", @"275C":@"#1D1157", @"2755C":@"#1B0069", @"2756C":@"#151D71", @"2757C":@"#002065", @"2758C":@"#001D68", @"276C":@"#241A44", @"2765C":@"#1B0C55", @"2766C":@"#151C55", @"2767C":@"#0B2345", @"2768C":@"#031E51", @"277C":@"A9C7EC", @"278C":@"#8CB4E8", @"279C":@"#4189DD", @"280C":@"#00267F", @"281C":@"#002569", @"282C":@"#00204E", @"283C":@"#93BFEB", @"284C":@"#6CABE7", @"285C":@"#0077D4", @"286C":@"#0035AD", @"287C":@"#003798", @"288C":@"#003082", @"289C":@"#00234C", @"290C":@"#BED9ED", @"2905C":@"#92C9EB", @"291C":@"#A4CEEC", @"2915C":@"#62B4E8", @"292C":@"#6AB2E7", @"2925C":@"#0092DD", @"293C":@"#0047B6", @"2935C":@"#005BC3", @"294C":@"#003580", @"2945C":@"#0053A5", @"295C":@"#002D62", @"2955C":@"#003B6F", @"296C":@"#002740", @"2965C":@"#003151", @"297C":@"#78C7EB", @"2975C":@"#A5D9EC", @"298C":@"#42B4E6", @"2985C":@"#40BDE8", @"299C":@"#00A0E2", @"2995C":@"#00A2E1", @"300C":@"#0067C6", @"3005C":@"#0076CC", @"301C":@"#00529B", @"3015C":@"#0060A1", @"302C":@"#00436E", @"3025C":@"#00496E", @"303C":@"#00344D", @"3035C":@"#003A4F", @"304C":@"#A2DBEB", @"305C":@"#53CAEB", @"306C":@"#00B5E6", @"307C":@"#0070B2", @"308C":@"#005883", @"309C":@"#003947", @"310C":@"#66CFE6", @"3105C":@"#6FD2E4", @"311C":@"#00C2E3", @"3115C":@"#00C4DC", @"312C":@"#00A7D4", @"3125C":@"#00AECE", @"313C":@"#0092C7", @"3135C":@"#0092BA", @"314C":@"#007FAC", @"3145C":@"#007A97", @"315C":@"#006685", @"3155C":@"#00667C", @"316C":@"#004650", @"3165C":@"#004F5D", @"317C":@"#BFE5EA", @"318C":@"#8EDBE5", @"319C":@"#36CCDA", @"320C":@"#0097AC", @"321C":@"#008193", @"322C":@"#006F7A", @"323C":@"#006068", @"324C":@"#98D9DB", @"3242C":@"#75D9D8", @"3245C":@"#7BDDD8", @"3248C":@"#7BD2C8", @"325C":@"#47C7C7", @"3252C":@"#41D2D2", @"3255C":@"#32D4CB", @"3258C":@"#43C4B7", @"326C":@"#00AFAD", @"3262C":@"#00BAB9", @"3265C":@"#00C2B6", @"3268C":@"#00A994", @"327C":@"#008579", @"3272C":@"#00A19C", @"3275C":@"#00B09D", @"3278C":@"#00997A", @"328C":@"#007168", @"3282C":@"#008480", @"3285C":@"#009384", @"3288C":@"#007E64", @"329C":@"#00625A", @"3292C":@"#005A53", @"3295C":@"#007C6F", @"3298C":@"#006752", @"330C":@"#00524D", @"3302C":@"#00423C", @"3305C":@"#004A41", @"3308C":@"#004236", @"331C":@"#B2E7DF", @"332C":@"#9FE4DB", @"333C":@"#43D9C7", @"334C":@"#009878", @"335C":@"#007B63", @"336C":@"#006651", @"337C":@"#94D8C8", @"3375C":@"#81E0C7", @"338C":@"#76D1BD", @"3385C":@"#3BD6B2", @"339C":@"#00B08B", @"3395C":@"#00C590", @"340C":@"#009460", @"3405C":@"#00AE68", @"341C":@"#007856", @"3415C":@"#00774B", @"342C":@"#006A4E", @"3425C":@"#006644", @"343C":@"#00533E", @"3435C":@"#004731", @"344C":@"#A6DEC1", @"345C":@"#89D5AF", @"346C":@"#5EC998", @"347C":@"#009543", @"348C":@"#007E3A", @"349C":@"#006233", @"350C":@"#18472C", @"351C":@"#A7E6C4", @"352C":@"#87E0B0", @"353C":@"#6ADCA2", @"354C":@"#00AB39", @"355C":@"#009530", @"356C":@"#007229", @"357C":@"#0F4D2A", @"358C":@"#A5DB92", @"359C":@"#9FD98B", @"360C":@"#55BE47", @"361C":@"#12AD2B", @"362C":@"#289728", @"363C":@"#2F8927", @"364C":@"#317023", @"365C":@"#CCE5A2", @"366C":@"#BCE18D", @"367C":@"#A4D867", @"368C":@"#62BD19", @"369C":@"#4FA600", @"370C":@"#4F8A10", @"371C":@"#4A601C", @"372C":@"#D7E9A1", @"373C":@"#CDE985", @"374C":@"#BAE55F", @"375C":@"#87D300", @"376C":@"#76B900", @"377C":@"#679000", @"378C":@"#4D5A12", @"379C":@"#DDE56C", @"380C":@"#D3E13C", @"381C":@"#C8DB00", @"382C":@"#B9D300", @"383C":@"#9FAA00", @"384C":@"#8B9000", @"385C":@"#6E6A12", @"386C":@"#E5E96E", @"387C":@"#DEE63A", @"388C":@"#D7E300", @"389C":@"#C6DB00", @"390C":@"#B2BC00", @"391C":@"#959200", @"392C":@"#7F7800", @"393C":@"#EDEB8F", @"3935C":@"#F0EB7A", @"394C":@"#E9E73F", @"3945C":@"#EFE600", @"395C":@"#E4E400", @"3955C":@"#ECE100", @"396C":@"#DDDF00", @"3965C":@"#E9DC00", @"397C":@"#BEB800", @"3975C":@"#BBA800", @"398C":@"#ABA200", @"3985C":@"#9B8900", @"399C":@"#998D00", @"3995C":@"#6A5B07", @"400C":@"#CDC9C4", @"401C":@"#BDB8B1", @"402C":@"#ADA59D", @"403C":@"#988F86", @"404C":@"#7C7369", @"405C":@"#645A50", @"406C":@"#CAC4C2", @"408C":@"#A59997", @"409C":@"#948683", @"410C":@"#7B6E6A", @"411C":@"#62524E", @"412C":@"#372B27", @"413C":@"#C8C9C3", @"414C":@"#B5B6B0", @"415C":@"#9D9D96", @"416C":@"#87887F", @"417C":@"#6E6F64", @"418C":@"#5A5B51", @"419C":@"#1F211C", @"420C":@"#CCCCCC", @"421C":@"#BABBBC", @"422C":@"#A9AAAB", @"423C":@"#939495", @"424C":@"#767A7D", @"425C":@"#56595C", @"426C":@"#212424", @"427C":@"#D2D6D9", @"428C":@"#C3C8CD", @"429C":@"#A8ADB4", @"430C":@"#868F98", @"431C":@"#616A74", @"432C":@"#414B56", @"433C":@"#212930", @"434C":@"#D3C9CE", @"435C":@"#C8BAC0", @"436C":@"#B7A6AD", @"437C":@"#846E74", @"438C":@"#513E3E", @"439C":@"#443535", @"440C":@"#392E2C", @"441C":@"#CBD1D4", @"442C":@"#B3BCC0", @"443C":@"#99A3A6", @"444C":@"#7B858A", @"445C":@"#4F5559", @"446C":@"#3D4242", @"447C":@"#323532", @"448C":@"#473E26", @"4485C":@"#5D4718", @"449C":@"#4D4325", @"4495C":@"#836E2C", @"450C":@"#514826", @"4505C":@"#9B8948", @"451C":@"#9F9B74", @"4515C":@"#B5A570", @"452C":@"#B5B292", @"4525C":@"#C5BA8E", @"453C":@"#C8C5AC", @"4535C":@"#D4CCAA", @"454C":@"#D5D3BF", @"4545C":@"#DED9C2", @"455C":@"#655415", @"456C":@"#977F09", @"457C":@"#B29200", @"458C":@"#DBCA67", @"459C":@"#DFD27C", @"460C":@"#E5DB97", @"461C":@"#E7E3B5", @"462C":@"#563F23", @"4625C":@"#4E2614", @"463C":@"#6D4921", @"4635C":@"#905A33", @"464C":@"#855723", @"4645C":@"#B17F5C", @"465C":@"#B99C6B", @"4655C":@"#C09477", @"466C":@"#CAB388", @"4665C":@"#D1AE97", @"467C":@"#D5C4A1", @"4675C":@"#DDC2B0", @"468C":@"#E0D4BB", @"4685C":@"#E4D2C5", @"469C":@"#613418", @"4695C":@"#532821", @"470C":@"#9B4D1B", @"4705C":@"#7F4C3E", @"471C":@"#B75312", @"4715C":@"#9B6E5F", @"472C":@"#E49969", @"4725C":@"#B28D7F", @"473C":@"#EDB996", @"4735C":@"#C5AAA0", @"474C":@"#EEC5A9", @"4745C":@"#D4BEB6", @"475C":@"#F0D0BB", @"4755C":@"#DDCDC7", @"476C":@"#513127", @"477C":@"#5E2F24", @"478C":@"#723629", @"479C":@"#AD806C", @"480C":@"#C8A99A", @"481C":@"#D5BDB0", @"482C":@"#DDCEC4", @"483C":@"#6A2E22", @"484C":@"#9F2D20", @"485C":@"#DC241F", @"486C":@"#EC9384", @"487C":@"#ECAB9D", @"488C":@"#ECBBAF", @"489C":@"#EBCDC3", @"490C":@"#5A272A", @"491C":@"#772B2F", @"492C":@"#91353B", @"494C":@"#E7A7B6", @"495C":@"#EDB8C5", @"496C":@"#EFC4CE", @"497C":@"#4E2A28", @"4975C":@"#441E1F", @"498C":@"#68322E", @"4985C":@"#854A50", @"499C":@"#763931", @"4995C":@"#A16971", @"500C":@"#C88691", @"5005C":@"#B7848C", @"501C":@"#DEACB7", @"5015C":@"#D1A9B0", @"502C":@"#E5BFC7", @"5025C":@"#DBBCC1", @"503C":@"#E9CCD2", @"5035C":@"#E3CBD0", @"504C":@"#4E2029", @"505C":@"#6E2639", @"506C":@"#7E2B42", @"507C":@"#D38DA6", @"508C":@"#E2ABBF", @"509C":@"#E7B9CA", @"510C":@"#E9C2D1", @"511C":@"#60244E", @"5115C":@"#4B253E", @"512C":@"#7E2271", @"5125C":@"#704165", @"513C":@"#95288F", @"5135C":@"#885E80", @"514C":@"#D385C8", @"5145C":@"#A17E9A", @"515C":@"#DFA5D6", @"5155C":@"#C0A6BD", @"516C":@"#E7BADF", @"5165C":@"#D6C5D3", @"517C":@"#EBCAE3", @"5175C":@"#E0D5DE", @"518C":@"#4B2A46", @"5185C":@"#45293B", @"519C":@"#5A2D5F", @"5195C":@"#5E3A51", @"520C":@"#682F73", @"5205C":@"#8B687D", @"521C":@"#AD85BA", @"5215C":@"#B195A6", @"522C":@"#BD9ECA", @"5225C":@"#C6B0BE", @"523C":@"#CBB2D5", @"5235C":@"#D4C4CE", @"524C":@"#DACCE1", @"5245C":@"#DFD4DB", @"525C":@"#51265A", @"5255C":@"#2A254B", @"526C":@"#61207F", @"5265C":@"#433B67", @"527C":@"#6E20A0", @"5275C":@"#57527E", @"528C":@"#A774CD", @"5285C":@"#8581A4", @"529C":@"#C6A4E1", @"5295C":@"#AAA7C1", @"530C":@"#CFB1E3", @"5305C":@"#C1BED1", @"531C":@"#D7C4E7", @"5315C":@"#D4D4E0", @"532C":@"#262A39", @"533C":@"#253355", @"534C":@"#293F6F", @"535C":@"#95A1C3", @"536C":@"#A4B1CD", @"537C":@"#BDC6DA", @"538C":@"#D2D7E4", @"539C":@"#002A46", @"5395C":@"#02253A", @"540C":@"#002F5D", @"5405C":@"#3E647E", @"541C":@"#003C79", @"5415C":@"#587993", @"542C":@"#5998C9", @"5425C":@"#7C98AE", @"543C":@"#93B9DC", @"5435C":@"#A5B8C9", @"544C":@"#B1CBE5", @"5445C":@"#BCCAD6", @"545C":@"#BFD3E6", @"5455C":@"#CCD6E0", @"546C":@"#003440", @"5463C":@"#002830", @"5467C":@"#183533", @"547C":@"#003E51", @"5473C":@"#00626E", @"5477C":@"#3C5B59", @"548C":@"#004159", @"5483C":@"#4F8D97", @"5487C":@"#627D7C", @"549C":@"#5B97B1", @"5493C":@"#81ADB5", @"5497C":@"#8DA09F", @"550C":@"#85B0C6", @"5503C":@"#A1C3C9", @"5507C":@"#AAB8B9", @"551C":@"#9FC1D3", @"5513C":@"#BED5D9", @"5517C":@"#BFCBCC", @"552C":@"#B9D0DC", @"5523C":@"#CFDEE1", @"5527C":@"#CCD4D4", @"553C":@"#214232", @"5535C":@"#1B3930", @"554C":@"#24604A", @"5545C":@"#4A6D62", @"555C":@"#13694E", @"5555C":@"#6E8D82", @"556C":@"#74A18E", @"5565C":@"#8FA8A0", @"557C":@"#98BAAC", @"5575C":@"#A9BDB6", @"558C":@"#ACC7BD", @"5585C":@"#C0CFCB", @"559C":@"#C0D4CD", @"5595C":@"#D3DEDB", @"560C":@"#22483F", @"5605C":@"#193025", @"561C":@"#0F6259", @"5615C":@"#5A7060", @"562C":@"#007770", @"5625C":@"#6C8072", @"563C":@"#72B8B4", @"5635C":@"#97A69B", @"564C":@"#98CCC9", @"5645C":@"#B1BCB5", @"565C":@"#B9DCDA", @"5655C":@"#BDC5BF", @"566C":@"#CDE3E2", @"5665C":@"#CDD3CD", @"567C":@"#18453B", @"569C":@"#008478", @"570C":@"#76C6BE", @"571C":@"#9DD6CF", @"572C":@"#B4DEDB", @"573C":@"#C1E2DE", @"574C":@"#404F24", @"5743C":@"#3E4723", @"5747C":@"#404616", @"575C":@"#56732E", @"5753C":@"#5E6639", @"5757C":@"#6F732D", @"576C":@"#668E3C", @"5763C":@"#6E7649", @"5767C":@"#8D9150", @"577C":@"#B2C891", @"5773C":@"#939871", @"5777C":@"#A7AB74", @"578C":@"#BDD0A0", @"5783C":@"#ADB291", @"5787C":@"#C1C49A", @"579C":@"#C5D5A9", @"5793C":@"#BDC2A9", @"5797C":@"#CED1B3", @"580C":@"#CFDDBB", @"5803C":@"#CED2BF", @"5807C":@"#D9DCC5", @"581C":@"#605A12", @"5815C":@"#4B4516", @"582C":@"#888600", @"5825C":@"#7D762F", @"583C":@"#ABB400", @"5835C":@"#9D9754", @"584C":@"#CBD34C", @"5845C":@"#ADA86B", @"585C":@"#D8DB6F", @"5855C":@"#C7C397", @"586C":@"#DDE18A", @"5865C":@"#D3CFAC", @"587C":@"#E2E59F", @"5875C":@"#D9D7B9", @"600C":@"#EEEBB6", @"601C":@"#EEEAA5", @"602C":@"#EEE88D", @"603C":@"#EDE25E", @"604C":@"#EADB1B", @"605C":@"#E0CA00", @"606C":@"#D8BD00", @"607C":@"#EBE9C3", @"608C":@"#E9E6B4", @"609C":@"#E7E29A", @"610C":@"#E2D973", @"611C":@"#D8CC46", @"612C":@"#C4B300", @"613C":@"#B39D00", @"614C":@"#E3E1C1", @"615C":@"#DDDBB1", @"616C":@"#D7D29D", @"617C":@"#C9C37F", @"618C":@"#B4A851", @"619C":@"#9C8E2A", @"620C":@"#887811", @"621C":@"#D2DFDC", @"622C":@"#BDD2CC", @"623C":@"#9EBCB3", @"624C":@"#78A095", @"625C":@"#518274", @"626C":@"#1F5647", @"627C":@"#032D23", @"628C":@"#C8E2E8", @"629C":@"#AADAE5", @"630C":@"#82CBDD", @"631C":@"#48B8D2", @"632C":@"#009EC0", @"633C":@"#007CA4", @"634C":@"#00628C", @"635C":@"#ADDDEB", @"636C":@"#8DD4E9", @"637C":@"#5BC8E7", @"638C":@"#00B2DE", @"639C":@"#009ACF", @"640C":@"#0085C2", @"641C":@"#0070B2", @"642C":@"#CED9E7", @"643C":@"#C5D2E3", @"644C":@"#97B1D0", @"645C":@"#7498C0", @"646C":@"#5781AE", @"647C":@"#11568C", @"648C":@"#002B5F", @"649C":@"#D4DCE8", @"650C":@"#C2CDE0", @"651C":@"#99AECE", @"652C":@"#6F8DB9", @"653C":@"#2A568F", @"654C":@"#003066", @"655C":@"#002252", @"656C":@"#D4DDED", @"657C":@"#BFD0EA", @"658C":@"#A1BBE4", @"659C":@"#6E96D5", @"660C":@"#296DC1", @"661C":@"#003596", @"662C":@"#002280", @"663C":@"#DED8E6", @"664C":@"#D7D0E0", @"665C":@"#C5BBD3", @"666C":@"#A392B7", @"667C":@"#7C6495", @"668C":@"#624A7E", @"669C":@"#432C5F", @"670C":@"#EAD4E4", @"671C":@"#E6C1DB", @"672C":@"#E1A7CF", @"673C":@"#DA89BE", @"674C":@"#CE62A4", @"675C":@"#B62A79", @"676C":@"#A30059", @"677C":@"#E5D1DF", @"678C":@"#E2C9DA", @"679C":@"#DEBDD4", @"680C":@"#CB97B7", @"681C":@"#B8749E", @"682C":@"#9C4878", @"683C":@"#7C2250", @"684C":@"#E5CAD9", @"685C":@"#E1BCD0", @"686C":@"#DBAEC6", @"687C":@"#C686A9", @"688C":@"#B46B93", @"689C":@"#95416F", @"690C":@"#6D2348", @"691C":@"#E7CDD2", @"692C":@"#E2C1C8", @"693C":@"#D9A7B1", @"694C":@"#CA909C", @"695C":@"#B06876", @"696C":@"#944554", @"697C":@"#81333D", @"698C":@"#EDCFD7", @"699C":@"#F0C2CD", @"700C":@"#ECA9B9", @"701C":@"#E58DA2", @"702C":@"#D5647C", @"703C":@"#BA394E", @"704C":@"#A22630", @"705C":@"#F2D6DE", @"706C":@"#F5C7D4", @"707C":@"#F5B0C1", @"708C":@"#F590A6", @"709C":@"#EF6782", @"710C":@"#E54661", @"711C":@"#D32939", @"712C":@"#FACDAE", @"713C":@"#FBC399", @"714C":@"#FDB179", @"715C":@"#F9964A", @"716C":@"#F17C0E", @"717C":@"#DE6100", @"718C":@"#CF5200", @"719C":@"#EFCFB8", @"720C":@"#ECC3A5", @"721C":@"#E5AE86", @"722C":@"#D58F59", @"723C":@"#C0722F", @"724C":@"#9A4B00", @"725C":@"#843B00", @"726C":@"#E8CEBB", @"727C":@"#E1BEA4", @"728C":@"#D5AA88", @"729C":@"#C38E63", @"730C":@"#AC703D", @"731C":@"#793F0D", @"732C":@"#64300A", @"801C":@"#00A7D8", @"802C":@"#5BDD45", @"803C":@"#FFE805", @"804C":@"#FFA243", @"805C":@"#FF585E", @"806C":@"#FF1CAC", @"807C":@"#D708B2", @"808C":@"#00AE97", @"809C":@"#E1E400", @"810C":@"#FFCE09", @"811C":@"#FF7750", @"812C":@"#FF3485", @"813C":@"#EA12AF", @"814C":@"#7E60CE",};
 #endif
     
+    // See: http://i.imgur.com/HS7eK4r.png
+    // Also: https://gist.github.com/erica/ca0023ef59a6ba9fbb93
+    // And: http://imgur.com/FiMbMb2 and http://imgur.com/TP9gC9r 
+    NSDictionary *iosDictionary = @{
+    @"Apple System Blue":@"0x007AFF",
+    @"Apple System Green":@"0x4CD964",
+    @"Apple System Red":@"0xFF3B30",
+    @"Apple System Gray":@"0x8E8E93",
+    
+    @"Apple Messages Blue":@"0x007AFF",
+    @"Apple Weather Gray":@"0x8E8E93",
+    @"Apple Notes Yellow":@"0xFFCC00",
+    @"Apple Newstand Blue":@"0x007AFF",
+    @"Apple Compass Red":@"0xFF3B30",
+    @"Apple Phone Blue":@"0x007AFF",
+    @"Apple FaceTime Blue":@"0x007AFF",
+    @"Apple Calendar Red":@"0xFF3B30",
+    @"Apple Clock Red":@"0xFF3B30",
+    @"Apple Reminders Orange":@"0xFF9500",
+    
+    @"Apple iTunes Primary Blue":@"0x34AADC",
+    @"Apple iTunes Secondary Blue":@"0x5AC8FA",
+    
+    @"Apple Mail Blue":@"0x007AFF",
+    @"Apple Photos Blue":@"0x007AFF",
+    @"Apple Maps Blue":@"0x007AFF",
+    @"Apple Stocks Gray":@"0x8E8E93",
+    @"Apple App Store Blue":@"0x007AFF",
+    @"Apple Mobile Safari Blue":@"0x007AFF",
+    @"Apple Calculator Yellow":@"0xFF9500",
+    @"Apple Camera Yellow":@"0xFFCC00",
+    @"Apple Videos Primary Blue":@"0x34AADC",
+    @"Apple Videos Secondary Blue":@"0x5AC8FA",
+    @"Apple Game Center Purple":@"0x5856D6",
+    @"Apple Passbook Blue":@"0x007AFF",
+    @"Apple Music Red":@"0xFF2D55",
+    @"Apple Contacts Blue":@"0x007AFF",
+    
+    @"Apple Magenta Dot":@"0xE12472",
+    @"Apple Purple Dot":@"0xC56DE2",
+    @"Apple Light Blue Dot":@"0x59BCEF",
+    @"Apple Light Green Dot":@"0x88F437",
+    @"Apple Yellow Dot":@"0xF0DD07",
+    @"Apple Orange Dot":@"0xE9A10E",
+    @"Apple Light Brown Dot":@"0xA58E63",
+    
+    @"Apple Highlight Green":@"0x6FE700",
+    @"Apple Safari Top":@"0x3FCFFD",
+    @"Apple Safari Bottom":@"0x1F5DEE",    
+    @"Apple Contacts Face Gray":@"0x8F8F8F",
+    @"Apple Contacts Light Gray":@"0xC2C1BD",
+    @"Apple Contacts Blue":@"0x4FC1F9",
+    @"Apple Contacts Light Green":@"0x43D459",
+    @"Apple Contacts Orange":@"0xFF8A04",    
+    @"Apple Game Center Bright Pink":@"0xFE2184",
+    @"Apple Game Center Bright Yellow":@"0xF7CC05",
+    @"Apple Game Center Bright Purple":@"0x951EEA",
+    @"Apple Game Center Bright Blue":@"0x3B8FF3",    
+    @"Apple Maps Yellow":@"0xFFD906",
+    @"Apple Maps Blue":@"0x3791FF",
+    @"Apple Maps Tan":@"0xE0D8C2",
+    @"Apple Maps Pink":@"0xFABECB",
+    @"Apple Maps Red":@"0xD91A21",
+    @"Apple Maps Green":@"0x6BBE34",
+    @"Apple Maps Orange":@"0xFEA50B",
+    @"Apple Settings Light Gray":@"0xD7DBDA",
+    @"Apple Settings Dark Gray":@"0x4A4A4A",
+    @"Apple iTunes Store Primary Pink":@"0xF252C0",
+    @"Apple iTunes Store Secondary Purple":@"0x9F3CFF",    
+    @"Apple Messages Primary Green":@"0x7DFD65",
+    @"Apple Messages Secondary Green":@"0x13D01A",
+
+    };
+    
     colorNameDictionaries = @{
                               @"Base" : baseDictionary,
                               @"Crayon" : crayonDictionary,
@@ -1437,6 +1514,7 @@ static NSDictionary *colorNameDictionaries = nil;
                               @"Moroney": moroneyDictionary,
                               @"xkcd" : xkcdDictionary,
                               @"PseudoPantone" : pseudoPantone,
+                              @"iOSDictionary" : iosDictionary,
                               };
     
 }
@@ -1570,31 +1648,6 @@ static NSDictionary *colorNameDictionaries = nil;
     return bestKey;
 }
 
-- (NSString *) closestCrayonName
-{
-    return [self closestColorNameUsingDictionary:@"Crayon"];
-}
-
-- (NSString *) closestCSSName
-{
-    return [self closestColorNameUsingDictionary:@"CSS"];
-}
-
-- (NSString *) closestBaseName
-{
-    return [self closestColorNameUsingDictionary:@"Base"];
-}
-
-- (NSString *) closestSystemColorName
-{
-    return [self closestColorNameUsingDictionary:@"System"];
-}
-
-- (NSString *) closestWikipediaColorName
-{
-    return [self closestColorNameUsingDictionary:@"Wikipedia"];
-}
-
 - (NSString *) closestPseudoPantoneName
 {
     return [self closestColorNameUsingDictionary:@"PseudoPantone"];
@@ -1639,6 +1692,69 @@ static NSDictionary *colorNameDictionaries = nil;
     }
     
     return results;
+}
+
++ (void) initializeColorNames
+{
+    if (colorNames)
+        return;
+    
+    if (!colorNameDictionaries)
+        [self initializeColorDictionaries];
+    
+    // Collect all keys
+    NSMutableArray *baseNames = [NSMutableArray array];
+    for (NSString *dictionaryName in [UIColor availableColorDictionaries])
+    {
+        if ([dictionaryName hasPrefix:@"PseudoPantone"]) continue; // No Pantone please
+        NSDictionary *dict = [UIColor colorDictionaryNamed:dictionaryName];
+        [baseNames addObjectsFromArray:dict.allKeys];
+    }
+    
+    // Sort and unique
+    NSArray *sorted = [baseNames sortedArrayUsingComparator:^(id obj1, id obj2){return [obj1 compare:obj2];}];
+    NSMutableArray *copiedArray = [NSMutableArray arrayWithArray:sorted];
+    for (id object in sorted)
+    {
+        [copiedArray removeObjectIdenticalTo:object];
+        [copiedArray addObject:object];
+    }
+    
+    // Store
+    colorNames = copiedArray;
+}
+
++ (NSArray *) closeColorNamesMatchingKeys: (NSArray *) keys
+{
+    [self initializeColorNames];
+    
+    NSArray *results = colorNames;
+    for (NSString *key in keys)
+    {
+        NSPredicate *containPred = [NSPredicate predicateWithFormat:@"SELF contains[cd] %@", key];
+        NSArray *filtered = [results filteredArrayUsingPredicate:containPred];
+        results = filtered;
+    }    
+    return results;
+}
+
++ (NSArray *) closeAppleNamesMatchingKeys: (NSArray *) keys
+{
+    [self initializeColorNames];
+    
+    NSArray *results = colorNames;
+    for (NSString *key in keys)
+    {
+        NSPredicate *containPred = [NSPredicate predicateWithFormat:@"SELF contains[cd] %@ AND SELF BEGINSWITH[c] 'Apple'", key];
+        NSArray *filtered = [results filteredArrayUsingPredicate:containPred];
+        results = filtered;
+    }
+    return results;
+}
+
++ (NSArray *) closeColorNames:(NSString *)colorNameString
+{
+    return [self closeColorNamesMatchingKeys:@[colorNameString]];
 }
 @end
 

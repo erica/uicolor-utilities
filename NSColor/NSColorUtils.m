@@ -8,6 +8,10 @@
 
 #import "NSColorUtils.h"
 
+static CGFloat cgfmin(CGFloat a, CGFloat b) { return (a < b) ? a : b;}
+static CGFloat cgfmax(CGFloat a, CGFloat b) { return (a > b) ? a : b;}
+static CGFloat cgfunitclamp(CGFloat f) {return cgfmax(0.0, cgfmin(1.0, f));}
+
 #pragma mark - Background Colors for Views, kinda
 @implementation NSView (OSXBGColorExtension)
 - (NSColor *) backgroundColor

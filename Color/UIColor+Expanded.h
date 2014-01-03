@@ -29,6 +29,18 @@
  Added: Various tweakers, warmth property, temperature stuff 
  */
 
+/*
+ 
+ Update checklist:
+ 
+ UInt32 -> uint32_t
+ float -> CGFloat
+ int -> NSInteger except w/ simple for loops
+ fmax, fmin -> cgfmax, cgfmin
+ unit clamping -> cgfunitclamp
+ 
+ */
+
 
 #import <UIKit/UIKit.h>
 
@@ -103,7 +115,7 @@ void HSPtoRGB(CGFloat  H, CGFloat  S, CGFloat  P, CGFloat *R, CGFloat *G, CGFloa
 
 @property (nonatomic, readonly) CGFloat alpha;
 
-@property (nonatomic, readonly) UInt32 rgbHex;
+@property (nonatomic, readonly) uint32_t rgbHex;
 
 - (NSArray *)arrayFromRGBAComponents;
 
@@ -162,7 +174,7 @@ void HSPtoRGB(CGFloat  H, CGFloat  S, CGFloat  P, CGFloat *R, CGFloat *G, CGFloa
 - (UIColor *) contrastingColor;            // A good contrasting color: will be either black or white
 - (UIColor *) complementaryColor;        // A complementary color that should look good with this color
 - (NSArray *) triadicColors;                // Two colors that should look good with this color
-- (NSArray *) analogousColorsWithStepAngle: (CGFloat) stepAngle pairCount: (int)pairs;    // Multiple pairs of colors
+- (NSArray *) analogousColorsWithStepAngle: (CGFloat) stepAngle pairCount: (NSInteger) pairs;    // Multiple pairs of colors
 
 - (UIColor *) kevinColorWithColor: (UIColor *) secondColor; // see Eridius request
 
@@ -173,7 +185,7 @@ void HSPtoRGB(CGFloat  H, CGFloat  S, CGFloat  P, CGFloat *R, CGFloat *G, CGFloa
 @property (nonatomic, readonly) NSString *valueString;
 + (UIColor *) colorWithString: (NSString *) string;
 + (UIColor *) colorWithHexString: (NSString *)stringToConvert;
-+ (UIColor *) colorWithRGBHex: (UInt32)hex;
++ (UIColor *) colorWithRGBHex: (uint32_t)hex;
 
 #pragma mark - Temperature
 // Temperature support -- preliminary
@@ -197,14 +209,13 @@ void HSPtoRGB(CGFloat  H, CGFloat  S, CGFloat  P, CGFloat *R, CGFloat *G, CGFloa
 + (UIColor *) colorWithName: (NSString *) name;
 
 - (NSString *) closestColorNameUsingDictionary: (NSString *) dictionaryName;
-
 - (NSDictionary *) closestColors;
+
++ (NSArray *) closeColorNames:(NSString *) colorNameString;
++ (NSArray *) closeColorNamesMatchingKeys: (NSArray *) keys;
++ (NSArray *) closeAppleNamesMatchingKeys: (NSArray *) keys;
+
 @property (nonatomic, readonly) NSString *closestColorName;
-@property (nonatomic, readonly) NSString *closestCrayonName;
-@property (nonatomic, readonly) NSString *closestWikipediaColorName;
-@property (nonatomic, readonly) NSString *closestCSSName;
-@property (nonatomic, readonly) NSString *closestBaseName;
-@property (nonatomic, readonly) NSString *closestSystemColorName;
 @property (nonatomic, readonly) UIColor  *closestMensColor;
 @property (nonatomic, readonly) NSString *closestPseudoPantoneName;
 @end
