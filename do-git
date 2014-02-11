@@ -6,8 +6,8 @@ if ($#argv != 1) then
 endif
 
 # copy over latest
-cp -r /Volumes/MusicAndData/Dev/Canon/Utility\ Packs/Foundation\ Pack/Color .
-cp -r /Volumes/MusicAndData/Dev/Canon/Snap\ Pack/NSColor .
+cp -r /Volumes/MusicAndData/Dev/Canon/Utility\ Packs/Color\ Pack .
+cp -r /Volumes/MusicAndData/Dev/Canon/Packs/NSColor .
 
 rm -rf build
 rm .DS_Store
