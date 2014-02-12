@@ -374,6 +374,12 @@ CGColorSpaceRef DeviceGraySpace()
 #pragma mark - Color Names
 
 static NSDictionary *colorNameDictionaries = nil;
+static NSMutableArray *colorNames = nil;
+
++ (NSArray *) colorNames
+{
+    return colorNames;
+}
 
 + (void) initializeColorDictionaries
 {
@@ -491,6 +497,50 @@ static NSDictionary *colorNameDictionaries = nil;
     }
     
     return nil;
+}
+
++ (void) initializeColorNames
+{
+    if (colorNames)
+        return;
+    
+    if (!colorNameDictionaries)
+        [self initializeColorDictionaries];
+    
+    // Collect all keys
+    NSMutableArray *baseNames = [NSMutableArray array];
+    for (NSString *dictionaryName in [NSColor availableColorDictionaries])
+    {
+        if ([dictionaryName hasPrefix:@"PseudoPantone"]) continue; // No Pantone please
+        NSDictionary *dict = [NSColor colorDictionaryNamed:dictionaryName];
+        [baseNames addObjectsFromArray:dict.allKeys];
+    }
+    
+    // Sort and unique
+    NSArray *sorted = [baseNames sortedArrayUsingComparator:^(id obj1, id obj2){return [obj1 compare:obj2];}];
+    NSMutableArray *copiedArray = [NSMutableArray arrayWithArray:sorted];
+    for (id object in sorted)
+    {
+        [copiedArray removeObjectIdenticalTo:object];
+        [copiedArray addObject:object];
+    }
+    
+    // Store
+    colorNames = copiedArray;
+}
+
++ (NSArray *) closeColorNamesMatchingKeys: (NSArray *) keys
+{
+    [self initializeColorNames];
+    
+    NSArray *results = colorNames;
+    for (NSString *key in keys)
+    {
+        NSPredicate *containPred = [NSPredicate predicateWithFormat:@"SELF contains[cd] %@", key];
+        NSArray *filtered = [results filteredArrayUsingPredicate:containPred];
+        results = filtered;
+    }
+    return results;
 }
 
 - (NSString *) closestColorNameUsingDictionary: (NSString *) dictionaryName

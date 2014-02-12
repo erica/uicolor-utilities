@@ -77,4 +77,7 @@ CGColorSpaceRef DeviceGraySpace();
 
 - (NSString *) closestColorNameUsingDictionary: (NSString *) dictionaryName;
 @property (nonatomic, readonly) NSString *closestColorName;
+
++ (NSArray *) closeColorNamesMatchingKeys: (NSArray *) keys;
++ (NSArray *) colorNames;
 @end
