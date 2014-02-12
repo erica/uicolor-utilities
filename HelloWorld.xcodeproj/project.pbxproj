@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8E01A20716FCA62B009C8E29 /* UIColor+Expanded.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E01A20316FCA62B009C8E29 /* UIColor+Expanded.m */; };
-		8E01A20816FCA62B009C8E29 /* Color-Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E01A20616FCA62B009C8E29 /* Color-Utilities.m */; };
+		8E338E8A18AC1E9E00D76C4A /* UIColor+Expanded.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E338E8918AC1E9E00D76C4A /* UIColor+Expanded.m */; };
 		8EF624E115892BA600A81FD2 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EF624E015892BA600A81FD2 /* UIKit.framework */; };
 		8EF624E315892BA600A81FD2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EF624E215892BA600A81FD2 /* Foundation.framework */; };
 		8EF624E515892BA600A81FD2 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EF624E415892BA600A81FD2 /* CoreGraphics.framework */; };
@@ -17,10 +16,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8E01A20216FCA62B009C8E29 /* UIColor+Expanded.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Expanded.h"; sourceTree = "<group>"; };
-		8E01A20316FCA62B009C8E29 /* UIColor+Expanded.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Expanded.m"; sourceTree = "<group>"; };
-		8E01A20516FCA62B009C8E29 /* Color-Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Color-Utilities.h"; sourceTree = "<group>"; };
-		8E01A20616FCA62B009C8E29 /* Color-Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Color-Utilities.m"; sourceTree = "<group>"; };
+		8E338E8718AC1E9E00D76C4A /* ColorPack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorPack.h; sourceTree = "<group>"; };
+		8E338E8818AC1E9E00D76C4A /* UIColor+Expanded.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Expanded.h"; sourceTree = "<group>"; };
+		8E338E8918AC1E9E00D76C4A /* UIColor+Expanded.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Expanded.m"; sourceTree = "<group>"; };
 		8EF624DC15892BA600A81FD2 /* HelloWorld.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HelloWorld.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8EF624E015892BA600A81FD2 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		8EF624E215892BA600A81FD2 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -45,38 +43,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		8E01A20016FCA62B009C8E29 /* Color */ = {
+		8E338E8618AC1E9E00D76C4A /* Color Pack */ = {
 			isa = PBXGroup;
 			children = (
-				8E01A20116FCA62B009C8E29 /* UIColor+Expanded */,
-				8E01A20416FCA62B009C8E29 /* Util */,
+				8E338E8718AC1E9E00D76C4A /* ColorPack.h */,
+				8E338E8818AC1E9E00D76C4A /* UIColor+Expanded.h */,
+				8E338E8918AC1E9E00D76C4A /* UIColor+Expanded.m */,
 			);
-			path = Color;
-			sourceTree = "<group>";
-		};
-		8E01A20116FCA62B009C8E29 /* UIColor+Expanded */ = {
-			isa = PBXGroup;
-			children = (
-				8E01A20216FCA62B009C8E29 /* UIColor+Expanded.h */,
-				8E01A20316FCA62B009C8E29 /* UIColor+Expanded.m */,
-			);
-			path = "UIColor+Expanded";
-			sourceTree = "<group>";
-		};
-		8E01A20416FCA62B009C8E29 /* Util */ = {
-			isa = PBXGroup;
-			children = (
-				8E01A20516FCA62B009C8E29 /* Color-Utilities.h */,
-				8E01A20616FCA62B009C8E29 /* Color-Utilities.m */,
-			);
-			path = Util;
-			sourceTree = "<group>";
+			path = "Color Pack";
+			sourceTree = SOURCE_ROOT;
 		};
 		8EF624D115892BA600A81FD2 = {
 			isa = PBXGroup;
 			children = (
 				8EF624EC15892BA600A81FD2 /* main.m */,
-				8E01A20016FCA62B009C8E29 /* Color */,
+				8E338E8618AC1E9E00D76C4A /* Color Pack */,
 				8EF624E715892BA600A81FD2 /* Supporting Files */,
 				8EF624DF15892BA600A81FD2 /* Frameworks */,
 				8EF624DD15892BA600A81FD2 /* Products */,
@@ -174,9 +155,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8E338E8A18AC1E9E00D76C4A /* UIColor+Expanded.m in Sources */,
 				8EF624ED15892BA600A81FD2 /* main.m in Sources */,
-				8E01A20716FCA62B009C8E29 /* UIColor+Expanded.m in Sources */,
-				8E01A20816FCA62B009C8E29 /* Color-Utilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
