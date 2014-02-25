@@ -15,6 +15,13 @@
 
  */
 
+/*
+ 
+ Warning: -getRed:green:blue:alpha: not valid for the NSColor NSNamedColorSpace System controlLightHighlightColor; need to first convert colorspace.
+ May not work well with developer colors
+ 
+ */
+
 #import <Foundation/Foundation.h>
 @interface NSView (OSXBGColorExtension)
 @property (nonatomic, weak) NSColor *backgroundColor;

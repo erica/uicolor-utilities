@@ -18,4 +18,7 @@
 @property (weak) IBOutlet NSTextField *colorNameLabel;
 @property (weak) IBOutlet NSTextField *searchField;
 @property (weak) IBOutlet NSView *nothingView;
+@property (weak) IBOutlet NSTextField *rField;
+@property (weak) IBOutlet NSTextField *bField;
+@property (weak) IBOutlet NSTextField *gField;
 @end

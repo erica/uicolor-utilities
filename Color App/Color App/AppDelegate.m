@@ -22,6 +22,10 @@
     _redField.stringValue = @((int) (currentColor.red * 255.0f)).stringValue;
     _greenField.stringValue = @((int) (currentColor.green * 255.0f)).stringValue;
     _blueField.stringValue = @((int) (currentColor.blue * 255.0f)).stringValue;
+    
+    _rField.stringValue = [NSString stringWithFormat:@"%0.3f", currentColor.red];
+    _gField.stringValue = [NSString stringWithFormat:@"%0.3f", currentColor.green];
+    _bField.stringValue = [NSString stringWithFormat:@"%0.3f", currentColor.blue];
 }
 
 - (void) updateHexValue
@@ -34,11 +38,31 @@
     [[NSUserDefaults standardUserDefaults] setObject:currentColor.hexStringValue forKey:@"colorKey"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
-    _colorNameLabel.stringValue = currentColor.closestColorName;
+    _colorNameLabel.stringValue = [currentColor.closestColorName capitalizedString];
     
     ignoreColorWellUpdate = YES;
     _colorWell.color = currentColor;
     ignoreColorWellUpdate = NO;
+}
+
+- (void) calculateFromFloatRGB
+{
+    CGFloat r = _rField.stringValue.floatValue;
+    CGFloat g = _gField.stringValue.floatValue;
+    CGFloat b = _bField.stringValue.floatValue;
+    
+    r = MIN(MAX(r, 0.0f), 1.0f);
+    g = MIN(MAX(g, 0.0f), 1.0f);
+    b = MIN(MAX(b, 0.0f), 1.0f);
+
+    _rField.stringValue = [NSString stringWithFormat:@"%0.3f", r];
+    _gField.stringValue = [NSString stringWithFormat:@"%0.3f", g];
+    _bField.stringValue = [NSString stringWithFormat:@"%0.3f", b];
+    
+    currentColor = [NSColor colorWithDeviceRed:r green:g blue:b alpha:1];
+    
+    [self updateColor];
+    [self updateHexValue];
 }
 
 - (void) calculateFromRGB
@@ -119,6 +143,8 @@
         [self calculateFromHex];
     else if (field == _searchField)
         [self updateSearch];
+    else if ((field == _rField) | (field == _gField) | (field == _bField))
+        [self calculateFromFloatRGB];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -156,7 +182,7 @@
     {
         currentColor = color;
         _hexField.stringValue = currentColor.hexStringValue;
-        _colorNameLabel.stringValue = items[rowIndex];
+        _colorNameLabel.stringValue = [items[rowIndex] capitalizedString];
         [self updateRGBValues];
         
         [[NSUserDefaults standardUserDefaults] setObject:currentColor.hexStringValue forKey:@"colorKey"];
