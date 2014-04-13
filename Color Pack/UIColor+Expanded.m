@@ -1287,8 +1287,11 @@ NSDictionary *kelvin = nil;
     {
         UIColor *color = [UIColor colorWithKelvin:i];
         NSString *hex = color.hexStringValue;
-        if (!dict[hex])
-            dict[hex] = @(i);
+        if (hex) {
+            if (!dict[hex])
+                dict[hex] = @(i);
+        }
+        
     }
     
     kelvin = [dict copy];
