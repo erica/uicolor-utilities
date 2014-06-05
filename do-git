@@ -6,13 +6,16 @@ if ($#argv != 1) then
 endif
 
 # copy over latest
-cp -r /Volumes/MusicAndData/Dev/Canon/Utility\ Packs/Color\ Pack .
-cp -r /Volumes/MusicAndData/Dev/Canon/Packs/NSColor .
+cp -r /Volumes/MusicAndData/Dev/Canon/OS\ X/Mac\ Pack/NSColor .
+cp -r /Volumes/MusicAndData/Dev/Canon/iOS\ Packs/Foundation/Color\ Pack .
 
+# old stuff
 rm -rf build
 rm .DS_Store
 rm */.DS_Store
 rm -rf *.xcodeproj/ericasadun.*
+
+# git stuff
 git add -A
 git commit -m "$1"
 git push
