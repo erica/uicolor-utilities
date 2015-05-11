@@ -1165,7 +1165,14 @@ void HSPtoRGB(
     CGFloat c[kMaxComponents];
     NSUInteger i = 0;
     
-    if (![scanner scanFloat: &c[i++]]) return nil;
+    if( 4 == sizeof( CGFloat))
+    {
+        if (![scanner scanFloat: &c[i++]]) return nil;
+    }
+    else
+    {
+        if (![scanner scanDouble: &c[i++]]) return nil;
+    }
     
     while (1)
     {
@@ -1173,7 +1180,14 @@ void HSPtoRGB(
         if (i >= kMaxComponents) return nil;
         if ([scanner scanString:@"," intoString:NULL])
         {
-            if (![scanner scanFloat: &c[i++]]) return nil;
+            if( 4 == sizeof( CGFloat))
+            {
+                if (![scanner scanFloat: &c[i++]]) return nil;
+            }
+            else
+            {
+                if (![scanner scanDouble: &c[i++]]) return nil;
+            }
         }
         else
         {
